@@ -50,7 +50,7 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
     _loadItems();
     _loadKnownSpells();
     _loadSpellsIndex();
-    _applyUnarmoredDefenseOnInit();
+    // removido UD
 
     // Verificar se o debug mode ainda está ativo
     _checkDebugMode();
@@ -2493,15 +2493,56 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
                               color: Colors.grey.withAlpha(80),
                             ),
                           ),
-                          child: const Row(
-                            children: [
-                              Icon(Icons.info_outline, color: Colors.grey),
-                              SizedBox(width: 8),
-                              Text(
-                                'Conjuração desativada. Ative nas configurações para usar magias.',
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                            ],
+                          child: LayoutBuilder(
+                            builder: (context, constraints) {
+                              final isNarrow = constraints.maxWidth < 400;
+                              if (isNarrow) {
+                                // Layout vertical para telas pequenas
+                                return const Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.info_outline,
+                                          color: Colors.grey,
+                                        ),
+                                        SizedBox(width: 8),
+                                        Text(
+                                          'Conjuração desativada.',
+                                          style: TextStyle(
+                                            color: Colors.grey,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      'Ative nas configurações para usar magias.',
+                                      style: TextStyle(color: Colors.grey),
+                                    ),
+                                  ],
+                                );
+                              } else {
+                                // Layout horizontal para telas maiores
+                                return const Row(
+                                  children: [
+                                    Icon(
+                                      Icons.info_outline,
+                                      color: Colors.grey,
+                                    ),
+                                    SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        'Conjuração desativada. Ative nas configurações para usar magias.',
+                                        style: TextStyle(color: Colors.grey),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }
+                            },
                           ),
                         ),
                       ],
@@ -3239,6 +3280,8 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
     );
   }
 
+  // (sem uso)
+
   Widget _buildInfoSection(String title, String content) {
     return Card(
       child: Padding(
@@ -3920,11 +3963,7 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
             }
           }
 
-          // Aplicar cálculo de CA "Defesa sem Armadura" se existir
-          _applyUnarmoredDefenseAC(
-            currentLevelFeatures,
-            subclassFeatures: subclassFeatures,
-          );
+          // removido UD
 
           if (currentLevelFeatures.isEmpty) {
             return _buildInfoCard(
@@ -3934,235 +3973,21 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
 
           return Column(
             children:
-                currentLevelFeatures
-                    .map(
-                      (feature) => _buildAbilityCard(
-                        feature['name'] ?? 'Habilidade',
-                        feature['description'] ?? 'Descrição não disponível',
-                        Colors.purple,
-                        Icons.class_,
-                        meta:
-                            '${classData['name']} • Nível ${feature['level']}',
-                        abilityData: feature,
-                      ),
-                    )
-                    .toList(),
+                currentLevelFeatures.map((feature) {
+                  final card = _buildAbilityCard(
+                    feature['name'] ?? 'Habilidade',
+                    feature['description'] ?? 'Descrição não disponível',
+                    Colors.purple,
+                    Icons.class_,
+                    meta: '${classData['name']} • Nível ${feature['level']}',
+                    abilityData: feature,
+                  );
+                  return card;
+                }).toList(),
           );
         },
       ),
     );
-  }
-
-  // Aplicar cálculo de CA "Defesa sem Armadura" na inicialização
-  Future<void> _applyUnarmoredDefenseOnInit() async {
-    try {
-      debugPrint('=== INICIANDO CÁLCULO DE CA ===');
-      debugPrint('Personagem: ${_character.name}');
-      debugPrint('Classe: ${_character.className}');
-      debugPrint('Nível: ${_character.level}');
-      debugPrint('CA atual: ${_character.armorClass}');
-
-      final classData = await _loadClassFromDatabase(_character.className);
-      if (classData != null) {
-        debugPrint('Dados da classe carregados: ${classData['name']}');
-
-        final levelFeaturesRaw = classData['level_features'];
-        List<dynamic> levelFeatures = [];
-
-        // Parse das level_features se for String
-        if (levelFeaturesRaw is String) {
-          try {
-            levelFeatures = jsonDecode(levelFeaturesRaw) as List<dynamic>;
-            debugPrint(
-              'Level features carregadas (String): ${levelFeatures.length}',
-            );
-          } catch (e) {
-            debugPrint('Erro ao fazer parse das level_features: $e');
-            levelFeatures = [];
-          }
-        } else if (levelFeaturesRaw is List<dynamic>) {
-          levelFeatures = levelFeaturesRaw;
-          debugPrint(
-            'Level features carregadas (List): ${levelFeatures.length}',
-          );
-        }
-
-        final currentLevelFeatures =
-            levelFeatures.where((feature) {
-              final lvl = feature['level'] as int?;
-              return lvl != null && lvl <= _character.level;
-            }).toList();
-
-        debugPrint(
-          'Características do nível atual: ${currentLevelFeatures.length}',
-        );
-        for (final feature in currentLevelFeatures) {
-          debugPrint('- ${feature['name']} (Nível ${feature['level']})');
-        }
-
-        // Carregar características das subclasses para o cálculo de CA
-        List<dynamic> subclassFeatures = [];
-        final subclassesDetails = classData['subclasses_details'];
-        if (subclassesDetails != null) {
-          List<dynamic> subclasses = [];
-          if (subclassesDetails is String) {
-            try {
-              subclasses = jsonDecode(subclassesDetails) as List<dynamic>;
-            } catch (e) {
-              subclasses = [];
-            }
-          } else if (subclassesDetails is List<dynamic>) {
-            subclasses = subclassesDetails;
-          }
-
-          // Coletar todas as características das subclasses do nível atual
-          for (final subclass in subclasses) {
-            final features = subclass['features'] as List<dynamic>? ?? [];
-            for (final feature in features) {
-              final level = feature['level'] as int?;
-              if (level != null && level <= _character.level) {
-                subclassFeatures.add(feature);
-              }
-            }
-          }
-        }
-
-        _applyUnarmoredDefenseAC(
-          currentLevelFeatures,
-          subclassFeatures: subclassFeatures,
-        );
-
-        if (mounted) {
-          setState(() {}); // Atualizar a UI
-        }
-      } else {
-        debugPrint('ERRO: Dados da classe não encontrados');
-      }
-    } catch (e) {
-      debugPrint('Erro ao aplicar Defesa sem Armadura: $e');
-    }
-  }
-
-  // Aplicar cálculo de CA "Defesa sem Armadura" se existir
-  void _applyUnarmoredDefenseAC(
-    List<dynamic> levelFeatures, {
-    List<dynamic>? subclassFeatures,
-  }) {
-    debugPrint('=== APLICANDO CÁLCULO DE CA ===');
-    bool hasUnarmoredDefense = false;
-
-    // Verificar características da classe principal
-    for (final feature in levelFeatures) {
-      debugPrint('Verificando característica da classe: ${feature['name']}');
-      debugPrint('has_unarmored_defense: ${feature['has_unarmored_defense']}');
-
-      if (feature['has_unarmored_defense'] == true) {
-        hasUnarmoredDefense = true;
-        debugPrint('ENCONTRADA habilidade Defesa sem Armadura na classe!');
-
-        final baseCA = (feature['ud_base'] as num?)?.toInt() ?? 10;
-        final abilities = (feature['ud_abilities'] as List<dynamic>?) ?? [];
-
-        debugPrint('CA base: $baseCA');
-        debugPrint('Atributos: $abilities');
-
-        int sumMods = 0;
-        for (final ability in abilities) {
-          final abilityName = ability.toString();
-          final mod = _character.getAbilityModifier(abilityName);
-          sumMods += mod;
-          debugPrint(
-            '$abilityName: $mod (score: ${_character.abilityScores[abilityName]})',
-          );
-        }
-
-        final unarmoredAC = baseCA + sumMods;
-        debugPrint('CA calculada: $unarmoredAC');
-
-        // Verificar se não está usando armadura
-        final equippedArmor = _character.getEquippedArmor();
-        debugPrint('Armadura equipada: ${equippedArmor?.name ?? "Nenhuma"}');
-
-        if (equippedArmor == null || equippedArmor.id.isEmpty) {
-          // Aplicar CA da Defesa sem Armadura
-          _character.armorClass = unarmoredAC;
-          debugPrint(
-            'CA Defesa sem Armadura aplicada: $unarmoredAC (Base: $baseCA + Mods: $sumMods)',
-          );
-        }
-        break; // Apenas a primeira habilidade de Defesa sem Armadura
-      }
-    }
-
-    // Verificar características das subclasses se não encontrou na classe principal
-    if (!hasUnarmoredDefense && subclassFeatures != null) {
-      for (final feature in subclassFeatures) {
-        debugPrint(
-          'Verificando característica da subclasse: ${feature['name']}',
-        );
-        debugPrint(
-          'has_unarmored_defense: ${feature['has_unarmored_defense']}',
-        );
-
-        if (feature['has_unarmored_defense'] == true) {
-          hasUnarmoredDefense = true;
-          debugPrint('ENCONTRADA habilidade Defesa sem Armadura na subclasse!');
-
-          final baseCA = (feature['ud_base'] as num?)?.toInt() ?? 10;
-          final abilities = (feature['ud_abilities'] as List<dynamic>?) ?? [];
-
-          debugPrint('CA base: $baseCA');
-          debugPrint('Atributos: $abilities');
-
-          int sumMods = 0;
-          for (final ability in abilities) {
-            final abilityName = ability.toString();
-            final mod = _character.getAbilityModifier(abilityName);
-            sumMods += mod;
-            debugPrint(
-              '$abilityName: $mod (score: ${_character.abilityScores[abilityName]})',
-            );
-          }
-
-          final unarmoredAC = baseCA + sumMods;
-          debugPrint('CA calculada: $unarmoredAC');
-
-          // Verificar se não está usando armadura
-          final equippedArmor = _character.getEquippedArmor();
-          debugPrint('Armadura equipada: ${equippedArmor?.name ?? "Nenhuma"}');
-
-          if (equippedArmor == null || equippedArmor.id.isEmpty) {
-            // Aplicar CA da Defesa sem Armadura
-            _character.armorClass = unarmoredAC;
-            debugPrint(
-              'CA Defesa sem Armadura (subclasse) aplicada: $unarmoredAC (Base: $baseCA + Mods: $sumMods)',
-            );
-          }
-          break; // Apenas a primeira habilidade de Defesa sem Armadura
-        }
-      }
-    }
-
-    // Se não tem habilidade "Defesa sem Armadura" e não está usando armadura,
-    // aplicar CA padrão: 10 + modificador de Destreza
-    if (!hasUnarmoredDefense) {
-      debugPrint('NÃO encontrada habilidade Defesa sem Armadura');
-      final equippedArmor = _character.getEquippedArmor();
-      debugPrint('Armadura equipada: ${equippedArmor?.name ?? "Nenhuma"}');
-
-      if (equippedArmor == null || equippedArmor.id.isEmpty) {
-        final dexModifier = _character.getAbilityModifier('Destreza');
-        final dexScore = _character.abilityScores['Destreza'];
-        final defaultAC = 10 + dexModifier;
-        _character.armorClass = defaultAC;
-        debugPrint(
-          'CA padrão aplicada: $defaultAC (10 + Destreza $dexModifier, score: $dexScore)',
-        );
-      }
-    }
-
-    debugPrint('CA final: ${_character.armorClass}');
-    debugPrint('=== FIM DO CÁLCULO DE CA ===');
   }
 
   int _getSpellSlotsFromDatabase(int spellLevel) {
@@ -4815,102 +4640,6 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
     final hasDiceIncrease =
         calculation.type == AbilityType.diceIncrease ||
         calculation.type == AbilityType.both;
-
-    // Exibir informações de Defesa sem Armadura (se existir)
-    final bool hasUD = (abilityData['has_unarmored_defense'] ?? false) == true;
-    if (hasUD) {
-      final int baseCA = (abilityData['ud_base'] as num?)?.toInt() ?? 10;
-      final List<dynamic> udAbilities =
-          (abilityData['ud_abilities'] as List<dynamic>?) ?? const [];
-      final bool allowsShield =
-          (abilityData['ud_allows_shield'] ?? true) == true;
-
-      String udText = 'CA: $baseCA';
-      if (udAbilities.isNotEmpty) {
-        final abilityNames = udAbilities.map((a) => a.toString()).join(' + ');
-        udText += ' + $abilityNames';
-      }
-      if (allowsShield) {
-        udText += ' (permite escudo)';
-      }
-
-      return Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.grey.withAlpha(30),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.grey.withAlpha(100)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Informações de Uso',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[700],
-              ),
-            ),
-            const SizedBox(height: 8),
-            if (usageType != null) _buildInfoRow('Tipo de Uso', usageType),
-            if (usageAttribute != null)
-              _buildInfoRow('Atributo', usageAttribute),
-            if (usageRecovery.isNotEmpty)
-              _buildInfoRow('Recuperação', usageRecovery),
-            if (hasDiceIncrease && initialDice != null)
-              _buildInfoRow('Dado Inicial', initialDice),
-            if (calculation.currentDie.isNotEmpty)
-              _buildInfoRow('Dado Atual', calculation.currentDie),
-            if (hasDiceIncrease &&
-                diceIncreases != null &&
-                diceIncreases.isNotEmpty) ...[
-              const SizedBox(height: 4),
-              Text(
-                'Melhorias do Dado:',
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey[700],
-                ),
-              ),
-              ...diceIncreases.map(
-                (increase) => Padding(
-                  padding: const EdgeInsets.only(left: 8, top: 2),
-                  child: Text(
-                    'Nível ${increase['level']}: ${increase['dice']}',
-                    style: const TextStyle(fontSize: 12),
-                  ),
-                ),
-              ),
-            ],
-            const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.blue.withAlpha(32),
-                borderRadius: BorderRadius.circular(6),
-                border: Border.all(color: Colors.blue.withAlpha(80)),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.shield, size: 16, color: Colors.blue[700]),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Text(
-                      udText,
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.blue[700],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
-    }
 
     return Container(
       padding: const EdgeInsets.all(12),
