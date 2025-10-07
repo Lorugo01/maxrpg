@@ -3,6 +3,7 @@ import '../models/character.dart';
 import '../models/skill.dart';
 import '../models/item.dart';
 import 'supabase_service.dart';
+import 'class_service.dart';
 import 'package:flutter/material.dart';
 import 'auth_service.dart';
 
@@ -30,7 +31,9 @@ class CharacterService {
         'CharacterService: ${response.length} personagens encontrados no banco',
       );
 
-      return response.map((json) {
+      final characters = <Character>[];
+
+      for (final json in response) {
         // Converter colunas individuais para mapa em PT-BR
         final abilityScores = {
           'Força': json['strength'] ?? 10,
@@ -63,14 +66,52 @@ class CharacterService {
 
         final character = Character.fromJson(json);
 
+        // Carregar dados completos da classe
+        if (character.className.isNotEmpty) {
+          try {
+            debugPrint(
+              'CharacterService: Tentando carregar classe: ${character.className}',
+            );
+            final dndClass = await ClassService.loadByName(character.className);
+            if (dndClass != null) {
+              character.dndClass = dndClass;
+              debugPrint(
+                'CharacterService: Classe carregada para ${character.name}: ${dndClass.name}',
+              );
+              debugPrint(
+                'CharacterService: levelFeatures: ${dndClass.levelFeatures?.length ?? 0}',
+              );
+              if (dndClass.levelFeatures != null) {
+                for (final feature in dndClass.levelFeatures!) {
+                  if (feature.containsKey('unarmored_defense')) {
+                    debugPrint(
+                      'CharacterService: UD encontrada: ${feature['unarmored_defense']}',
+                    );
+                  }
+                }
+              }
+            } else {
+              debugPrint(
+                'CharacterService: Classe ${character.className} não encontrada',
+              );
+            }
+          } catch (e) {
+            debugPrint(
+              'CharacterService: Erro ao carregar classe ${character.className}: $e',
+            );
+          }
+        }
+
         // Sincronizar proficiências com skills após carregar
         _syncProficienciesWithSkills(character, character.proficiencies);
 
         debugPrint(
           'CharacterService: Personagem carregado: ${character.name} (ID: ${character.id})',
         );
-        return character;
-      }).toList();
+        characters.add(character);
+      }
+
+      return characters;
     } catch (e) {
       debugPrint('Erro ao carregar personagens: $e');
       return [];

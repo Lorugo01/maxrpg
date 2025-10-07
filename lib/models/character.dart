@@ -375,16 +375,60 @@ class Character {
         }
       }
     } else {
-      // Sem armadura, usar CA padrão: 10 + modificador de Destreza
-      baseAC += dexModifier;
+      // Sem armadura - verificar se a classe tem Defesa sem Armadura
+      final unarmoredDefense = _getUnarmoredDefense();
+      if (unarmoredDefense != null) {
+        // Usar fórmula da Defesa sem Armadura
+        baseAC = unarmoredDefense['base'] as int;
+
+        // Adicionar modificadores dos atributos especificados
+        final abilities = List<String>.from(
+          unarmoredDefense['abilities'] ?? [],
+        );
+        for (final ability in abilities) {
+          baseAC += getAbilityModifier(ability);
+        }
+
+        // Verificar se permite escudo
+        final allowsShield = unarmoredDefense['allows_shield'] as bool? ?? true;
+        if (allowsShield &&
+            equippedShield != null &&
+            equippedShield.id.isNotEmpty) {
+          baseAC += 2;
+        }
+      } else {
+        // CA padrão: 10 + modificador de Destreza
+        baseAC += dexModifier;
+
+        // Adicionar bônus do escudo (+2)
+        if (equippedShield != null && equippedShield.id.isNotEmpty) {
+          baseAC += 2;
+        }
+      }
     }
 
-    // Adicionar bônus do escudo (+2)
-    if (equippedShield != null && equippedShield.id.isNotEmpty) {
-      baseAC += 2;
+    // Se não é Defesa sem Armadura, adicionar escudo normalmente
+    if (equippedArmor != null && equippedArmor.id.isNotEmpty) {
+      if (equippedShield != null && equippedShield.id.isNotEmpty) {
+        baseAC += 2;
+      }
     }
 
     return baseAC;
+  }
+
+  // Buscar configuração de Defesa sem Armadura da classe
+  Map<String, dynamic>? _getUnarmoredDefense() {
+    if (dndClass?.levelFeatures == null) return null;
+
+    // Procurar em todas as features de nível por uma que tenha unarmored_defense
+    for (final feature in dndClass!.levelFeatures!) {
+      if (feature.containsKey('unarmored_defense')) {
+        return feature['unarmored_defense'] as Map<String, dynamic>;
+      }
+    }
+
+    return null;
   }
 
   // Extrair CA da descrição da armadura

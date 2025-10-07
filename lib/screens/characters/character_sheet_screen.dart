@@ -5,6 +5,7 @@ import '/services/equipment_service.dart';
 import '/services/character_service_supabase.dart';
 import '/services/supabase_service.dart';
 import '/services/ability_calculator.dart';
+import '/services/class_service.dart';
 import '/models/spell.dart';
 import '/models/character.dart';
 import '/models/item.dart';
@@ -44,12 +45,19 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
 
     debugPrint('=== INICIALIZAÇÃO DA FICHA ===');
     debugPrint('Personagem: ${_character.name}');
+    debugPrint('Classe: ${_character.className}');
+    debugPrint('dndClass: ${_character.dndClass?.name}');
+    debugPrint(
+      'levelFeatures: ${_character.dndClass?.levelFeatures?.length ?? 0}',
+    );
     debugPrint('CA inicial: ${_character.armorClass}');
     debugPrint('Ability scores: ${_character.abilityScores}');
 
     _loadItems();
     _loadKnownSpells();
     _loadSpellsIndex();
+    // Carregar classe se não estiver carregada
+    _loadCharacterClass();
     // removido UD
 
     // Verificar se o debug mode ainda está ativo
@@ -183,6 +191,51 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
       if (mounted) setState(() {});
     } catch (e) {
       debugPrint('Erro ao carregar índice de magias: $e');
+    }
+  }
+
+  Future<void> _loadCharacterClass() async {
+    if (_character.dndClass != null) {
+      debugPrint(
+        'CharacterSheet: Classe já carregada: ${_character.dndClass!.name}',
+      );
+      return;
+    }
+
+    if (_character.className.isEmpty) {
+      debugPrint('CharacterSheet: Nome da classe vazio');
+      return;
+    }
+
+    try {
+      debugPrint('CharacterSheet: Carregando classe: ${_character.className}');
+      final dndClass = await ClassService.loadByName(_character.className);
+      if (dndClass != null) {
+        setState(() {
+          _character.dndClass = dndClass;
+        });
+        debugPrint('CharacterSheet: Classe carregada: ${dndClass.name}');
+        debugPrint(
+          'CharacterSheet: levelFeatures: ${dndClass.levelFeatures?.length ?? 0}',
+        );
+
+        // Verificar se tem UD
+        if (dndClass.levelFeatures != null) {
+          for (final feature in dndClass.levelFeatures!) {
+            if (feature.containsKey('unarmored_defense')) {
+              debugPrint(
+                'CharacterSheet: UD encontrada: ${feature['unarmored_defense']}',
+              );
+            }
+          }
+        }
+      } else {
+        debugPrint(
+          'CharacterSheet: Classe não encontrada: ${_character.className}',
+        );
+      }
+    } catch (e) {
+      debugPrint('CharacterSheet: Erro ao carregar classe: $e');
     }
   }
 
@@ -763,14 +816,7 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
                           ),
                         ),
                         const SizedBox(width: 12),
-                        Expanded(
-                          child: _buildStatCard(
-                            'Classe de Armadura',
-                            '${_character.getCalculatedArmorClass()}',
-                            Icons.shield,
-                            Colors.blue,
-                          ),
-                        ),
+                        Expanded(child: _buildArmorClassCard()),
                       ],
                     ),
 
@@ -3238,6 +3284,89 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
     }
   }
 
+  Widget _buildArmorClassCard() {
+    final calculatedAC = _character.getCalculatedArmorClass();
+    final unarmoredDefense = _getUnarmoredDefense();
+    final hasUnarmoredDefense = unarmoredDefense != null;
+
+    // Debug: verificar se UD está sendo detectada
+    debugPrint('=== DEBUG CA ===');
+    debugPrint('Personagem: ${_character.name}');
+    debugPrint('Classe: ${_character.className}');
+    debugPrint('dndClass: ${_character.dndClass?.name}');
+    debugPrint(
+      'levelFeatures: ${_character.dndClass?.levelFeatures?.length ?? 0}',
+    );
+    debugPrint('unarmoredDefense: $unarmoredDefense');
+    debugPrint('hasUnarmoredDefense: $hasUnarmoredDefense');
+    debugPrint('calculatedAC: $calculatedAC');
+    debugPrint('=== FIM DEBUG CA ===');
+
+    return Card(
+      elevation: 2,
+      child: InkWell(
+        onTap: () => _showArmorClassDialog(),
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Icon(Icons.shield, color: Colors.blue, size: 24),
+              const SizedBox(height: 8),
+              Text(
+                'Classe de Armadura',
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                '$calculatedAC',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue,
+                ),
+              ),
+              // Indicador de Defesa sem Armadura
+              if (hasUnarmoredDefense) ...[
+                const SizedBox(height: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withAlpha(20),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.blue.withAlpha(60)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.shield_outlined, color: Colors.blue, size: 12),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Defesa sem Armadura',
+                        style: TextStyle(
+                          fontSize: 9,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.blue.shade700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildStatCard(
     String title,
     String value,
@@ -3428,6 +3557,189 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
             ],
           ),
     );
+  }
+
+  void _showArmorClassDialog() {
+    final calculatedAC = _character.getCalculatedArmorClass();
+    final unarmoredDefense = _getUnarmoredDefense();
+    final equippedArmor = _character.getEquippedArmor();
+    final equippedShield = _character.getEquippedShield();
+
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Classe de Armadura'),
+            content: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // CA Calculada
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withAlpha(20),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.blue.withAlpha(60)),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.shield, color: Colors.blue, size: 24),
+                        const SizedBox(width: 12),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'CA Atual: $calculatedAC',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue,
+                              ),
+                            ),
+                            if (unarmoredDefense != null)
+                              Text(
+                                'Defesa sem Armadura Ativa',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.blue.shade700,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Detalhes do Cálculo
+                  Text(
+                    'Detalhes do Cálculo:',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+
+                  if (equippedArmor != null && equippedArmor.id.isNotEmpty) ...[
+                    _buildACDetailRow('Armadura Equipada', equippedArmor.name),
+                    _buildACDetailRow(
+                      'CA da Armadura',
+                      _extractArmorACFromDescription(equippedArmor.description),
+                    ),
+                  ] else if (unarmoredDefense != null) ...[
+                    _buildACDetailRow('CA Base', '${unarmoredDefense['base']}'),
+                    _buildACDetailRow(
+                      'Atributos',
+                      (unarmoredDefense['abilities'] as List).join(' + '),
+                    ),
+                  ] else ...[
+                    _buildACDetailRow('CA Base', '10'),
+                    _buildACDetailRow(
+                      'Modificador de Destreza',
+                      '${_character.getAbilityModifier('Destreza')}',
+                    ),
+                  ],
+
+                  if (equippedShield != null &&
+                      equippedShield.id.isNotEmpty) ...[
+                    _buildACDetailRow('Escudo Equipado', equippedShield.name),
+                    _buildACDetailRow('Bônus do Escudo', '+2'),
+                  ],
+
+                  const SizedBox(height: 16),
+
+                  // Fórmula da Defesa sem Armadura
+                  if (unarmoredDefense != null) ...[
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.green.withAlpha(20),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.green.withAlpha(60)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.info_outline,
+                                color: Colors.green,
+                                size: 16,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Defesa sem Armadura',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.green.shade700,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Enquanto você não estiver vestindo armadura, sua CA é calculada como:',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.green.shade700,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'CA = ${unarmoredDefense['base']} + ${(unarmoredDefense['abilities'] as List).join(' + ')}${unarmoredDefense['allows_shield'] == true ? ' + Escudo' : ''}',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.green.shade800,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Fechar'),
+              ),
+            ],
+          ),
+    );
+  }
+
+  Widget _buildACDetailRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text('$label:', style: const TextStyle(fontWeight: FontWeight.w500)),
+          Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
+        ],
+      ),
+    );
+  }
+
+  Map<String, dynamic>? _getUnarmoredDefense() {
+    if (_character.dndClass?.levelFeatures == null) return null;
+
+    // Procurar em todas as features de nível por uma que tenha unarmored_defense
+    for (final feature in _character.dndClass!.levelFeatures!) {
+      if (feature.containsKey('unarmored_defense')) {
+        return feature['unarmored_defense'] as Map<String, dynamic>;
+      }
+    }
+
+    return null;
   }
 
   void _showAbilityRollDialog(String abilityName, int modifier) {

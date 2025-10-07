@@ -42,12 +42,23 @@ class ClassService {
 
   /// Carrega uma classe específica pelo nome
   static Future<DndClass?> loadByName(String name) async {
+    debugPrint('ClassService: Carregando classe: $name');
     final classes = await loadAll();
+    debugPrint('ClassService: ${classes.length} classes carregadas');
     try {
       final target = _normalize(name);
-      return classes.firstWhere((c) => _normalize(c.name) == target);
+      debugPrint('ClassService: Procurando por: $target');
+      final found = classes.firstWhere((c) => _normalize(c.name) == target);
+      debugPrint('ClassService: Classe encontrada: ${found.name}');
+      debugPrint(
+        'ClassService: levelFeatures: ${found.levelFeatures?.length ?? 0}',
+      );
+      return found;
     } catch (e) {
-      debugPrint('Classe não encontrada: $name');
+      debugPrint('ClassService: Classe não encontrada: $name');
+      debugPrint(
+        'ClassService: Classes disponíveis: ${classes.map((c) => c.name).toList()}',
+      );
       return null;
     }
   }
@@ -181,6 +192,7 @@ class ClassService {
               row['progression_table'] is Map<String, dynamic>
                   ? row['progression_table']
                   : null,
+          'levelFeatures': parseJsonList(row['level_features']),
         };
       }
 

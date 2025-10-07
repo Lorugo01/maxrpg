@@ -896,7 +896,11 @@ class _EditClassScreenState extends ConsumerState<EditClassScreen> {
               feature['description'] ?? '',
               style: const TextStyle(fontSize: 12, color: Colors.grey),
             ),
-            // Removido: indicador de Defesa sem Armadura (será refeito)
+            // Indicador de Defesa sem Armadura
+            if (feature['unarmored_defense'] != null) ...[
+              const SizedBox(height: 8),
+              _buildUnarmoredDefenseIndicator(feature['unarmored_defense']),
+            ],
             if (feature['has_usage_limit'] == true) ...[
               const SizedBox(height: 8),
               _buildUsageInfo(feature),
@@ -911,6 +915,47 @@ class _EditClassScreenState extends ConsumerState<EditClassScreen> {
             ],
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildUnarmoredDefenseIndicator(Map<String, dynamic> udData) {
+    final base = udData['base'] as int? ?? 10;
+    final abilities = List<String>.from(udData['abilities'] ?? []);
+    final allowsShield = udData['allows_shield'] as bool? ?? true;
+
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Colors.blue.withAlpha(20),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: Colors.blue.withAlpha(80)),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.shield_outlined, color: Colors.blue, size: 16),
+          const SizedBox(width: 6),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Defesa sem Armadura',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.blue.shade700,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  'CA: $base + ${abilities.join(' + ')}${allowsShield ? ' + Escudo' : ''}',
+                  style: TextStyle(fontSize: 11, color: Colors.blue.shade600),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -2116,7 +2161,8 @@ class _EditClassScreenState extends ConsumerState<EditClassScreen> {
                 if (feature['has_proficiency_doubling'] == true) ...{
                   'proficiency_skill_count': feature['proficiency_skill_count'],
                 },
-                // removido UD
+                if (feature['unarmored_defense'] != null)
+                  'unarmored_defense': feature['unarmored_defense'],
               };
             }).toList(),
         'has_spells': _hasSpells,
@@ -2559,7 +2605,13 @@ class _LevelFeatureDialogState extends State<_LevelFeatureDialog> {
   bool _hasProficiencyDoubling = false;
   final _proficiencySkillCountController = TextEditingController();
 
-  // removido UD
+  // UD state (por diálogo)
+  bool _udEnabled = false;
+  final TextEditingController _udBaseController = TextEditingController(
+    text: '10',
+  );
+  final List<String> _udAbilities = [];
+  bool _udAllowsShield = true;
 
   // Opções para tipo de uso
   final List<String> _usageTypeOptions = [
@@ -2661,7 +2713,26 @@ class _LevelFeatureDialogState extends State<_LevelFeatureDialog> {
             widget.initialFeature!["proficiency_skill_count"]?.toString() ?? '';
       }
 
-      // removido UD
+      // Carregar UD se existir
+      final ud =
+          widget.initialFeature!["unarmored_defense"] as Map<String, dynamic>?;
+      if (ud != null) {
+        _udEnabled = true;
+        _udBaseController.text = (ud['base']?.toString() ?? '10');
+        _udAbilities
+          ..clear()
+          ..addAll(
+            List<String>.from(
+              (ud['abilities'] as List?)?.map((e) => e.toString()) ?? const [],
+            ),
+          );
+        _udAllowsShield = (ud['allows_shield'] ?? true) == true;
+      } else {
+        _udEnabled = false;
+        _udAbilities.clear();
+        _udBaseController.text = '10';
+        _udAllowsShield = true;
+      }
     }
   }
 
@@ -2763,7 +2834,8 @@ class _LevelFeatureDialogState extends State<_LevelFeatureDialog> {
 
                       const SizedBox(height: 16),
 
-                      // removido UD
+                      // Seção de Defesa sem Armadura
+                      _buildUnarmoredDefenseSection(),
                     ],
                   ),
                 ),
@@ -2813,9 +2885,13 @@ class _LevelFeatureDialogState extends State<_LevelFeatureDialog> {
                                 ) ??
                                 0,
                           },
-
-                          // Unarmored Defense
-                          // removido UD
+                          if (_udEnabled)
+                            'unarmored_defense': {
+                              'base':
+                                  int.tryParse(_udBaseController.text) ?? 10,
+                              'abilities': List<String>.from(_udAbilities),
+                              'allows_shield': _udAllowsShield,
+                            },
                         };
                         widget.onSave(feature);
                         Navigator.of(context).pop();
@@ -3490,7 +3566,81 @@ class _LevelFeatureDialogState extends State<_LevelFeatureDialog> {
     );
   }
 
-  // removido UD
+  Widget _buildUnarmoredDefenseSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CheckboxListTile(
+          title: const Text(
+            'Defesa sem Armadura (UD) para esta característica',
+            style: TextStyle(fontWeight: FontWeight.w500),
+          ),
+          subtitle: const Text('Define uma fórmula de CA quando sem armadura'),
+          value: _udEnabled,
+          onChanged: (value) {
+            setState(() {
+              _udEnabled = value ?? false;
+              if (!_udEnabled) {
+                _udBaseController.text = '10';
+                _udAbilities.clear();
+                _udAllowsShield = true;
+              }
+            });
+          },
+          controlAffinity: ListTileControlAffinity.leading,
+        ),
+        if (_udEnabled) ...[
+          const SizedBox(height: 12),
+          TextFormField(
+            controller: _udBaseController,
+            decoration: const InputDecoration(
+              labelText: 'CA Base',
+              hintText: 'Ex: 10',
+              border: OutlineInputBorder(),
+            ),
+            keyboardType: TextInputType.number,
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            'Atributos que somam na CA:',
+            style: TextStyle(fontWeight: FontWeight.w500),
+          ),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children:
+                _attributeOptions.map((attr) {
+                  final selected = _udAbilities.contains(attr);
+                  return FilterChip(
+                    label: Text(attr),
+                    selected: selected,
+                    onSelected: (v) {
+                      setState(() {
+                        if (v) {
+                          if (!_udAbilities.contains(attr)) {
+                            _udAbilities.add(attr);
+                          }
+                        } else {
+                          _udAbilities.remove(attr);
+                        }
+                      });
+                    },
+                  );
+                }).toList(),
+          ),
+          const SizedBox(height: 8),
+          SwitchListTile(
+            title: const Text('Permite Escudo'),
+            subtitle: const Text('Se a UD permite somar +2 de escudo'),
+            value: _udAllowsShield,
+            onChanged: (v) => setState(() => _udAllowsShield = v),
+            dense: true,
+          ),
+        ],
+      ],
+    );
+  }
 }
 
 class _SpellLevelDialog extends StatefulWidget {
@@ -3970,7 +4120,13 @@ class _SubclassFeatureDialogState extends State<_SubclassFeatureDialog> {
   bool _hasHitPointIncrease = false;
   final _hitPointIncreaseController = TextEditingController();
 
-  // removido UD
+  // UD state (por diálogo)
+  bool _udEnabled = false;
+  final TextEditingController _udBaseController = TextEditingController(
+    text: '10',
+  );
+  final List<String> _udAbilities = [];
+  bool _udAllowsShield = true;
 
   final List<String> _usageTypeOptions = [
     'Por Nível',
@@ -4040,7 +4196,25 @@ class _SubclassFeatureDialogState extends State<_SubclassFeatureDialog> {
     _hitPointIncreaseController.text =
         feature['hit_point_increase_per_level']?.toString() ?? '';
 
-    // removido UD
+    // Carregar UD se existir
+    final ud = feature['unarmored_defense'] as Map<String, dynamic>?;
+    if (ud != null) {
+      _udEnabled = true;
+      _udBaseController.text = (ud['base']?.toString() ?? '10');
+      _udAbilities
+        ..clear()
+        ..addAll(
+          List<String>.from(
+            (ud['abilities'] as List?)?.map((e) => e.toString()) ?? const [],
+          ),
+        );
+      _udAllowsShield = (ud['allows_shield'] ?? true) == true;
+    } else {
+      _udEnabled = false;
+      _udBaseController.text = '10';
+      _udAbilities.clear();
+      _udAllowsShield = true;
+    }
   }
 
   @override
@@ -4053,7 +4227,7 @@ class _SubclassFeatureDialogState extends State<_SubclassFeatureDialog> {
     _additionalFeatureNameController.dispose();
     _additionalFeatureDescriptionController.dispose();
     _hitPointIncreaseController.dispose();
-    // removido UD
+    _udBaseController.dispose();
     super.dispose();
   }
 
@@ -4135,7 +4309,8 @@ class _SubclassFeatureDialogState extends State<_SubclassFeatureDialog> {
               _buildHitPointIncreaseSection(),
               const SizedBox(height: 16),
 
-              // removido UD
+              // Defesa sem Armadura
+              _buildUnarmoredDefenseSection(),
             ],
           ),
         ),
@@ -4180,7 +4355,12 @@ class _SubclassFeatureDialogState extends State<_SubclassFeatureDialog> {
                     _hitPointIncreaseController.text.isNotEmpty
                         ? int.tryParse(_hitPointIncreaseController.text)
                         : null,
-                // removido UD
+                if (_udEnabled)
+                  'unarmored_defense': {
+                    'base': int.tryParse(_udBaseController.text) ?? 10,
+                    'abilities': List<String>.from(_udAbilities),
+                    'allows_shield': _udAllowsShield,
+                  },
               };
               widget.onSave(featureData);
               Navigator.of(context).pop();
@@ -4576,7 +4756,78 @@ class _SubclassFeatureDialogState extends State<_SubclassFeatureDialog> {
     );
   }
 
-  // removido UD
+  Widget _buildUnarmoredDefenseSection() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CheckboxListTile(
+              title: const Text('Defesa sem Armadura (UD)'),
+              subtitle: const Text('Define fórmula de CA quando sem armadura'),
+              value: _udEnabled,
+              onChanged: (value) {
+                setState(() {
+                  _udEnabled = value ?? false;
+                  if (!_udEnabled) {
+                    _udBaseController.text = '10';
+                    _udAbilities.clear();
+                    _udAllowsShield = true;
+                  }
+                });
+              },
+            ),
+            if (_udEnabled) ...[
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: _udBaseController,
+                decoration: const InputDecoration(
+                  labelText: 'CA Base',
+                  hintText: 'Ex: 10',
+                  border: OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.number,
+              ),
+              const SizedBox(height: 12),
+              const Text('Atributos para a CA:'),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children:
+                    _attributeOptions.map((attr) {
+                      final selected = _udAbilities.contains(attr);
+                      return FilterChip(
+                        label: Text(attr),
+                        selected: selected,
+                        onSelected: (v) {
+                          setState(() {
+                            if (v) {
+                              if (!_udAbilities.contains(attr)) {
+                                _udAbilities.add(attr);
+                              }
+                            } else {
+                              _udAbilities.remove(attr);
+                            }
+                          });
+                        },
+                      );
+                    }).toList(),
+              ),
+              const SizedBox(height: 8),
+              SwitchListTile(
+                title: const Text('Permite Escudo'),
+                value: _udAllowsShield,
+                onChanged: (v) => setState(() => _udAllowsShield = v),
+                dense: true,
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class _EditEquipmentChoiceDialog extends StatefulWidget {
