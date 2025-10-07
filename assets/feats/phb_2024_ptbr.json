@@ -1,0 +1,343 @@
+[
+  {
+    "name": "Alerta",
+    "category": "Origem",
+    "repeatable": false,
+    "prerequisites": "",
+    "effects": [
+      "Proficiência em Iniciativa: ao rolar Iniciativa, adicione seu Bônus de Proficiência.",
+      "Troca de Iniciativa: imediatamente após rolar Iniciativa, você pode trocar sua Iniciativa com um aliado voluntário no mesmo combate (ambos não podem estar Incapacitados)."
+    ]
+  },
+  {
+    "name": "Artifista",
+    "category": "Origem",
+    "repeatable": false,
+    "prerequisites": "",
+    "effects": [
+      "Proficiência com três Ferramentas de Artesão à escolha (veja tabela Fabricação Rápida).",
+      "Desconto: 20% em itens não mágicos que você compra.",
+      "Fabricação Rápida: ao finalizar um Descanso Longo, fabrica 1 item simples da tabela correspondente se tiver as ferramentas; o item dura até o próximo Descanso Longo."
+    ]
+  },
+  {
+    "name": "Atacante Selvagem",
+    "category": "Origem",
+    "repeatable": false,
+    "prerequisites": "",
+    "effects": [
+      "Uma vez por turno, ao atingir com uma arma, role os dados de dano da arma duas vezes e use qualquer uma das jogadas."
+    ]
+  },
+  {
+    "name": "Curandeiro",
+    "category": "Origem",
+    "repeatable": false,
+    "prerequisites": "",
+    "effects": [
+      "Médico de Combate: com um Kit de Curandeiro, gaste 1 uso (Ação Usar Objeto) para permitir que uma criatura gaste 1 Dado de Vida; ela recupera o resultado + seu Bônus de Proficiência.",
+      "Cura Garantida: sempre que rolar 1 em dado de cura (magia ou Médico de Combate), role novamente (usa o novo resultado)."
+    ]
+  },
+  {
+    "name": "Habilidoso",
+    "category": "Origem",
+    "repeatable": true,
+    "prerequisites": "",
+    "effects": [
+      "Adquira proficiência em qualquer combinação de três perícias ou ferramentas."
+    ]
+  },
+  {
+    "name": "Iniciado em Magia",
+    "category": "Origem",
+    "repeatable": true,
+    "prerequisites": "",
+    "effects": [
+      "Aprende dois truques da lista de Clérigo, Druida ou Mago (escolha o atributo de conjuração ao selecionar o talento).",
+      "Magia de 1º círculo da mesma lista sempre preparada; 1 uso sem espaço por Descanso Longo; também pode usar seus espaços.",
+      "Ao subir de nível, pode substituir uma das magias escolhidas por outra da mesma lista."
+    ]
+  },
+  {
+    "name": "Músico",
+    "category": "Origem",
+    "repeatable": false,
+    "prerequisites": "",
+    "effects": [
+      "Proficiência em três Instrumentos Musicais.",
+      "Canção Encorajadora: ao terminar um Descanso Curto ou Longo, conceda Inspiração Heroica a até X aliados (X = seu Bônus de Proficiência) que ouvirem sua apresentação."
+    ]
+  },
+  {
+    "name": "Sortudo",
+    "category": "Origem",
+    "repeatable": false,
+    "prerequisites": "",
+    "effects": [
+      "Pontos de Sorte = seu Bônus de Proficiência; recupera no Descanso Longo.",
+      "Vantagem: gaste 1 ponto para ter Vantagem em um Teste de D20.",
+      "Desvantagem: gaste 1 ponto para impor Desvantagem em uma jogada de ataque contra você."
+    ]
+  },
+  {
+    "name": "Valentão de Taverna",
+    "category": "Origem",
+    "repeatable": false,
+    "prerequisites": "",
+    "effects": [
+      "Ataque Desarmado Aprimorado: 1d4 + Força (ou 1d4 substitui o dano normal).",
+      "Dano Garantido: rerrole 1 em dados de dano de Ataque Desarmado.",
+      "Armamento Improvisado: proficiência com armas improvisadas.",
+      "Empurrar: uma vez por turno ao acertar com Ataque Desarmado, cause dano e empurre 1,5 m."
+    ]
+  },
+  {
+    "name": "Vigoroso",
+    "category": "Origem",
+    "repeatable": false,
+    "prerequisites": "",
+    "effects": [
+      "Seus PV máximos aumentam em 2 por nível de personagem (aplica imediatamente +2 por nível atual)."
+    ]
+  },
+  {
+    "name": "Adepto Elemental",
+    "category": "Geral",
+    "repeatable": true,
+    "prerequisites": "Nível 4+, Conjuração ou Magia de Pacto",
+    "abilityBoost": { "options": ["Inteligência","Sabedoria","Carisma"], "amount": 1 },
+    "effects": [
+      "+1 em INT/SAB/CAR (máx. 20).",
+      "Domínio Elemental: escolha Ácido, Elétrico, Gélido, Ígneo ou Trovejante; suas magias ignoram Resistência desse tipo e tratam 1 em dado de dano como 2. Cada vez que repetir, escolha um tipo diferente."
+    ]
+  },
+  {
+    "name": "Agressor",
+    "category": "Geral",
+    "repeatable": false,
+    "prerequisites": "Nível 4+, FOR ou DES 13+",
+    "abilityBoost": { "options": ["Força","Destreza"], "amount": 1 },
+    "effects": [
+      "+1 em FOR ou DES (máx. 20).",
+      "Corrida Aprimorada: +3 m ao usar Correr.",
+      "Ataque em Investida: após mover 3 m em linha reta antes de um ataque corpo a corpo, ganhe +1d8 dano OU empurre 3 m (1/turno)."
+    ]
+  },
+  {
+    "name": "Analítico",
+    "category": "Geral",
+    "repeatable": false,
+    "prerequisites": "Nível 4+, INT ou SAB 13+",
+    "abilityBoost": { "options": ["Inteligência","Sabedoria"], "amount": 1 },
+    "effects": [
+      "+1 em INT ou SAB (máx. 20).",
+      "Proficiência/Especialização: escolha Intuição, Investigação ou Percepção; se não proficiente ganha proficiência, se já for proficiente ganha Especialização.",
+      "Pesquisa Rápida: pode Procurar como Ação Bônus."
+    ]
+  },
+  {
+    "name": "Atirador Arcano",
+    "category": "Geral",
+    "repeatable": false,
+    "prerequisites": "Nível 4+, Conjuração ou Magia de Pacto",
+    "abilityBoost": { "options": ["Inteligência","Sabedoria","Carisma"], "amount": 1 },
+    "effects": [
+      "+1 em INT/SAB/CAR (máx. 20).",
+      "Jogadas de ataque com magias ignoram Cobertura Parcial e de Três Quartos.",
+      "Ataques à queima-roupa com magias não sofrem Desvantagem a 1,5 m.",
+      "Aumente em 18 m o alcance de magias de ataque com alcance ≥ 3 m."
+    ]
+  },
+  {
+    "name": "Atleta",
+    "category": "Geral",
+    "repeatable": false,
+    "prerequisites": "Nível 4+, FOR ou DES 13+",
+    "abilityBoost": { "options": ["Força","Destreza"], "amount": 1 },
+    "effects": [
+      "+1 em FOR ou DES (máx. 20).",
+      "Deslocamento de Escalada igual ao seu Deslocamento.",
+      "Levantar com apenas 1,5 m de movimento.",
+      "Saltar após 1,5 m de corrida."
+    ]
+  },
+  {
+    "name": "Aumento no Valor de Atributo",
+    "category": "Geral",
+    "repeatable": true,
+    "prerequisites": "Nível 4+",
+    "abilityBoost": { "options": ["Força","Destreza","Constituição","Inteligência","Sabedoria","Carisma"], "amount": 2, "mode": "splitAllowed" },
+    "effects": [
+      "+2 em um atributo, ou +1 em dois atributos (máx. 20)."
+    ]
+  },
+  {
+    "name": "Chef",
+    "category": "Geral",
+    "repeatable": false,
+    "prerequisites": "Nível 4+",
+    "abilityBoost": { "options": ["Constituição","Sabedoria"], "amount": 1 },
+    "effects": [
+      "+1 em CON ou SAB (máx. 20).",
+      "Proficiência com Utensílios de Cozinheiro.",
+      "Refeição Satisfatória: durante Descanso Curto, quem gastar DV recupera +1d8 PV.",
+      "Guloseimas Revigorantes: crie guloseimas (até seu Bônus de Proficiência) que concedem PV temporários iguais ao seu Bônus de Proficiência (duram 8 h)."
+    ]
+  },
+  {
+    "name": "Combatente Montado",
+    "category": "Geral",
+    "repeatable": false,
+    "prerequisites": "Nível 4+",
+    "abilityBoost": { "options": ["Força","Destreza","Sabedoria"], "amount": 1 },
+    "effects": [
+      "+1 em FOR/DES/SAB (máx. 20).",
+      "Golpe Montado: vantagem contra alvos desmontados próximos da sua montaria.",
+      "Pulo Lateral: sua montaria aplica Evasão em efeitos de Destreza.",
+      "Redirecionar Ataque: pode fazer ataque contra sua montaria atingi-lo."
+    ]
+  },
+  {
+    "name": "Conjurador Bélico",
+    "category": "Geral",
+    "repeatable": false,
+    "prerequisites": "Nível 4+, Conjuração ou Magia de Pacto",
+    "abilityBoost": { "options": ["Inteligência","Sabedoria","Carisma"], "amount": 1 },
+    "effects": [
+      "+1 em INT/SAB/CAR (máx. 20).",
+      "Vantagem em salvaguardas de Constituição para manter Concentração.",
+      "Magia Reativa como Reação no lugar de Ataque de Oportunidade (magia de 1 ação, alvo único).",
+      "Pode realizar componentes somáticos com mãos ocupadas por armas/escudo."
+    ]
+  },
+  {
+    "name": "Conjurador Ritualista",
+    "category": "Geral",
+    "repeatable": false,
+    "prerequisites": "Nível 4+, INT/SAB/CAR 13+",
+    "abilityBoost": { "options": ["Inteligência","Sabedoria","Carisma"], "amount": 1 },
+    "effects": [
+      "+1 em INT/SAB/CAR (máx. 20).",
+      "Magias Rituais: escolha magias de 1º com marcador Ritual igual ao seu Bônus de Proficiência; sempre preparadas; atributo é o aumentado; adiciona mais conforme o Bônus de Proficiência aumenta.",
+      "Ritual Rápido: pode conjurar uma dessas magias no tempo normal (1/Descanso Longo) sem gastar espaço."
+    ]
+  },
+  {
+    "name": "Duelista Defensivo",
+    "category": "Geral",
+    "repeatable": false,
+    "prerequisites": "Nível 4+, DES 13+",
+    "abilityBoost": { "options": ["Destreza"], "amount": 1 },
+    "effects": [
+      "+1 em Destreza (máx. 20).",
+      "Aparar: com arma de Acuidade, Reação para adicionar seu Bônus de Proficiência à CA contra o ataque e até o início do seu próximo turno."
+    ]
+  },
+  {
+    "name": "Envenenador",
+    "category": "Geral",
+    "repeatable": false,
+    "prerequisites": "Nível 4+",
+    "abilityBoost": { "options": ["Destreza","Inteligência"], "amount": 1 },
+    "effects": [
+      "+1 em DES ou INT (máx. 20).",
+      "Ignora Resistência a dano Venenoso.",
+      "Proficiência com Kit de Veneno; pode preparar doses (até seu Bônus de Proficiência) com 50 po cada; aplicar como Ação Bônus; salvaguarda CON falha = 2d8 Venenoso e Envenenado até fim do próximo turno (CD = 8 + mod do atributo aumentado + Bônus de Proficiência)."
+    ]
+  },
+  {
+    "name": "Esmagador",
+    "category": "Geral",
+    "repeatable": false,
+    "prerequisites": "Nível 4+",
+    "abilityBoost": { "options": ["Força","Constituição"], "amount": 1 },
+    "effects": [
+      "+1 em FOR ou CON (máx. 20).",
+      "Empurrar 1,5 m (1/turno) ao causar dano Contundente.",
+      "Crítico Melhorado: após crítico Contundente, ataques contra o alvo têm Vantagem até o início do seu próximo turno."
+    ]
+  },
+  {
+    "name": "Especialista Ambidestro",
+    "category": "Geral",
+    "repeatable": false,
+    "prerequisites": "Nível 4+, FOR ou DES 13+",
+    "abilityBoost": { "options": ["Força","Destreza"], "amount": 1 },
+    "effects": [
+      "+1 em FOR ou DES (máx. 20).",
+      "Combate com Duas Armas Aprimorado (Ação Bônus adicional com arma Leve sem propriedade Duas Mãos, sem adicionar mod ao dano do ataque adicional a menos que negativo).",
+      "Saque Rápido: sacar/embainhar duas armas quando poderia fazer apenas uma."
+    ]
+  },
+  {
+    "name": "Especialista em Armaduras Leves",
+    "category": "Geral",
+    "repeatable": false,
+    "prerequisites": "Nível 4+",
+    "abilityBoost": { "options": ["Força","Destreza"], "amount": 1 },
+    "effects": [
+      "+1 em FOR ou DES (máx. 20).",
+      "Treinamento com Armadura Leve e Escudos."
+    ]
+  },
+  {
+    "name": "Especialista em Armaduras Médias",
+    "category": "Geral",
+    "repeatable": false,
+    "prerequisites": "Nível 4+, Treinamento com Armadura Leve",
+    "abilityBoost": { "options": ["Força","Destreza"], "amount": 1 },
+    "effects": [
+      "+1 em FOR ou DES (máx. 20).",
+      "Treinamento com Armadura Média."
+    ]
+  },
+  {
+    "name": "Especialista em Armaduras Pesadas",
+    "category": "Geral",
+    "repeatable": false,
+    "prerequisites": "Nível 4+, Treinamento com Armadura Média",
+    "abilityBoost": { "options": ["Constituição","Força"], "amount": 1 },
+    "effects": [
+      "+1 em CON ou FOR (máx. 20).",
+      "Treinamento com Armadura Pesada."
+    ]
+  },
+  {
+    "name": "Especialista em Besta",
+    "category": "Geral",
+    "repeatable": false,
+    "prerequisites": "Nível 4+, DES 13+",
+    "abilityBoost": { "options": ["Destreza"], "amount": 1 },
+    "effects": [
+      "+1 em Destreza (máx. 20).",
+      "Ignora Recarga nas bestas; pode recarregar sem mão livre se estiver segurando a besta.",
+      "Sem desvantagem a 1,5 m com ataques de besta.",
+      "No ataque adicional de arma Leve, pode adicionar o modificador ao dano se a arma adicional for uma besta Leve e você ainda não estiver adicionando outro modificador."
+    ]
+  },
+  {
+    "name": "Especialista em Perícia",
+    "category": "Geral",
+    "repeatable": false,
+    "prerequisites": "Nível 4+",
+    "abilityBoost": { "options": ["Força","Destreza","Constituição","Inteligência","Sabedoria","Carisma"], "amount": 1 },
+    "effects": [
+      "+1 em qualquer atributo (máx. 20).",
+      "Proficiência em uma perícia à escolha.",
+      "Especialização em uma perícia na qual já é proficiente."
+    ]
+  },
+  {
+    "name": "Exterminador de Conjuradores",
+    "category": "Geral",
+    "repeatable": false,
+    "prerequisites": "Nível 4+",
+    "effects": [
+      "+1 em FOR ou DES (máx. 20).",
+      "Quebrador de Concentração: alvos que você ferir e estejam concentrando têm Desvantagem para manter a Concentração.",
+      "Resguardo Mental: 1/Descanso (Curto ou Longo), substituir falha em salvaguarda de INT/SAB/CAR por sucesso."
+    ]
+  }
+]
+

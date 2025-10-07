@@ -1,0 +1,492 @@
+[
+  {
+    "name": "Humano",
+    "description": "Os humanos são os inovadores, os realizadores e os pioneiros dos mundos. Com suas vidas mais curtas, eles se esforçam para alcançar o máximo que podem nos anos que têm.",
+    "flavorText": "ESTAS SÃO AS HISTÓRIAS DE UM POVO INCANSÁVEL QUE, há muito tempo, saiu aos mares e rios em longos navios, primeiro para saquear e aterrorizar, em seguida para colonizar.",
+    "abilityScoreIncrease": {
+      "Força": 1,
+      "Destreza": 1,
+      "Constituição": 1,
+      "Inteligência": 1,
+      "Sabedoria": 1,
+      "Carisma": 1
+    },
+    "ageOfMaturity": 18,
+    "averageLifespan": 80,
+    "alignment": "Variado",
+    "size": "Médio",
+    "speed": 9.0,
+    "traits": [
+      {
+        "name": "Versatilidade",
+        "description": "Todos os seus valores de habilidade aumentam em 1.",
+        "level": null
+      },
+      {
+        "name": "Idioma Adicional",
+        "description": "Você pode falar, ler e escrever Comum e outro idioma adicional, à sua escolha.",
+        "level": null
+      }
+    ],
+    "languages": ["Comum"],
+    "subraces": [],
+    "maleNames": [
+      "Aseir", "Bardeid", "Haseid", "Khemed", "Mehmen", "Sudeiman", "Zasheir",
+      "Darvin", "Dorn", "Evendur", "Gorstag", "Grim", "Helm", "Malark", "Morn", "Randal", "Stedd"
+    ],
+    "femaleNames": [
+      "Arveene", "Esvele", "Jhessail", "Kerri", "Lureene", "Miri", "Rowan", "Shandri", "Tessele",
+      "Arveene", "Esvele", "Jhessail", "Kerri", "Lureene", "Miri", "Rowan", "Shandri", "Tessele"
+    ],
+    "surnames": [
+      "Amblecrown", "Buckman", "Dundragon", "Evenwood", "Greycastle", "Tallstag",
+      "Amblecrown", "Buckman", "Dundragon", "Evenwood", "Greycastle", "Tallstag"
+    ]
+  },
+  {
+    "name": "Elfo",
+    "description": "Os elfos são um povo mágico de graça sobrenatural, vivendo no mundo mas não completamente parte dele.",
+    "flavorText": "Os elfos são um povo mágico de graça sobrenatural, vivendo no mundo mas não completamente parte dele. Eles vivem em locais de beleza etérea, no meio de antigas florestas ou em torres prateadas que brilham com luz feérica.",
+    "abilityScoreIncrease": {
+      "Destreza": 2
+    },
+    "ageOfMaturity": 100,
+    "averageLifespan": 750,
+    "alignment": "Tendência ao Caótico",
+    "size": "Médio",
+    "speed": 9.0,
+    "traits": [
+      {
+        "name": "Visão no Escuro",
+        "description": "Você pode ver na penumbra a até 18 metros de você como se fosse luz plena, e na escuridão como se fosse penumbra.",
+        "level": null
+      },
+      {
+        "name": "Transe",
+        "description": "Os elfos não precisam dormir. Em vez disso, eles meditam profundamente, permanecendo semiconscientes, por 4 horas por dia.",
+        "level": null
+      },
+      {
+        "name": "Resistência Encantadora",
+        "description": "Você tem vantagem em testes de resistência contra ser encantado e magia não pode colocá-lo para dormir.",
+        "level": null
+      },
+      {
+        "name": "Perícia com Armas de Elfo",
+        "description": "Você tem proficiência com espada longa, espada curta, arco longo e arco curto.",
+        "level": null
+      }
+    ],
+    "languages": ["Comum", "Élfico"],
+    "subraces": [
+      {
+        "name": "Alto Elfo",
+        "description": "Os altos elfos são os mais refinados e tradicionais dos elfos.",
+        "abilityScoreIncrease": {
+          "Inteligência": 1
+        },
+        "traits": [
+          {
+            "name": "Treinamento com Armas de Elfo",
+            "description": "Você tem proficiência com espada longa, espada curta, arco longo e arco curto.",
+            "level": null
+          },
+          {
+            "name": "Truque",
+            "description": "Você conhece um truque da lista de magias de mago.",
+            "level": null
+          },
+          {
+            "name": "Idioma Extra",
+            "description": "Você pode falar, ler e escrever um idioma adicional à sua escolha.",
+            "level": null
+          }
+        ]
+      },
+      {
+        "name": "Elfo da Madeira",
+        "description": "Os elfos da madeira são mais resistentes e têm uma conexão especial com a natureza.",
+        "abilityScoreIncrease": {
+          "Sabedoria": 1
+        },
+        "traits": [
+          {
+            "name": "Treinamento com Armas de Elfo",
+            "description": "Você tem proficiência com espada longa, espada curta, arco longo e arco curto.",
+            "level": null
+          },
+          {
+            "name": "Velocidade da Floresta",
+            "description": "Seu deslocamento base aumenta para 10,5 metros.",
+            "level": null
+          },
+          {
+            "name": "Máscara da Natureza",
+            "description": "Você pode tentar se esconder mesmo quando está apenas levemente obscurecido por folhagem, chuva forte, neve, névoa e outros fenômenos naturais.",
+            "level": null
+          }
+        ]
+      },
+      {
+        "name": "Elfo Negro",
+        "description": "Os elfos negros, ou drow, são elfos que se adaptaram à vida no Subterrâneo.",
+        "abilityScoreIncrease": {
+          "Carisma": 1
+        },
+        "traits": [
+          {
+            "name": "Visão no Escuro Superior",
+            "description": "Seu alcance de visão no escuro aumenta para 36 metros.",
+            "level": null
+          },
+          {
+            "name": "Magia Drow",
+            "description": "Você conhece o truque chama dançante. No 3º nível, você pode conjurar faerie fire uma vez por dia. No 5º nível, você também pode conjurar escuridão uma vez por dia.",
+            "level": null
+          },
+          {
+            "name": "Sensibilidade à Luz Solar",
+            "description": "Você tem desvantagem em testes de ataque e em testes de Sabedoria (Percepção) que dependem da visão quando você, o alvo do seu ataque ou a coisa que você está tentando perceber está sob luz solar direta.",
+            "level": null
+          }
+        ]
+      }
+    ],
+    "maleNames": [
+      "Adran", "Aelar", "Aramil", "Arannis", "Aust", "Beiro", "Berrian", "Carric", "Enialis", "Erdan", "Erevan", "Galinndan", "Hadarai", "Heian", "Himo", "Immeral", "Ivellios", "Laucian", "Mindartis", "Paelias", "Peren", "Quarion", "Riardon", "Rolen", "Soveliss", "Thamior", "Tharivol", "Theren", "Varis"
+    ],
+    "femaleNames": [
+      "Adrie", "Althaea", "Anastrianna", "Andraste", "Antinua", "Bethrynna", "Birel", "Caelynn", "Drusilia", "Enna", "Felosial", "Ielenia", "Jelenneth", "Keyleth", "Leshanna", "Lia", "Meriele", "Mialee", "Naivara", "Quelenna", "Quillathe", "Sariel", "Shanairra", "Shava", "Silaqui", "Theirastra", "Thia", "Vadania", "Valanthe", "Xanaphia"
+    ],
+    "surnames": [
+      "Amakiir", "Amastacia", "Galanodel", "Holimion", "Ilphelkiir", "Liadon", "Meliamne", "Naïlo", "Siannodel", "Xiloscient"
+    ]
+  },
+  {
+    "name": "Anão",
+    "description": "Os anões são um povo resistente e trabalhador, conhecidos por sua habilidade com metais e pedras.",
+    "flavorText": "Os anões são um povo resistente e trabalhador, conhecidos por sua habilidade com metais e pedras. Eles vivem em montanhas e colinas, construindo grandes fortalezas e cidades subterrâneas.",
+    "abilityScoreIncrease": {
+      "Constituição": 2
+    },
+    "ageOfMaturity": 50,
+    "averageLifespan": 350,
+    "alignment": "Tendência ao Leal",
+    "size": "Médio",
+    "speed": 7.5,
+    "traits": [
+      {
+        "name": "Visão no Escuro",
+        "description": "Você pode ver na penumbra a até 18 metros de você como se fosse luz plena, e na escuridão como se fosse penumbra.",
+        "level": null
+      },
+      {
+        "name": "Resistência Anã",
+        "description": "Você tem vantagem em testes de resistência contra veneno e resistência contra dano de veneno.",
+        "level": null
+      },
+      {
+        "name": "Treinamento com Armas de Anão",
+        "description": "Você tem proficiência com machadinha, machado de batalha, maça, martelo de guerra e martelo leve.",
+        "level": null
+      },
+      {
+        "name": "Treinamento com Ferramentas",
+        "description": "Você ganha proficiência com um tipo de ferramenta de artesão à sua escolha.",
+        "level": null
+      },
+      {
+        "name": "Conhecimento de Pedra",
+        "description": "Sempre que você faz um teste de Inteligência (História) relacionado à origem de trabalho em pedra, você é considerado proficiente na perícia História e adiciona o dobro do seu bônus de proficiência ao teste.",
+        "level": null
+      }
+    ],
+    "languages": ["Comum", "Anão"],
+    "subraces": [
+      {
+        "name": "Anão da Montanha",
+        "description": "Os anões da montanha são mais resistentes e têm uma conexão especial com as montanhas.",
+        "abilityScoreIncrease": {
+          "Força": 2
+        },
+        "traits": [
+          {
+            "name": "Treinamento com Armadura de Anão",
+            "description": "Você tem proficiência com armaduras leves e médias.",
+            "level": null
+          }
+        ]
+      },
+      {
+        "name": "Anão da Colina",
+        "description": "Os anões da colina são mais sábios e têm uma conexão especial com a natureza.",
+        "abilityScoreIncrease": {
+          "Sabedoria": 1
+        },
+        "traits": [
+          {
+            "name": "Truque",
+            "description": "Você conhece um truque da lista de magias de clérigo.",
+            "level": null
+          }
+        ]
+      }
+    ],
+    "maleNames": [
+      "Adrik", "Alberich", "Baern", "Barendd", "Brottor", "Bruenor", "Dain", "Darrak", "Delg", "Eberk", "Einkil", "Fargrim", "Flint", "Gardain", "Harbek", "Kildrak", "Morgran", "Orsik", "Oskar", "Rangrim", "Rurik", "Taklinn", "Thoradin", "Thorin", "Tordek", "Traubon", "Travok", "Ulfgar", "Veit", "Vondal"
+    ],
+    "femaleNames": [
+      "Amber", "Artin", "Audhild", "Bardryn", "Dagnal", "Diesa", "Eldeth", "Falkrunn", "Finellen", "Gunnloda", "Gurdis", "Helja", "Hlin", "Kathra", "Kristryd", "Ilde", "Liftrasa", "Mardred", "Riswynn", "Sannl", "Torbera", "Torgga", "Vistra"
+    ],
+    "surnames": [
+      "Balderk", "Battlehammer", "Brawnanvil", "Dankil", "Fireforge", "Frostbeard", "Gorunn", "Holderhek", "Ironfist", "Loderr", "Lutgehr", "Rumnaheim", "Strakeln", "Torunn", "Ungart"
+    ]
+  },
+  {
+    "name": "Halfling",
+    "description": "Os halflings são um povo pequeno e alegre, conhecidos por sua coragem e determinação.",
+    "flavorText": "Os halflings são um povo pequeno e alegre, conhecidos por sua coragem e determinação. Eles vivem em comunidades pacíficas, mas quando necessário, podem ser surpreendentemente corajosos.",
+    "abilityScoreIncrease": {
+      "Destreza": 2
+    },
+    "ageOfMaturity": 20,
+    "averageLifespan": 150,
+    "alignment": "Tendência ao Leal e Bom",
+    "size": "Pequeno",
+    "speed": 7.5,
+    "traits": [
+      {
+        "name": "Sorte",
+        "description": "Quando você rola um 1 no d20 para um teste de resistência, você pode rolar novamente e usar o novo resultado.",
+        "level": null
+      },
+      {
+        "name": "Coragem",
+        "description": "Você tem vantagem em testes de resistência contra ser amedrontado.",
+        "level": null
+      },
+      {
+        "name": "Agilidade Halfling",
+        "description": "Você pode se mover através do espaço de qualquer criatura que seja de um tamanho maior que o seu.",
+        "level": null
+      }
+    ],
+    "languages": ["Comum", "Halfling"],
+    "subraces": [
+      {
+        "name": "Halfling Pés Leves",
+        "description": "Os halflings pés leves são mais ágeis e têm uma conexão especial com a natureza.",
+        "abilityScoreIncrease": {
+          "Carisma": 1
+        },
+        "traits": [
+          {
+            "name": "Furtividade Natural",
+            "description": "Você pode tentar se esconder mesmo quando está apenas levemente obscurecido por uma criatura que seja pelo menos um tamanho maior que você.",
+            "level": null
+          }
+        ]
+      },
+      {
+        "name": "Halfling Robusto",
+        "description": "Os halflings robustos são mais resistentes e têm uma conexão especial com a natureza.",
+        "abilityScoreIncrease": {
+          "Constituição": 1
+        },
+        "traits": [
+          {
+            "name": "Resistência Halfling",
+            "description": "Você tem vantagem em testes de resistência contra veneno e resistência contra dano de veneno.",
+            "level": null
+          }
+        ]
+      }
+    ],
+    "maleNames": [
+      "Alton", "Ander", "Cade", "Corrin", "Eldon", "Errich", "Finnan", "Garret", "Lindal", "Lyle", "Merric", "Milo", "Osborn", "Perrin", "Reed", "Roscoe", "Wellby"
+    ],
+    "femaleNames": [
+      "Andry", "Bree", "Callie", "Cora", "Euphemia", "Jillian", "Kithri", "Lavinia", "Lidda", "Merla", "Nedda", "Paela", "Portia", "Seraphina", "Shaena", "Trym", "Vani", "Verna"
+    ],
+    "surnames": [
+      "Brushgather", "Goodbarrel", "Greenbottle", "High-hill", "Hilltopple", "Leagallow", "Tealeaf", "Thorngage", "Tosscobble", "Underbough"
+    ]
+  },
+  {
+    "name": "Draconato",
+    "description": "Os draconatos são descendentes de dragões, combinando a melhor das qualidades dos dragões e humanoides.",
+    "flavorText": "Os draconatos são descendentes de dragões, combinando a melhor das qualidades dos dragões e humanoides. Eles são orgulhosos e nobres, mas também podem ser arrogantes e teimosos.",
+    "abilityScoreIncrease": {
+      "Força": 2,
+      "Carisma": 1
+    },
+    "ageOfMaturity": 15,
+    "averageLifespan": 80,
+    "alignment": "Tendência ao Leal",
+    "size": "Médio",
+    "speed": 9.0,
+    "traits": [
+      {
+        "name": "Ancestralidade Dracônica",
+        "description": "Você escolhe um tipo de dragão como seu ancestral. O tipo de dragão determina o dano do seu sopro e a resistência que você ganha.",
+        "level": null
+      },
+      {
+        "name": "Sopro",
+        "description": "Você pode usar sua ação para exalar energia destrutiva. O tipo de energia é determinado pelo seu ancestral dracônico.",
+        "level": null
+      },
+      {
+        "name": "Resistência Dracônica",
+        "description": "Você tem resistência contra o tipo de dano associado ao seu ancestral dracônico.",
+        "level": null
+      }
+    ],
+    "languages": ["Comum", "Dracônico"],
+    "subraces": [],
+    "maleNames": [
+      "Arjhan", "Balasar", "Bharash", "Donaar", "Ghesh", "Heskan", "Kriv", "Medrash", "Mehen", "Nadarr", "Pandjed", "Patrin", "Rhogar", "Shamash", "Shedinn", "Tarhun", "Torinn"
+    ],
+    "femaleNames": [
+      "Akra", "Biri", "Daar", "Farideh", "Harann", "Havilar", "Jheri", "Kava", "Korinn", "Mishann", "Nala", "Perra", "Raiann", "Sora", "Surina", "Thava", "Uadjit"
+    ],
+    "surnames": [
+      "Clethtinthiallor", "Daardendrian", "Delmirev", "Drachedandion", "Fenkenkabradon", "Kepeshkmolik", "Kerrhylon", "Kimbatuul", "Linxakasendalor", "Myastan", "Nemmonis", "Norixius", "Ophinshtalajiir", "Prexijandilin", "Shestendeliath", "Turnuroth", "Verthisathurgiesh", "Yarjerit"
+    ]
+  },
+  {
+    "name": "Meio-Elfo",
+    "description": "Os meio-elfos são filhos de humanos e elfos, combinando as melhores qualidades de ambas as raças.",
+    "flavorText": "Os meio-elfos são filhos de humanos e elfos, combinando as melhores qualidades de ambas as raças. Eles são versáteis e adaptáveis, mas também podem se sentir deslocados em ambas as culturas.",
+    "abilityScoreIncrease": {
+      "Carisma": 2
+    },
+    "ageOfMaturity": 20,
+    "averageLifespan": 180,
+    "alignment": "Variado",
+    "size": "Médio",
+    "speed": 9.0,
+    "traits": [
+      {
+        "name": "Versatilidade",
+        "description": "Dois valores de habilidade à sua escolha aumentam em 1.",
+        "level": null
+      },
+      {
+        "name": "Visão no Escuro",
+        "description": "Você pode ver na penumbra a até 18 metros de você como se fosse luz plena, e na escuridão como se fosse penumbra.",
+        "level": null
+      },
+      {
+        "name": "Resistência Encantadora",
+        "description": "Você tem vantagem em testes de resistência contra ser encantado e magia não pode colocá-lo para dormir.",
+        "level": null
+      },
+      {
+        "name": "Versatilidade",
+        "description": "Você ganha proficiência com duas perícias à sua escolha.",
+        "level": null
+      },
+      {
+        "name": "Idiomas Extras",
+        "description": "Você pode falar, ler e escrever Comum, Élfico e um idioma adicional à sua escolha.",
+        "level": null
+      }
+    ],
+    "languages": ["Comum", "Élfico"],
+    "subraces": [],
+    "maleNames": [
+      "Adran", "Aelar", "Aramil", "Arannis", "Aust", "Beiro", "Berrian", "Carric", "Enialis", "Erdan", "Erevan", "Galinndan", "Hadarai", "Heian", "Himo", "Immeral", "Ivellios", "Laucian", "Mindartis", "Paelias", "Peren", "Quarion", "Riardon", "Rolen", "Soveliss", "Thamior", "Tharivol", "Theren", "Varis"
+    ],
+    "femaleNames": [
+      "Adrie", "Althaea", "Anastrianna", "Andraste", "Antinua", "Bethrynna", "Birel", "Caelynn", "Drusilia", "Enna", "Felosial", "Ielenia", "Jelenneth", "Keyleth", "Leshanna", "Lia", "Meriele", "Mialee", "Naivara", "Quelenna", "Quillathe", "Sariel", "Shanairra", "Shava", "Silaqui", "Theirastra", "Thia", "Vadania", "Valanthe", "Xanaphia"
+    ],
+    "surnames": [
+      "Amakiir", "Amastacia", "Galanodel", "Holimion", "Ilphelkiir", "Liadon", "Meliamne", "Naïlo", "Siannodel", "Xiloscient"
+    ]
+  },
+  {
+    "name": "Meio-Orc",
+    "description": "Os meio-orcs são filhos de humanos e orcs, combinando a força dos orcs com a versatilidade dos humanos.",
+    "flavorText": "Os meio-orcs são filhos de humanos e orcs, combinando a força dos orcs com a versatilidade dos humanos. Eles são fortes e resistentes, mas também podem ser vistos com desconfiança por ambas as raças.",
+    "abilityScoreIncrease": {
+      "Força": 2,
+      "Constituição": 1
+    },
+    "ageOfMaturity": 14,
+    "averageLifespan": 75,
+    "alignment": "Tendência ao Caótico",
+    "size": "Médio",
+    "speed": 9.0,
+    "traits": [
+      {
+        "name": "Visão no Escuro",
+        "description": "Você pode ver na penumbra a até 18 metros de você como se fosse luz plena, e na escuridão como se fosse penumbra.",
+        "level": null
+      },
+      {
+        "name": "Ameaçador",
+        "description": "Você ganha proficiência na perícia Intimidação.",
+        "level": null
+      },
+      {
+        "name": "Resistência Implacável",
+        "description": "Quando você é reduzido a 0 pontos de vida mas não é morto instantaneamente, você pode rolar um d20. Se você rolar um 10 ou mais, você fica com 1 ponto de vida.",
+        "level": null
+      }
+    ],
+    "languages": ["Comum", "Orc"],
+    "subraces": [],
+    "maleNames": [
+      "Dench", "Feng", "Gell", "Henk", "Holg", "Imsh", "Keth", "Krusk", "Mhurren", "Ront", "Shump", "Thokk"
+    ],
+    "femaleNames": [
+      "Baggi", "Emen", "Engong", "Kansif", "Myev", "Neega", "Ovak", "Ownka", "Shautha", "Sutha", "Vola", "Volen", "Yevelda"
+    ],
+    "surnames": [
+      "Dench", "Feng", "Gell", "Henk", "Holg", "Imsh", "Keth", "Krusk", "Mhurren", "Ront", "Shump", "Thokk"
+    ]
+  },
+  {
+    "name": "Tiefling",
+    "description": "Os tieflings são descendentes de humanos e demônios, carregando o legado infernal em seu sangue.",
+    "flavorText": "Os tieflings são descendentes de humanos e demônios, carregando o legado infernal em seu sangue. Eles são carismáticos e inteligentes, mas também podem ser vistos com desconfiança devido à sua aparência infernal.",
+    "abilityScoreIncrease": {
+      "Inteligência": 1,
+      "Carisma": 2
+    },
+    "ageOfMaturity": 18,
+    "averageLifespan": 80,
+    "alignment": "Tendência ao Caótico",
+    "size": "Médio",
+    "speed": 9.0,
+    "traits": [
+      {
+        "name": "Visão no Escuro",
+        "description": "Você pode ver na penumbra a até 18 metros de você como se fosse luz plena, e na escuridão como se fosse penumbra.",
+        "level": null
+      },
+      {
+        "name": "Resistência Infernal",
+        "description": "Você tem resistência contra dano de fogo.",
+        "level": null
+      },
+      {
+        "name": "Legado Infernal",
+        "description": "Você conhece o truque taumaturgia. Quando você atingir o 3° nível, você poderá conjurar a magia repreensão infernal como uma magia de 2° nível. Quando você atingir o 5° nível, você também poderá conjurar a magia escuridão.",
+        "level": null
+      }
+    ],
+    "languages": ["Comum", "Infernal"],
+    "subraces": [],
+    "maleNames": [
+      "Akmenos", "Amnon", "Barakas", "Damakos", "Ekemon", "Iados", "Kairon", "Leucis", "Melech", "Mordai", "Morthos", "Pelaios", "Skamos", "Therai"
+    ],
+    "femaleNames": [
+      "Akta", "Anakis", "Armara", "Astaro", "Aym", "Azza", "Beleth", "Bryseis", "Criella", "Damaia", "Ea", "Kallista", "Lerissa", "Makaria", "Nemeia", "Orianna", "Phelaia", "Rieta"
+    ],
+    "surnames": [
+      "Art", "Carrion", "Chant", "Creed", "Despair", "Excellence", "Fear", "Glory", "Hope", "Ideal", "Music", "Nowhere", "Open", "Poetry", "Quest", "Random", "Reverence", "Sorrow", "Temerity", "Torment", "Weary"
+    ]
+  }
+]

@@ -1,0 +1,687 @@
+[
+  {
+    "name": "Acólito",
+    "description": "Você se dedicou ao serviço em um templo, localizado em uma aldeia ou em um bosque sagrado, onde realizava ritos em homenagem a um deus ou panteão. Sob a orientação de um sacerdote, você estudou religião e, graças à sua devoção, aprendeu a canalizar um pouco do poder divino para o seu local de culto e para as pessoas que ali oravam.",
+    "abilityScores": ["Inteligência", "Sabedoria", "Carisma"],
+    "feat": "Iniciação Mágica (Clérigo)",
+    "skillProficiencies": ["Intuição", "Religião"],
+    "toolProficiencies": ["Suprimentos de Caligrafia"],
+    "languages": ["Dois idiomas à sua escolha"],
+    "equipment": [
+      {
+        "name": "Suprimentos de Caligrafia",
+        "description": "Ferramentas para escrever textos sagrados",
+        "quantity": 1
+      },
+      {
+        "name": "Livro de Orações",
+        "description": "Um livro contendo orações e rituais sagrados",
+        "quantity": 1
+      },
+      {
+        "name": "Símbolo Sagrado",
+        "description": "Um símbolo representando sua divindade",
+        "quantity": 1
+      },
+      {
+        "name": "Pergaminho",
+        "description": "Folhas de pergaminho para textos sagrados",
+        "quantity": 10
+      },
+      {
+        "name": "Túnica",
+        "description": "Roupa religiosa simples",
+        "quantity": 1
+      },
+      {
+        "name": "Ouro",
+        "description": "Moedas de ouro",
+        "quantity": 8
+      }
+    ],
+    "feature": {
+      "name": "Refúgio do Templo",
+      "description": "Você pode encontrar refúgio nos templos de sua religião. Você e seus companheiros podem ficar gratuitamente em um templo por até 10 dias, desde que não causem problemas. Os sacerdotes fornecerão cuidados médicos básicos e comida simples."
+    },
+    "startingGold": 8
+  },
+  {
+    "name": "Artesão",
+    "description": "Você é um mestre artesão, especializado na criação de objetos úteis e belos. Você pode ser um ferreiro, carpinteiro, tecelão, ou especialista em qualquer outro ofício manual.",
+    "abilityScores": ["Força", "Destreza", "Inteligência"],
+    "feat": "Criador",
+    "skillProficiencies": ["Investigação", "Persuasão"],
+    "toolProficiencies": ["Escolha um tipo de Ferramentas de Artesão"],
+    "languages": ["Um idioma à sua escolha"],
+    "equipment": [
+      {
+        "name": "Ferramentas de Artesão",
+        "description": "Ferramentas específicas do seu ofício",
+        "quantity": 1
+      },
+      {
+        "name": "Bolsa",
+        "description": "Bolsa para carregar ferramentas",
+        "quantity": 2
+      },
+      {
+        "name": "Roupas de Viajante",
+        "description": "Roupas práticas para viagem",
+        "quantity": 1
+      },
+      {
+        "name": "Ouro",
+        "description": "Moedas de ouro",
+        "quantity": 32
+      }
+    ],
+    "feature": {
+      "name": "Oficina",
+      "description": "Você tem acesso a uma oficina onde pode criar objetos. Você pode usar esta oficina para criar itens não mágicos, fazer reparos, ou ensinar seu ofício a outros."
+    },
+    "startingGold": 32
+  },
+  {
+    "name": "Charlatão",
+    "description": "Você é um mestre da decepção e da manipulação. Você pode ser um vendedor ambulante, um falsificador, ou alguém que vive de enganar os outros com truques e ilusões.",
+    "abilityScores": ["Destreza", "Constituição", "Carisma"],
+    "feat": "Hábil",
+    "skillProficiencies": ["Enganação", "Prestidigitação"],
+    "toolProficiencies": ["Kit de Falsificação"],
+    "languages": ["Dois idiomas à sua escolha"],
+    "equipment": [
+      {
+        "name": "Kit de Falsificação",
+        "description": "Ferramentas para criar documentos falsos",
+        "quantity": 1
+      },
+      {
+        "name": "Fantasia",
+        "description": "Roupa para disfarces",
+        "quantity": 1
+      },
+      {
+        "name": "Roupas Finas",
+        "description": "Roupas elegantes para impressionar",
+        "quantity": 1
+      },
+      {
+        "name": "Ouro",
+        "description": "Moedas de ouro",
+        "quantity": 15
+      }
+    ],
+    "feature": {
+      "name": "Identidade Falsa",
+      "description": "Você criou uma segunda identidade que inclui documentos, conhecidos e disfarces. Você pode assumir esta identidade falsa sem ser descoberto, exceto por magia divina."
+    },
+    "startingGold": 15
+  },
+  {
+    "name": "Criminoso",
+    "description": "Você é um criminoso experiente, com um histórico de atividades ilegais. Você pode ser um ladrão, um assassino, um contrabandista, ou qualquer outro tipo de criminoso.",
+    "abilityScores": ["Destreza", "Constituição", "Inteligência"],
+    "feat": "Alerta",
+    "skillProficiencies": ["Prestidigitação", "Furtividade"],
+    "toolProficiencies": ["Ferramentas de Ladrão"],
+    "languages": ["Dois idiomas à sua escolha"],
+    "equipment": [
+      {
+        "name": "Adaga",
+        "description": "Arma pequena e discreta",
+        "quantity": 2
+      },
+      {
+        "name": "Ferramentas de Ladrão",
+        "description": "Ferramentas para abrir fechaduras e desarmar armadilhas",
+        "quantity": 1
+      },
+      {
+        "name": "Pé de Cabra",
+        "description": "Ferramenta para forçar portas",
+        "quantity": 1
+      },
+      {
+        "name": "Bolsa",
+        "description": "Bolsa para carregar equipamentos",
+        "quantity": 2
+      },
+      {
+        "name": "Roupas de Viajante",
+        "description": "Roupas práticas e discretas",
+        "quantity": 1
+      },
+      {
+        "name": "Ouro",
+        "description": "Moedas de ouro",
+        "quantity": 16
+      }
+    ],
+    "feature": {
+      "name": "Contato Criminoso",
+      "description": "Você tem um contato confiável que pode fornecer informações sobre atividades criminosas, oportunidades de trabalho ilegal, ou ajudar a esconder evidências."
+    },
+    "startingGold": 16
+  },
+  {
+    "name": "Artista",
+    "description": "Você é um artista talentoso, especializado em entreter e impressionar audiências. Você pode ser um músico, um ator, um dançarino, ou qualquer outro tipo de artista.",
+    "abilityScores": ["Força", "Destreza", "Carisma"],
+    "feat": "Músico",
+    "skillProficiencies": ["Acrobacia", "Atuação"],
+    "toolProficiencies": ["Escolha um tipo de Instrumento Musical"],
+    "languages": ["Dois idiomas à sua escolha"],
+    "equipment": [
+      {
+        "name": "Instrumento Musical",
+        "description": "Instrumento específico da sua especialidade",
+        "quantity": 1
+      },
+      {
+        "name": "Fantasia",
+        "description": "Roupa para apresentações",
+        "quantity": 2
+      },
+      {
+        "name": "Espelho",
+        "description": "Espelho para maquiagem e preparação",
+        "quantity": 1
+      },
+      {
+        "name": "Perfume",
+        "description": "Perfume para apresentações",
+        "quantity": 1
+      },
+      {
+        "name": "Roupas de Viajante",
+        "description": "Roupas práticas para viagem",
+        "quantity": 1
+      },
+      {
+        "name": "Ouro",
+        "description": "Moedas de ouro",
+        "quantity": 11
+      }
+    ],
+    "feature": {
+      "name": "Apresentação",
+      "description": "Você pode se apresentar em tavernas, festas e outros eventos para ganhar dinheiro. Suas apresentações podem inspirar aliados ou distrair inimigos."
+    },
+    "startingGold": 11
+  },
+  {
+    "name": "Fazendeiro",
+    "description": "Você cresceu trabalhando na terra, aprendendo sobre agricultura, criação de animais e vida rural. Você pode ser um fazendeiro, um pastor, ou alguém que trabalha com a terra.",
+    "abilityScores": ["Força", "Constituição", "Sabedoria"],
+    "feat": "Resistente",
+    "skillProficiencies": ["Adestrar Animais", "Natureza"],
+    "toolProficiencies": ["Ferramentas de Carpinteiro"],
+    "languages": ["Um idioma à sua escolha"],
+    "equipment": [
+      {
+        "name": "Foice",
+        "description": "Ferramenta agrícola para colheita",
+        "quantity": 1
+      },
+      {
+        "name": "Ferramentas de Carpinteiro",
+        "description": "Ferramentas para trabalhar com madeira",
+        "quantity": 1
+      },
+      {
+        "name": "Kit de Cura",
+        "description": "Kit básico para primeiros socorros",
+        "quantity": 1
+      },
+      {
+        "name": "Panela de Ferro",
+        "description": "Panela para cozinhar",
+        "quantity": 1
+      },
+      {
+        "name": "Pá",
+        "description": "Ferramenta para cavar",
+        "quantity": 1
+      },
+      {
+        "name": "Ouro",
+        "description": "Moedas de ouro",
+        "quantity": 30
+      }
+    ],
+    "feature": {
+      "name": "Conhecimento Rural",
+      "description": "Você conhece os costumes e tradições das comunidades rurais. Você pode encontrar comida e abrigo em fazendas e vilas rurais, e os fazendeiros locais o tratam com respeito."
+    },
+    "startingGold": 30
+  },
+  {
+    "name": "Guarda",
+    "description": "Você serviu como guarda ou soldado, protegendo comunidades e mantendo a ordem. Você pode ter sido um guarda da cidade, um soldado, ou um mercenário.",
+    "abilityScores": ["Força", "Inteligência", "Sabedoria"],
+    "feat": "Alerta",
+    "skillProficiencies": ["Atletismo", "Percepção"],
+    "toolProficiencies": ["Escolha um tipo de Jogo"],
+    "languages": ["Um idioma à sua escolha"],
+    "equipment": [
+      {
+        "name": "Lança",
+        "description": "Arma de combate corpo a corpo",
+        "quantity": 1
+      },
+      {
+        "name": "Besta Leve",
+        "description": "Arma de combate à distância",
+        "quantity": 1
+      },
+      {
+        "name": "Virotes",
+        "description": "Munição para besta",
+        "quantity": 20
+      },
+      {
+        "name": "Jogo",
+        "description": "Jogo de tabuleiro ou cartas",
+        "quantity": 1
+      },
+      {
+        "name": "Lanterna com Capuz",
+        "description": "Lanterna para iluminação",
+        "quantity": 1
+      },
+      {
+        "name": "Algemas",
+        "description": "Algemas para prender prisioneiros",
+        "quantity": 1
+      },
+      {
+        "name": "Aljava",
+        "description": "Suporte para virotes",
+        "quantity": 1
+      },
+      {
+        "name": "Roupas de Viajante",
+        "description": "Roupas práticas para serviço",
+        "quantity": 1
+      },
+      {
+        "name": "Ouro",
+        "description": "Moedas de ouro",
+        "quantity": 12
+      }
+    ],
+    "feature": {
+      "name": "Patrulha",
+      "description": "Você pode usar sua experiência como guarda para manter vigilância e detectar ameaças. Você tem vantagem em testes de Percepção para detectar perigos."
+    },
+    "startingGold": 12
+  },
+  {
+    "name": "Ermitão",
+    "description": "Você viveu isolado da sociedade, dedicando-se ao estudo, meditação ou busca espiritual. Você pode ter sido um eremita religioso, um estudioso solitário, ou alguém que se retirou da sociedade.",
+    "abilityScores": ["Constituição", "Sabedoria", "Carisma"],
+    "feat": "Curandeiro",
+    "skillProficiencies": ["Medicina", "Religião"],
+    "toolProficiencies": ["Kit de Herbalismo"],
+    "languages": ["Um idioma à sua escolha"],
+    "equipment": [
+      {
+        "name": "Bordão",
+        "description": "Arma simples e cajado de caminhada",
+        "quantity": 1
+      },
+      {
+        "name": "Kit de Herbalismo",
+        "description": "Ferramentas para identificar e preparar ervas",
+        "quantity": 1
+      },
+      {
+        "name": "Saco de Dormir",
+        "description": "Saco para dormir ao ar livre",
+        "quantity": 1
+      },
+      {
+        "name": "Livro de Filosofia",
+        "description": "Livro com ensinamentos filosóficos",
+        "quantity": 1
+      },
+      {
+        "name": "Lâmpada",
+        "description": "Lâmpada para iluminação",
+        "quantity": 1
+      },
+      {
+        "name": "Óleo",
+        "description": "Óleo para lâmpada",
+        "quantity": 3
+      },
+      {
+        "name": "Roupas de Viajante",
+        "description": "Roupas práticas para vida ao ar livre",
+        "quantity": 1
+      },
+      {
+        "name": "Ouro",
+        "description": "Moedas de ouro",
+        "quantity": 16
+      }
+    ],
+    "feature": {
+      "name": "Descoberta",
+      "description": "Durante seu tempo como eremita, você descobriu algo importante. Você pode ter encontrado um local sagrado, descoberto um segredo antigo, ou aprendido algo valioso sobre magia ou religião."
+    },
+    "startingGold": 16
+  },
+  {
+    "name": "Comerciante",
+    "description": "Você é um comerciante experiente, especializado em comprar e vender mercadorias. Você pode ser um vendedor ambulante, um comerciante de caravana, ou um negociante de uma cidade.",
+    "abilityScores": ["Constituição", "Inteligência", "Carisma"],
+    "feat": "Sortudo",
+    "skillProficiencies": ["Adestrar Animais", "Persuasão"],
+    "toolProficiencies": ["Ferramentas de Navegação"],
+    "languages": ["Um idioma à sua escolha"],
+    "equipment": [
+      {
+        "name": "Ferramentas de Navegação",
+        "description": "Ferramentas para navegação e orientação",
+        "quantity": 1
+      },
+      {
+        "name": "Bolsa",
+        "description": "Bolsa para carregar mercadorias",
+        "quantity": 2
+      },
+      {
+        "name": "Roupas de Viajante",
+        "description": "Roupas práticas para viagem comercial",
+        "quantity": 1
+      },
+      {
+        "name": "Ouro",
+        "description": "Moedas de ouro",
+        "quantity": 22
+      }
+    ],
+    "feature": {
+      "name": "Contatos Comerciais",
+      "description": "Você tem contatos em várias cidades que podem fornecer informações sobre mercados, oportunidades de negócio, ou ajudar a encontrar compradores e vendedores."
+    },
+    "startingGold": 22
+  },
+  {
+    "name": "Nobre",
+    "description": "Você vem de uma família nobre ou rica, acostumado ao luxo e à vida na corte. Você pode ser um nobre menor, um cortesão, ou alguém que herdou uma fortuna.",
+    "abilityScores": ["Força", "Inteligência", "Carisma"],
+    "feat": "Hábil",
+    "skillProficiencies": ["História", "Persuasão"],
+    "toolProficiencies": ["Escolha um tipo de Jogo"],
+    "languages": ["Dois idiomas à sua escolha"],
+    "equipment": [
+      {
+        "name": "Jogo",
+        "description": "Jogo de tabuleiro ou cartas",
+        "quantity": 1
+      },
+      {
+        "name": "Roupas Finas",
+        "description": "Roupas elegantes e caras",
+        "quantity": 1
+      },
+      {
+        "name": "Perfume",
+        "description": "Perfume caro para ocasiões especiais",
+        "quantity": 1
+      },
+      {
+        "name": "Ouro",
+        "description": "Moedas de ouro",
+        "quantity": 29
+      }
+    ],
+    "feature": {
+      "name": "Posição de Privilégio",
+      "description": "Sua posição social lhe dá acesso a lugares e pessoas que outros não conseguem alcançar. Você pode conseguir audiências com nobres e autoridades locais."
+    },
+    "startingGold": 29
+  },
+  {
+    "name": "Sábio",
+    "description": "Você é um estudioso dedicado, especializado em conhecimento e pesquisa. Você pode ser um bibliotecário, um pesquisador, ou um acadêmico.",
+    "abilityScores": ["Constituição", "Inteligência", "Sabedoria"],
+    "feat": "Iniciação Mágica (Mago)",
+    "skillProficiencies": ["Arcano", "História"],
+    "toolProficiencies": ["Suprimentos de Caligrafia"],
+    "languages": ["Dois idiomas à sua escolha"],
+    "equipment": [
+      {
+        "name": "Bordão",
+        "description": "Arma simples e cajado de caminhada",
+        "quantity": 1
+      },
+      {
+        "name": "Suprimentos de Caligrafia",
+        "description": "Ferramentas para escrever e copiar textos",
+        "quantity": 1
+      },
+      {
+        "name": "Livro de História",
+        "description": "Livro com conhecimento histórico",
+        "quantity": 1
+      },
+      {
+        "name": "Pergaminho",
+        "description": "Folhas de pergaminho para anotações",
+        "quantity": 8
+      },
+      {
+        "name": "Túnica",
+        "description": "Roupa acadêmica simples",
+        "quantity": 1
+      },
+      {
+        "name": "Ouro",
+        "description": "Moedas de ouro",
+        "quantity": 8
+      }
+    ],
+    "feature": {
+      "name": "Pesquisador",
+      "description": "Quando você precisa aprender ou lembrar de uma informação, você sabe onde encontrar isso. Você pode encontrar informações em bibliotecas, arquivos ou outras fontes de conhecimento."
+    },
+    "startingGold": 8
+  },
+  {
+    "name": "Marinheiro",
+    "description": "Você é um marinheiro experiente, acostumado à vida no mar. Você pode ser um marinheiro comum, um capitão, ou alguém que trabalha em navios mercantes.",
+    "abilityScores": ["Força", "Destreza", "Sabedoria"],
+    "feat": "Brigão de Taverna",
+    "skillProficiencies": ["Acrobacia", "Percepção"],
+    "toolProficiencies": ["Ferramentas de Navegação"],
+    "languages": ["Um idioma à sua escolha"],
+    "equipment": [
+      {
+        "name": "Adaga",
+        "description": "Arma pequena e prática",
+        "quantity": 1
+      },
+      {
+        "name": "Ferramentas de Navegação",
+        "description": "Ferramentas para navegação marítima",
+        "quantity": 1
+      },
+      {
+        "name": "Corda",
+        "description": "Corda de 50 pés",
+        "quantity": 1
+      },
+      {
+        "name": "Roupas de Viajante",
+        "description": "Roupas práticas para vida no mar",
+        "quantity": 1
+      },
+      {
+        "name": "Ouro",
+        "description": "Moedas de ouro",
+        "quantity": 20
+      }
+    ],
+    "feature": {
+      "name": "Passagem de Navio",
+      "description": "Você pode conseguir passagem gratuita em navios para você e seus companheiros. Os marinheiros o tratam com respeito e podem fornecer informações sobre o mar e portos."
+    },
+    "startingGold": 20
+  },
+  {
+    "name": "Escriba",
+    "description": "Você é um escriba profissional, especializado em escrever e copiar documentos. Você pode ser um escriba da corte, um copista de livros, ou um secretário.",
+    "abilityScores": ["Destreza", "Inteligência", "Sabedoria"],
+    "feat": "Hábil",
+    "skillProficiencies": ["Investigação", "Percepção"],
+    "toolProficiencies": ["Suprimentos de Caligrafia"],
+    "languages": ["Dois idiomas à sua escolha"],
+    "equipment": [
+      {
+        "name": "Suprimentos de Caligrafia",
+        "description": "Ferramentas profissionais para escrever",
+        "quantity": 1
+      },
+      {
+        "name": "Roupas Finas",
+        "description": "Roupas elegantes para trabalho formal",
+        "quantity": 1
+      },
+      {
+        "name": "Lâmpada",
+        "description": "Lâmpada para iluminação",
+        "quantity": 1
+      },
+      {
+        "name": "Óleo",
+        "description": "Óleo para lâmpada",
+        "quantity": 3
+      },
+      {
+        "name": "Pergaminho",
+        "description": "Folhas de pergaminho para documentos",
+        "quantity": 12
+      },
+      {
+        "name": "Ouro",
+        "description": "Moedas de ouro",
+        "quantity": 23
+      }
+    ],
+    "feature": {
+      "name": "Conhecimento Legal",
+      "description": "Você conhece as leis e regulamentos locais. Você pode encontrar informações sobre documentos legais, contratos e procedimentos burocráticos."
+    },
+    "startingGold": 23
+  },
+  {
+    "name": "Soldado",
+    "description": "Você é um soldado experiente, treinado em combate e disciplina militar. Você pode ter sido um soldado comum, um oficial, ou um mercenário.",
+    "abilityScores": ["Força", "Destreza", "Constituição"],
+    "feat": "Atacante Selvagem",
+    "skillProficiencies": ["Atletismo", "Intimidação"],
+    "toolProficiencies": ["Escolha um tipo de Jogo"],
+    "languages": ["Um idioma à sua escolha"],
+    "equipment": [
+      {
+        "name": "Lança",
+        "description": "Arma de combate corpo a corpo",
+        "quantity": 1
+      },
+      {
+        "name": "Arco Curto",
+        "description": "Arma de combate à distância",
+        "quantity": 1
+      },
+      {
+        "name": "Flechas",
+        "description": "Munição para arco",
+        "quantity": 20
+      },
+      {
+        "name": "Jogo",
+        "description": "Jogo de tabuleiro ou cartas",
+        "quantity": 1
+      },
+      {
+        "name": "Kit de Cura",
+        "description": "Kit básico para primeiros socorros",
+        "quantity": 1
+      },
+      {
+        "name": "Aljava",
+        "description": "Suporte para flechas",
+        "quantity": 1
+      },
+      {
+        "name": "Roupas de Viajante",
+        "description": "Roupas práticas para serviço militar",
+        "quantity": 1
+      },
+      {
+        "name": "Ouro",
+        "description": "Moedas de ouro",
+        "quantity": 14
+      }
+    ],
+    "feature": {
+      "name": "Ranka Militar",
+      "description": "Você tem uma patente militar que outros soldados reconhecem. Você pode conseguir acesso a instalações militares e informações sobre operações militares."
+    },
+    "startingGold": 14
+  },
+  {
+    "name": "Viajante",
+    "description": "Você é um viajante experiente, acostumado a se mover pelo mundo. Você pode ser um mercador ambulante, um explorador, ou alguém que sempre está em movimento.",
+    "abilityScores": ["Destreza", "Sabedoria", "Carisma"],
+    "feat": "Sortudo",
+    "skillProficiencies": ["Intuição", "Furtividade"],
+    "toolProficiencies": ["Ferramentas de Ladrão"],
+    "languages": ["Dois idiomas à sua escolha"],
+    "equipment": [
+      {
+        "name": "Adaga",
+        "description": "Arma pequena e discreta",
+        "quantity": 2
+      },
+      {
+        "name": "Ferramentas de Ladrão",
+        "description": "Ferramentas para abrir fechaduras e desarmar armadilhas",
+        "quantity": 1
+      },
+      {
+        "name": "Jogo",
+        "description": "Jogo de tabuleiro ou cartas",
+        "quantity": 1
+      },
+      {
+        "name": "Saco de Dormir",
+        "description": "Saco para dormir ao ar livre",
+        "quantity": 1
+      },
+      {
+        "name": "Bolsa",
+        "description": "Bolsa para carregar equipamentos",
+        "quantity": 2
+      },
+      {
+        "name": "Roupas de Viajante",
+        "description": "Roupas práticas para viagem",
+        "quantity": 1
+      },
+      {
+        "name": "Ouro",
+        "description": "Moedas de ouro",
+        "quantity": 16
+      }
+    ],
+    "feature": {
+      "name": "Conhecimento de Estradas",
+      "description": "Você conhece as rotas comerciais e caminhos secretos entre as cidades. Você pode encontrar atalhos, evitar perigos conhecidos, e saber onde encontrar comida e abrigo."
+    },
+    "startingGold": 16
+  }
+]

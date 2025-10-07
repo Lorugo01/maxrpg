@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\J.Informatica\Desktop\app\Rpg\maxrpg\build\windows\x64\CMakeFiles\0e75ba2791a1ad0727cb0dd5135693fd\INSTALL_force.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{CBB20918-9FB7-3041-8CB6-30E28A97DA6B}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

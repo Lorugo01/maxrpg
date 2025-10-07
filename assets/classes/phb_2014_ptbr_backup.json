@@ -1,0 +1,1452 @@
+[
+  {
+    "name": "Bárbaro",
+    "description": "Um guerreiro feroz que usa fúria primitiva em batalha.",
+    "hitDie": 12,
+    "primaryAbility": "Força",
+    "secondaryAbility": "Constituição",
+    "suggestedBackground": "Forasteiro",
+    "flavorText": "Um humano alto membro de alguma tribo caminha em meio a uma nevasca, coberto por peles e empunhando seu machado. Ele gargalha à medida que avança em direção do gigante do gelo que ousou caçar os alces que o seu povo arrebahava.",
+    "proficiency": {
+      "armor": ["Armaduras leves", "Armaduras médias", "Escudos"],
+      "weapons": ["Armas simples", "Armas marciais"],
+      "tools": [],
+      "savingThrows": ["Força", "Constituição"],
+      "skills": [
+        "Adestrar Animais",
+        "Atletismo",
+        "Intimidação",
+        "Natureza",
+        "Percepção",
+        "Sobrevivência"
+      ],
+      "skillChoices": 2
+    },
+    "startingEquipment": [
+      "(a) um machado grande ou (b) qualquer arma marcial corpo-a-corpo",
+      "(a) dois machados de mão ou (b) qualquer arma simples",
+      "Um pacote de aventureiro e quatro azagaias"
+    ],
+    "subclasses": ["Caminho do Furioso", "Caminho do Guerreiro Totêmico"],
+    "features": [
+      {
+        "name": "Fúria",
+        "description": "Em batalha, você luta com uma ferocidade primitiva. No seu turno, você pode entrar em fúria com uma ação bônus.",
+        "level": 1,
+        "isPassive": false
+      },
+      {
+        "name": "Defesa sem Armadura",
+        "description": "Quando você não estiver vestindo qualquer armadura, sua Classe de Armadura será 10 + seu modificador de Destreza + seu modificador de Constituição.",
+        "level": 1,
+        "isPassive": true
+      },
+      {
+        "name": "Ataque Descuidado",
+        "description": "Você pode desistir de toda preocupação com sua defesa para atacar com um desespero feroz.",
+        "level": 2,
+        "isPassive": false
+      },
+      {
+        "name": "Sentido de Perigo",
+        "description": "Você adquire um sentido sobrenatural de quando as coisas próximas não estão como deveriam.",
+        "level": 2,
+        "isPassive": true
+      },
+      {
+        "name": "Caminho Primitivo",
+        "description": "Você escolhe um caminho que molda a natureza da sua fúria.",
+        "level": 3,
+        "isPassive": false
+      },
+      {
+        "name": "Ataque Extra",
+        "description": "Você pode atacar duas vezes, ao invés de uma, sempre que você realizar a ação de Ataque no seu turno.",
+        "level": 5,
+        "isPassive": true
+      },
+      {
+        "name": "Movimento Rápido",
+        "description": "Seu deslocamento aumenta em 3 metros enquanto você não estiver vestindo uma armadura pesada.",
+        "level": 5,
+        "isPassive": true
+      },
+      {
+        "name": "Instinto Selvagem",
+        "description": "Seu instinto está tão apurado que você recebe vantagem nas jogadas de iniciativa.",
+        "level": 7,
+        "isPassive": true
+      },
+      {
+        "name": "Crítico Brutal",
+        "description": "Você pode rolar um dado de dano de arma adicional quando estiver determinando o dano extra de um acerto crítico.",
+        "level": 9,
+        "isPassive": true
+      },
+      {
+        "name": "Fúria Implacável",
+        "description": "Sua fúria pode manter você lutando independente da gravidade dos seus ferimentos.",
+        "level": 11,
+        "isPassive": true
+      },
+      {
+        "name": "Fúria Persistente",
+        "description": "Sua fúria é tão brutal que ela só termina prematuramente se você cair inconsciente ou se você decidir terminá-la.",
+        "level": 15,
+        "isPassive": true
+      },
+      {
+        "name": "Força Indomável",
+        "description": "Você pode usar sua força bruta para superar obstáculos mentais.",
+        "level": 18,
+        "isPassive": true
+      },
+      {
+        "name": "Campeão Primitivo",
+        "description": "Você incorpora o poder do mundo selvagem. Sua Força e Constituição aumentam em 4. O máximo para esses valores é 24.",
+        "level": 20,
+        "isPassive": true
+      }
+    ],
+    "spellcasting": null
+  },
+  {
+    "name": "Bardo",
+    "description": "Um artista versátil cujo poder vem da música e da magia.",
+    "hitDie": 8,
+    "primaryAbility": "Carisma",
+    "secondaryAbility": "Destreza",
+    "suggestedBackground": "Artista",
+    "flavorText": "Você aprendeu a história do mundo através de canções, lendas e danças. Sua música tem o poder de inspirar aliados e desmoralizar inimigos.",
+    "proficiency": {
+      "armor": ["Armaduras leves"],
+      "weapons": ["Armas simples", "Rapieira", "Espada curta", "Besta de mão", "Alabarda longa"],
+      "tools": ["Três instrumentos musicais à sua escolha"],
+      "savingThrows": ["Destreza", "Carisma"],
+      "skills": [
+        "Acrobacia",
+        "Atuação",
+        "Decepção",
+        "História",
+        "Intuição",
+        "Investigação",
+        "Medicina",
+        "Natureza",
+        "Percepção",
+        "Persuasão",
+        "Prestidigitação",
+        "Religião",
+        "Sobrevivência"
+      ],
+      "skillChoices": 3
+    },
+    "startingEquipment": [
+      "(a) uma rapieira, (b) uma espada longa ou (c) qualquer arma simples",
+      "(a) um pacote de diplomata ou (b) um pacote de artista",
+      "(a) um alaúde ou (b) qualquer outro instrumento musical",
+      "Armadura de couro e uma adaga"
+    ],
+    "subclasses": ["Colégio do Conhecimento", "Colégio da Coragem"],
+    "features": [
+      {
+        "name": "Conjuração",
+        "description": "Você conjura magias através da música e da palavra.",
+        "level": 1,
+        "isPassive": true
+      },
+      {
+        "name": "Inspiração Bárdica",
+        "description": "Você pode inspirar outros através de palavras ou música cortantes.",
+        "level": 1,
+        "isPassive": false
+      },
+      {
+        "name": "Perícias",
+        "description": "Você adquire proficiência com três perícias à sua escolha.",
+        "level": 2,
+        "isPassive": true
+      },
+      {
+        "name": "Canção de Descanso",
+        "description": "Você pode usar música ou palavras para ajudar seus aliados a se recuperarem.",
+        "level": 2,
+        "isPassive": false
+      },
+      {
+        "name": "Colégio Bárdico",
+        "description": "Você escolhe um colégio que reflete sua natureza como bardo.",
+        "level": 3,
+        "isPassive": false
+      },
+      {
+        "name": "Contramágica",
+        "description": "Você pode usar sua música para interromper magias.",
+        "level": 6,
+        "isPassive": false
+      },
+      {
+        "name": "Perícias",
+        "description": "Você adquire proficiência com mais duas perícias à sua escolha.",
+        "level": 10,
+        "isPassive": true
+      },
+      {
+        "name": "Magia Maior",
+        "description": "Você aprende uma magia de 6º nível de qualquer classe.",
+        "level": 14,
+        "isPassive": true
+      },
+      {
+        "name": "Inspiração Superior",
+        "description": "Quando você rola Inspiração Bárdica, você pode rolar um dado adicional.",
+        "level": 20,
+        "isPassive": true
+      }
+    ],
+    "spellcasting": {
+      "ability": "Carisma",
+      "spellSaveDC": 8,
+      "spellAttackBonus": 0,
+      "cantripsKnown": [2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+      "spellsKnown": [4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 15, 16, 18, 19, 19, 20, 22, 22, 22],
+      "spellSlots": [
+        [2, 0, 0, 0, 0, 0, 0, 0, 0],
+        [3, 0, 0, 0, 0, 0, 0, 0, 0],
+        [3, 0, 0, 0, 0, 0, 0, 0, 0],
+        [3, 2, 0, 0, 0, 0, 0, 0, 0],
+        [3, 2, 0, 0, 0, 0, 0, 0, 0],
+        [3, 3, 0, 0, 0, 0, 0, 0, 0],
+        [3, 3, 1, 0, 0, 0, 0, 0, 0],
+        [3, 3, 1, 0, 0, 0, 0, 0, 0],
+        [3, 3, 2, 0, 0, 0, 0, 0, 0],
+        [4, 3, 2, 0, 0, 0, 0, 0, 0],
+        [4, 3, 2, 1, 0, 0, 0, 0, 0],
+        [4, 3, 2, 1, 0, 0, 0, 0, 0],
+        [4, 3, 2, 1, 1, 0, 0, 0, 0],
+        [4, 3, 2, 1, 1, 0, 0, 0, 0],
+        [4, 3, 2, 1, 1, 1, 0, 0, 0],
+        [4, 3, 2, 1, 1, 1, 0, 0, 0],
+        [4, 3, 2, 1, 1, 1, 1, 0, 0],
+        [4, 3, 2, 1, 1, 1, 1, 0, 0],
+        [4, 3, 2, 2, 1, 1, 1, 1, 0],
+        [4, 3, 2, 2, 2, 1, 1, 1, 1]
+      ]
+    }
+  },
+  {
+    "name": "Clérigo",
+    "description": "Um sacerdote que canaliza poder divino para curar e proteger.",
+    "hitDie": 8,
+    "primaryAbility": "Sabedoria",
+    "secondaryAbility": "Constituição",
+    "suggestedBackground": "Acólito",
+    "flavorText": "Você é um intermediário entre o mundo mortal e o plano divino. Seus deuses lhe concedem poder para espalhar sua vontade.",
+    "proficiency": {
+      "armor": ["Armaduras leves", "Armaduras médias", "Escudos"],
+      "weapons": ["Armas simples"],
+      "tools": [],
+      "savingThrows": ["Sabedoria", "Carisma"],
+      "skills": [
+        "História",
+        "Insight",
+        "Medicina",
+        "Persuasão",
+        "Religião"
+      ],
+      "skillChoices": 2
+    },
+    "startingEquipment": [
+      "(a) uma maça ou (b) um martelo de guerra (se proficiente)",
+      "(a) armadura de couro, (b) armadura de couro batido ou (c) armadura de placas (se proficiente)",
+      "(a) uma besta leve e 20 virotes ou (b) qualquer arma simples",
+      "(a) um pacote de sacerdote ou (b) um pacote de explorador",
+      "Um escudo e um símbolo sagrado"
+    ],
+    "subclasses": ["Domínio da Vida", "Domínio da Luz", "Domínio da Natureza", "Domínio da Tempestade", "Domínio da Guerra"],
+    "features": [
+      {
+        "name": "Conjuração",
+        "description": "Você conjura magias através de orações e símbolos sagrados.",
+        "level": 1,
+        "isPassive": true
+      },
+      {
+        "name": "Domínio Divino",
+        "description": "Você escolhe um domínio relacionado ao seu deus.",
+        "level": 1,
+        "isPassive": false
+      },
+      {
+        "name": "Canalizar Divindade",
+        "description": "Você pode canalizar energia divina para efeitos poderosos.",
+        "level": 2,
+        "isPassive": false
+      },
+      {
+        "name": "Destruir Mortos-Vivos",
+        "description": "Você pode usar Canalizar Divindade para destruir mortos-vivos.",
+        "level": 5,
+        "isPassive": false
+      },
+      {
+        "name": "Magia Divina",
+        "description": "Você pode preparar magias de domínio adicionais.",
+        "level": 6,
+        "isPassive": true
+      },
+      {
+        "name": "Destruir Mortos-Vivos",
+        "description": "Sua habilidade de destruir mortos-vivos melhora.",
+        "level": 8,
+        "isPassive": true
+      },
+      {
+        "name": "Magia Divina",
+        "description": "Você pode preparar mais magias de domínio.",
+        "level": 14,
+        "isPassive": true
+      },
+      {
+        "name": "Intervenção Divina",
+        "description": "Você pode pedir ajuda direta ao seu deus.",
+        "level": 20,
+        "isPassive": false
+      }
+    ],
+    "spellcasting": {
+      "ability": "Sabedoria",
+      "spellSaveDC": 8,
+      "spellAttackBonus": 0,
+      "cantripsKnown": [3, 3, 3, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5],
+      "spellsKnown": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      "spellSlots": [
+        [2, 0, 0, 0, 0, 0, 0, 0, 0],
+        [3, 0, 0, 0, 0, 0, 0, 0, 0],
+        [3, 0, 0, 0, 0, 0, 0, 0, 0],
+        [3, 2, 0, 0, 0, 0, 0, 0, 0],
+        [3, 2, 0, 0, 0, 0, 0, 0, 0],
+        [3, 3, 0, 0, 0, 0, 0, 0, 0],
+        [3, 3, 1, 0, 0, 0, 0, 0, 0],
+        [3, 3, 1, 0, 0, 0, 0, 0, 0],
+        [3, 3, 2, 0, 0, 0, 0, 0, 0],
+        [4, 3, 2, 0, 0, 0, 0, 0, 0],
+        [4, 3, 2, 1, 0, 0, 0, 0, 0],
+        [4, 3, 2, 1, 0, 0, 0, 0, 0],
+        [4, 3, 2, 1, 1, 0, 0, 0, 0],
+        [4, 3, 2, 1, 1, 0, 0, 0, 0],
+        [4, 3, 2, 1, 1, 1, 0, 0, 0],
+        [4, 3, 2, 1, 1, 1, 0, 0, 0],
+        [4, 3, 2, 1, 1, 1, 1, 0, 0],
+        [4, 3, 2, 1, 1, 1, 1, 0, 0],
+        [4, 3, 2, 2, 1, 1, 1, 1, 0],
+        [4, 3, 2, 2, 2, 1, 1, 1, 1]
+      ]
+    }
+  },
+  {
+    "name": "Druida",
+    "description": "Um sacerdote da natureza que canaliza o poder elemental.",
+    "hitDie": 8,
+    "primaryAbility": "Sabedoria",
+    "secondaryAbility": "Constituição",
+    "suggestedBackground": "Eremita",
+    "flavorText": "Você é um guardião da natureza, capaz de se transformar em animais e conjurar magias que controlam os elementos.",
+    "proficiency": {
+      "armor": ["Armaduras leves", "Armaduras médias", "Escudos"],
+      "weapons": ["Clava", "Adaga", "Dardo", "Azagaia", "Besta leve", "Maça", "Maça de guerra", "Arco curto", "Cimitarra", "Lança", "Besta de mão", "Tridente"],
+      "tools": ["Kit de herbalismo"],
+      "savingThrows": ["Inteligência", "Sabedoria"],
+      "skills": [
+        "Adestrar Animais",
+        "Arcanismo",
+        "Intuição",
+        "Medicina",
+        "Natureza",
+        "Percepção",
+        "Religião",
+        "Sobrevivência"
+      ],
+      "skillChoices": 2
+    },
+    "startingEquipment": [
+      "(a) um escudo de madeira ou (b) qualquer arma simples",
+      "(a) um cimitarra ou (b) qualquer arma corpo-a-corpo simples",
+      "Armadura de couro, um arco de caça e uma aljava com 20 flechas",
+      "(a) um pacote de explorador ou (b) um pacote de estudioso",
+      "Um kit de herbalismo e um símbolo druídico"
+    ],
+    "subclasses": ["Círculo da Terra", "Círculo da Lua"],
+    "features": [
+      {
+        "name": "Conjuração",
+        "description": "Você conjura magias através de símbolos druídicos e conexão com a natureza.",
+        "level": 1,
+        "isPassive": true
+      },
+      {
+        "name": "Círculo Druídico",
+        "description": "Você escolhe um círculo que reflete sua conexão com a natureza.",
+        "level": 2,
+        "isPassive": false
+      },
+      {
+        "name": "Forma Selvagem",
+        "description": "Você pode usar uma ação para se transformar em uma besta.",
+        "level": 2,
+        "isPassive": false
+      },
+      {
+        "name": "Forma Selvagem",
+        "description": "Você pode se transformar em bestas mais poderosas.",
+        "level": 4,
+        "isPassive": true
+      },
+      {
+        "name": "Forma Selvagem",
+        "description": "Você pode se transformar em bestas ainda mais poderosas.",
+        "level": 8,
+        "isPassive": true
+      },
+      {
+        "name": "Forma Selvagem",
+        "description": "Você pode se transformar em bestas elementais.",
+        "level": 10,
+        "isPassive": true
+      },
+      {
+        "name": "Forma Selvagem",
+        "description": "Você pode se transformar em bestas lendárias.",
+        "level": 12,
+        "isPassive": true
+      },
+      {
+        "name": "Forma Selvagem",
+        "description": "Você pode se transformar em bestas míticas.",
+        "level": 16,
+        "isPassive": true
+      },
+      {
+        "name": "Forma Selvagem",
+        "description": "Você pode se transformar em qualquer besta.",
+        "level": 20,
+        "isPassive": true
+      }
+    ],
+    "spellcasting": {
+      "ability": "Sabedoria",
+      "spellSaveDC": 8,
+      "spellAttackBonus": 0,
+      "cantripsKnown": [2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+      "spellsKnown": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      "spellSlots": [
+        [2, 0, 0, 0, 0, 0, 0, 0, 0],
+        [3, 0, 0, 0, 0, 0, 0, 0, 0],
+        [3, 0, 0, 0, 0, 0, 0, 0, 0],
+        [3, 2, 0, 0, 0, 0, 0, 0, 0],
+        [3, 2, 0, 0, 0, 0, 0, 0, 0],
+        [3, 3, 0, 0, 0, 0, 0, 0, 0],
+        [3, 3, 1, 0, 0, 0, 0, 0, 0],
+        [3, 3, 1, 0, 0, 0, 0, 0, 0],
+        [3, 3, 2, 0, 0, 0, 0, 0, 0],
+        [4, 3, 2, 0, 0, 0, 0, 0, 0],
+        [4, 3, 2, 1, 0, 0, 0, 0, 0],
+        [4, 3, 2, 1, 0, 0, 0, 0, 0],
+        [4, 3, 2, 1, 1, 0, 0, 0, 0],
+        [4, 3, 2, 1, 1, 0, 0, 0, 0],
+        [4, 3, 2, 1, 1, 1, 0, 0, 0],
+        [4, 3, 2, 1, 1, 1, 0, 0, 0],
+        [4, 3, 2, 1, 1, 1, 1, 0, 0],
+        [4, 3, 2, 1, 1, 1, 1, 0, 0],
+        [4, 3, 2, 2, 1, 1, 1, 1, 0],
+        [4, 3, 2, 2, 2, 1, 1, 1, 1]
+      ]
+    }
+  },
+  {
+    "name": "Guerreiro",
+    "description": "Um mestre das armas e da guerra, especialista em combate.",
+    "hitDie": 10,
+    "primaryAbility": "Força ou Destreza",
+    "secondaryAbility": "Constituição",
+    "suggestedBackground": "Soldado",
+    "flavorText": "Você é um especialista em combate, treinado para usar qualquer arma e armadura com maestria.",
+    "proficiency": {
+      "armor": ["Todas as armaduras", "Escudos"],
+      "weapons": ["Armas simples", "Armas marciais"],
+      "tools": [],
+      "savingThrows": ["Força", "Constituição"],
+      "skills": [
+        "Acrobacia",
+        "Adestrar Animais",
+        "Atletismo",
+        "História",
+        "Insight",
+        "Intimidação",
+        "Percepção",
+        "Sobrevivência"
+      ],
+      "skillChoices": 2
+    },
+    "startingEquipment": [
+      "(a) armadura de placas ou (b) armadura de couro batido, escudo longo e espada longa",
+      "(a) uma besta pesada e 20 virotes ou (b) duas azagaias",
+      "(a) um pacote de explorador ou (b) um pacote de estudioso",
+      "Um símbolo sagrado"
+    ],
+    "subclasses": ["Campeão", "Mestre da Batalha", "Cavaleiro Éldrico"],
+    "features": [
+      {
+        "name": "Estilo de Luta",
+        "description": "Você adota um estilo particular de luta como sua especialidade.",
+        "level": 1,
+        "isPassive": true
+      },
+      {
+        "name": "Segunda Respiração",
+        "description": "Você tem uma reserva limitada de resistência que pode usar para se proteger do cansaço.",
+        "level": 1,
+        "isPassive": false
+      },
+      {
+        "name": "Ação Surge",
+        "description": "Você pode empurrar-se além dos seus limites normais por um momento.",
+        "level": 2,
+        "isPassive": false
+      },
+      {
+        "name": "Arquétipo Marcial",
+        "description": "Você escolhe um arquétipo que reflete seu estilo de luta.",
+        "level": 3,
+        "isPassive": false
+      },
+      {
+        "name": "Ataque Extra",
+        "description": "Você pode atacar duas vezes, ao invés de uma, sempre que você realizar a ação de Ataque no seu turno.",
+        "level": 5,
+        "isPassive": true
+      },
+      {
+        "name": "Ação Surge",
+        "description": "Você pode usar Ação Surge duas vezes antes de um descanso.",
+        "level": 17,
+        "isPassive": true
+      },
+      {
+        "name": "Ataque Extra",
+        "description": "Você pode atacar três vezes, ao invés de duas, sempre que você realizar a ação de Ataque no seu turno.",
+        "level": 20,
+        "isPassive": true
+      }
+    ],
+    "spellcasting": null
+  },
+  {
+    "name": "Ladino",
+    "description": "Um especialista em furtividade e precisão, mestre das sombras.",
+    "hitDie": 8,
+    "primaryAbility": "Destreza",
+    "secondaryAbility": "Inteligência",
+    "suggestedBackground": "Criminoso",
+    "flavorText": "Você é um especialista em furtividade, capaz de se mover silenciosamente e causar dano devastador com ataques precisos.",
+    "proficiency": {
+      "armor": ["Armaduras leves"],
+      "weapons": ["Armas simples", "Rapieira", "Espada curta", "Besta de mão", "Besta leve"],
+      "tools": ["Ferramentas de ladrão"],
+      "savingThrows": ["Destreza", "Inteligência"],
+      "skills": [
+        "Acrobacia",
+        "Atletismo",
+        "Decepção",
+        "Furtividade",
+        "Intimidação",
+        "Investigação",
+        "Percepção",
+        "Prestidigitação",
+        "Sobrevivência"
+      ],
+      "skillChoices": 4
+    },
+    "startingEquipment": [
+      "(a) uma rapieira ou (b) uma espada curta",
+      "(a) um arco curto e uma aljava com 20 flechas ou (b) uma espada curta",
+      "(a) um pacote de ladrão ou (b) um pacote de explorador",
+      "Armadura de couro, duas adagas e ferramentas de ladrão"
+    ],
+    "subclasses": ["Assassino", "Arcano", "Patrulheiro"],
+    "features": [
+      {
+        "name": "Perícias",
+        "description": "Você adquire proficiência com quatro perícias à sua escolha.",
+        "level": 1,
+        "isPassive": true
+      },
+      {
+        "name": "Ataque Furtivo",
+        "description": "Você sabe como atacar sutilmente e explorar as fraquezas de um inimigo.",
+        "level": 1,
+        "isPassive": true
+      },
+      {
+        "name": "Perícias",
+        "description": "Você adquire proficiência com mais duas perícias à sua escolha.",
+        "level": 6,
+        "isPassive": true
+      },
+      {
+        "name": "Esquiva",
+        "description": "Você pode usar sua ação bônus para se mover até metade do seu deslocamento.",
+        "level": 2,
+        "isPassive": false
+      },
+      {
+        "name": "Arquétipo Ladino",
+        "description": "Você escolhe um arquétipo que reflete sua natureza como ladino.",
+        "level": 3,
+        "isPassive": false
+      },
+      {
+        "name": "Ataque Furtivo",
+        "description": "Seu dano de ataque furtivo aumenta.",
+        "level": 3,
+        "isPassive": true
+      },
+      {
+        "name": "Ataque Furtivo",
+        "description": "Seu dano de ataque furtivo aumenta ainda mais.",
+        "level": 5,
+        "isPassive": true
+      },
+      {
+        "name": "Ataque Furtivo",
+        "description": "Seu dano de ataque furtivo aumenta ainda mais.",
+        "level": 7,
+        "isPassive": true
+      },
+      {
+        "name": "Ataque Furtivo",
+        "description": "Seu dano de ataque furtivo aumenta ainda mais.",
+        "level": 9,
+        "isPassive": true
+      },
+      {
+        "name": "Ataque Furtivo",
+        "description": "Seu dano de ataque furtivo aumenta ainda mais.",
+        "level": 11,
+        "isPassive": true
+      },
+      {
+        "name": "Ataque Furtivo",
+        "description": "Seu dano de ataque furtivo aumenta ainda mais.",
+        "level": 13,
+        "isPassive": true
+      },
+      {
+        "name": "Ataque Furtivo",
+        "description": "Seu dano de ataque furtivo aumenta ainda mais.",
+        "level": 15,
+        "isPassive": true
+      },
+      {
+        "name": "Ataque Furtivo",
+        "description": "Seu dano de ataque furtivo aumenta ainda mais.",
+        "level": 17,
+        "isPassive": true
+      },
+      {
+        "name": "Ataque Furtivo",
+        "description": "Seu dano de ataque furtivo aumenta ainda mais.",
+        "level": 19,
+        "isPassive": true
+      },
+      {
+        "name": "Perícias",
+        "description": "Você adquire proficiência com mais duas perícias à sua escolha.",
+        "level": 11,
+        "isPassive": true
+      },
+      {
+        "name": "Perícias",
+        "description": "Você adquire proficiência com mais duas perícias à sua escolha.",
+        "level": 20,
+        "isPassive": true
+      }
+    ],
+    "spellcasting": null
+  },
+  {
+    "name": "Mago",
+    "description": "Um estudioso da magia arcana, mestre dos feitiços.",
+    "hitDie": 6,
+    "primaryAbility": "Inteligência",
+    "secondaryAbility": "Constituição",
+    "suggestedBackground": "Sábio",
+    "flavorText": "Você é um estudioso da magia arcana, capaz de aprender e conjurar uma vasta gama de feitiços através de estudo e pesquisa.",
+    "proficiency": {
+      "armor": [],
+      "weapons": ["Adaga", "Dardo", "Besta leve", "Besta de mão", "Maça", "Cajado"],
+      "tools": [],
+      "savingThrows": ["Inteligência", "Sabedoria"],
+      "skills": [
+        "Arcanismo",
+        "História",
+        "Insight",
+        "Investigação",
+        "Medicina",
+        "Religião"
+      ],
+      "skillChoices": 2
+    },
+    "startingEquipment": [
+      "(a) uma maça ou (b) uma adaga",
+      "(a) uma besta leve e 20 virotes ou (b) qualquer arma simples",
+      "(a) um pacote de estudioso ou (b) um pacote de explorador",
+      "Um componente de conjuração e um livro de magias"
+    ],
+    "subclasses": ["Escola de Abjuração", "Escola de Conjuração", "Escola de Divinação", "Escola de Encantamento", "Escola de Evocação", "Escola de Ilusão", "Escola de Necromancia", "Escola de Transmutação"],
+    "features": [
+      {
+        "name": "Conjuração",
+        "description": "Você conjura magias através de componentes materiais e estudo arcano.",
+        "level": 1,
+        "isPassive": true
+      },
+      {
+        "name": "Livro de Magias",
+        "description": "Você possui um livro de magias contendo feitiços que você aprendeu.",
+        "level": 1,
+        "isPassive": true
+      },
+      {
+        "name": "Recuperação Arcana",
+        "description": "Você aprendeu a recuperar parte de sua energia mágica estudando seu livro de magias.",
+        "level": 1,
+        "isPassive": false
+      },
+      {
+        "name": "Tradição Arcana",
+        "description": "Você escolhe uma tradição arcana que reflete sua abordagem à magia.",
+        "level": 2,
+        "isPassive": false
+      },
+      {
+        "name": "Recuperação Arcana",
+        "description": "Você pode recuperar mais energia mágica.",
+        "level": 2,
+        "isPassive": true
+      },
+      {
+        "name": "Recuperação Arcana",
+        "description": "Você pode recuperar ainda mais energia mágica.",
+        "level": 3,
+        "isPassive": true
+      },
+      {
+        "name": "Recuperação Arcana",
+        "description": "Você pode recuperar ainda mais energia mágica.",
+        "level": 4,
+        "isPassive": true
+      },
+      {
+        "name": "Recuperação Arcana",
+        "description": "Você pode recuperar ainda mais energia mágica.",
+        "level": 5,
+        "isPassive": true
+      },
+      {
+        "name": "Recuperação Arcana",
+        "description": "Você pode recuperar ainda mais energia mágica.",
+        "level": 6,
+        "isPassive": true
+      },
+      {
+        "name": "Recuperação Arcana",
+        "description": "Você pode recuperar ainda mais energia mágica.",
+        "level": 7,
+        "isPassive": true
+      },
+      {
+        "name": "Recuperação Arcana",
+        "description": "Você pode recuperar ainda mais energia mágica.",
+        "level": 8,
+        "isPassive": true
+      },
+      {
+        "name": "Recuperação Arcana",
+        "description": "Você pode recuperar ainda mais energia mágica.",
+        "level": 9,
+        "isPassive": true
+      },
+      {
+        "name": "Recuperação Arcana",
+        "description": "Você pode recuperar ainda mais energia mágica.",
+        "level": 10,
+        "isPassive": true
+      },
+      {
+        "name": "Recuperação Arcana",
+        "description": "Você pode recuperar ainda mais energia mágica.",
+        "level": 11,
+        "isPassive": true
+      },
+      {
+        "name": "Recuperação Arcana",
+        "description": "Você pode recuperar ainda mais energia mágica.",
+        "level": 12,
+        "isPassive": true
+      },
+      {
+        "name": "Recuperação Arcana",
+        "description": "Você pode recuperar ainda mais energia mágica.",
+        "level": 13,
+        "isPassive": true
+      },
+      {
+        "name": "Recuperação Arcana",
+        "description": "Você pode recuperar ainda mais energia mágica.",
+        "level": 14,
+        "isPassive": true
+      },
+      {
+        "name": "Recuperação Arcana",
+        "description": "Você pode recuperar ainda mais energia mágica.",
+        "level": 15,
+        "isPassive": true
+      },
+      {
+        "name": "Recuperação Arcana",
+        "description": "Você pode recuperar ainda mais energia mágica.",
+        "level": 16,
+        "isPassive": true
+      },
+      {
+        "name": "Recuperação Arcana",
+        "description": "Você pode recuperar ainda mais energia mágica.",
+        "level": 17,
+        "isPassive": true
+      },
+      {
+        "name": "Recuperação Arcana",
+        "description": "Você pode recuperar ainda mais energia mágica.",
+        "level": 18,
+        "isPassive": true
+      },
+      {
+        "name": "Recuperação Arcana",
+        "description": "Você pode recuperar ainda mais energia mágica.",
+        "level": 19,
+        "isPassive": true
+      },
+      {
+        "name": "Magia Significativa",
+        "description": "Você pode lançar uma magia de 3º nível sem gastar um slot.",
+        "level": 20,
+        "isPassive": false
+      }
+    ],
+    "spellcasting": {
+      "ability": "Inteligência",
+      "spellSaveDC": 8,
+      "spellAttackBonus": 0,
+      "cantripsKnown": [3, 3, 3, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5],
+      "spellsKnown": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      "spellSlots": [
+        [2, 0, 0, 0, 0, 0, 0, 0, 0],
+        [3, 0, 0, 0, 0, 0, 0, 0, 0],
+        [3, 0, 0, 0, 0, 0, 0, 0, 0],
+        [3, 2, 0, 0, 0, 0, 0, 0, 0],
+        [3, 2, 0, 0, 0, 0, 0, 0, 0],
+        [3, 3, 0, 0, 0, 0, 0, 0, 0],
+        [3, 3, 1, 0, 0, 0, 0, 0, 0],
+        [3, 3, 1, 0, 0, 0, 0, 0, 0],
+        [3, 3, 2, 0, 0, 0, 0, 0, 0],
+        [4, 3, 2, 0, 0, 0, 0, 0, 0],
+        [4, 3, 2, 1, 0, 0, 0, 0, 0],
+        [4, 3, 2, 1, 0, 0, 0, 0, 0],
+        [4, 3, 2, 1, 1, 0, 0, 0, 0],
+        [4, 3, 2, 1, 1, 0, 0, 0, 0],
+        [4, 3, 2, 1, 1, 1, 0, 0, 0],
+        [4, 3, 2, 1, 1, 1, 0, 0, 0],
+        [4, 3, 2, 1, 1, 1, 1, 0, 0],
+        [4, 3, 2, 1, 1, 1, 1, 0, 0],
+        [4, 3, 2, 2, 1, 1, 1, 1, 0],
+        [4, 3, 2, 2, 2, 1, 1, 1, 1]
+      ]
+    }
+  },
+  {
+    "name": "Monge",
+    "description": "Um mestre das artes marciais e da disciplina espiritual.",
+    "hitDie": 8,
+    "primaryAbility": "Destreza",
+    "secondaryAbility": "Sabedoria",
+    "suggestedBackground": "Eremita",
+    "flavorText": "Você é um mestre das artes marciais, capaz de usar seu corpo como arma e canalizar energia espiritual.",
+    "proficiency": {
+      "armor": [],
+      "weapons": ["Armas simples", "Espada curta"],
+      "tools": ["Um tipo de kit de artesão ou instrumento musical à sua escolha"],
+      "savingThrows": ["Força", "Destreza"],
+      "skills": [
+        "Acrobacia",
+        "Atletismo",
+        "História",
+        "Insight",
+        "Religião",
+        "Furtividade"
+      ],
+      "skillChoices": 2
+    },
+    "startingEquipment": [
+      "(a) uma espada curta ou (b) qualquer arma simples",
+      "(a) um pacote de explorador ou (b) um pacote de estudioso",
+      "10 dardos"
+    ],
+    "subclasses": ["Caminho do Punho Aberto", "Caminho das Sombras", "Caminho dos Quatro Elementos"],
+    "features": [
+      {
+        "name": "Defesa sem Armadura",
+        "description": "Quando você não estiver vestindo qualquer armadura, sua Classe de Armadura será 10 + seu modificador de Destreza + seu modificador de Sabedoria.",
+        "level": 1,
+        "isPassive": true
+      },
+      {
+        "name": "Artes Marciais",
+        "description": "Você pode usar Destreza em vez de Força para ataques desarmados e armas de monge.",
+        "level": 1,
+        "isPassive": true
+      },
+      {
+        "name": "Ki",
+        "description": "Você pode usar pontos de ki para realizar técnicas especiais.",
+        "level": 2,
+        "isPassive": false
+      },
+      {
+        "name": "Movimento sem Armadura",
+        "description": "Seu deslocamento aumenta enquanto você não estiver vestindo armadura.",
+        "level": 2,
+        "isPassive": true
+      },
+      {
+        "name": "Tradição Monástica",
+        "description": "Você escolhe uma tradição que reflete sua abordagem às artes marciais.",
+        "level": 3,
+        "isPassive": false
+      },
+      {
+        "name": "Deflexão de Projéteis",
+        "description": "Você pode usar sua reação para desviar ou capturar projéteis.",
+        "level": 3,
+        "isPassive": false
+      },
+      {
+        "name": "Ataque Extra",
+        "description": "Você pode atacar duas vezes, ao invés de uma, sempre que você realizar a ação de Ataque no seu turno.",
+        "level": 5,
+        "isPassive": true
+      },
+      {
+        "name": "Golpe Atordoante",
+        "description": "Você pode usar sua ação para tentar atordoar uma criatura.",
+        "level": 5,
+        "isPassive": false
+      },
+      {
+        "name": "Evasão",
+        "description": "Você pode se mover rapidamente para evitar certos efeitos de área.",
+        "level": 7,
+        "isPassive": true
+      },
+      {
+        "name": "Paz Mental",
+        "description": "Você pode entrar em um estado de paz mental que o protege de certos efeitos.",
+        "level": 7,
+        "isPassive": false
+      },
+      {
+        "name": "Movimento sem Armadura",
+        "description": "Seu deslocamento aumenta ainda mais.",
+        "level": 6,
+        "isPassive": true
+      },
+      {
+        "name": "Movimento sem Armadura",
+        "description": "Seu deslocamento aumenta ainda mais.",
+        "level": 10,
+        "isPassive": true
+      },
+      {
+        "name": "Movimento sem Armadura",
+        "description": "Seu deslocamento aumenta ainda mais.",
+        "level": 14,
+        "isPassive": true
+      },
+      {
+        "name": "Movimento sem Armadura",
+        "description": "Seu deslocamento aumenta ainda mais.",
+        "level": 18,
+        "isPassive": true
+      },
+      {
+        "name": "Perfeição Corporal",
+        "description": "Você alcança a perfeição física e espiritual.",
+        "level": 20,
+        "isPassive": true
+      }
+    ],
+    "spellcasting": null
+  },
+  {
+    "name": "Paladino",
+    "description": "Um guerreiro sagrado que combina combate com magia divina.",
+    "hitDie": 10,
+    "primaryAbility": "Força",
+    "secondaryAbility": "Carisma",
+    "suggestedBackground": "Nobre",
+    "flavorText": "Você é um guerreiro sagrado, dedicado a uma causa maior e capaz de canalizar poder divino através de suas ações.",
+    "proficiency": {
+      "armor": ["Todas as armaduras", "Escudos"],
+      "weapons": ["Armas simples", "Armas marciais"],
+      "tools": [],
+      "savingThrows": ["Sabedoria", "Carisma"],
+      "skills": [
+        "Atletismo",
+        "Insight",
+        "Intimidação",
+        "Medicina",
+        "Persuasão",
+        "Religião"
+      ],
+      "skillChoices": 2
+    },
+    "startingEquipment": [
+      "(a) uma arma marcial e um escudo ou (b) duas armas marciais",
+      "(a) cinco azagaias ou (b) qualquer arma simples corpo-a-corpo",
+      "(a) um pacote de sacerdote ou (b) um pacote de explorador",
+      "Armadura de placas e um símbolo sagrado"
+    ],
+    "subclasses": ["Juramento de Devoção", "Juramento dos Anciões", "Juramento de Vingança"],
+    "features": [
+      {
+        "name": "Conjuração",
+        "description": "Você conjura magias através de orações e símbolos sagrados.",
+        "level": 2,
+        "isPassive": true
+      },
+      {
+        "name": "Estilo de Luta",
+        "description": "Você adota um estilo particular de luta como sua especialidade.",
+        "level": 2,
+        "isPassive": true
+      },
+      {
+        "name": "Ataque Divino",
+        "description": "Você pode canalizar energia divina através de suas armas.",
+        "level": 2,
+        "isPassive": false
+      },
+      {
+        "name": "Juramento Sagrado",
+        "description": "Você faz um juramento que define sua natureza como paladino.",
+        "level": 3,
+        "isPassive": false
+      },
+      {
+        "name": "Ataque Extra",
+        "description": "Você pode atacar duas vezes, ao invés de uma, sempre que você realizar a ação de Ataque no seu turno.",
+        "level": 5,
+        "isPassive": true
+      },
+      {
+        "name": "Aura de Proteção",
+        "description": "Você e aliados próximos recebem bônus em testes de resistência.",
+        "level": 6,
+        "isPassive": true
+      },
+      {
+        "name": "Aura de Coragem",
+        "description": "Você e aliados próximos são imunes ao medo.",
+        "level": 10,
+        "isPassive": true
+      },
+      {
+        "name": "Aura de Coragem",
+        "description": "Você e aliados próximos são imunes ao medo.",
+        "level": 18,
+        "isPassive": true
+      },
+      {
+        "name": "Aura de Coragem",
+        "description": "Você e aliados próximos são imunes ao medo.",
+        "level": 20,
+        "isPassive": true
+      }
+    ],
+    "spellcasting": {
+      "ability": "Carisma",
+      "spellSaveDC": 8,
+      "spellAttackBonus": 0,
+      "cantripsKnown": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      "spellsKnown": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      "spellSlots": [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0]
+      ]
+    }
+  },
+  {
+    "name": "Patrulheiro",
+    "description": "Um guardião da natureza e especialista em sobrevivência.",
+    "hitDie": 10,
+    "primaryAbility": "Destreza",
+    "secondaryAbility": "Sabedoria",
+    "suggestedBackground": "Forasteiro",
+    "flavorText": "Você é um guardião das fronteiras, especialista em sobrevivência e combate à distância.",
+    "proficiency": {
+      "armor": ["Armaduras leves", "Armaduras médias", "Escudos"],
+      "weapons": ["Armas simples", "Armas marciais"],
+      "tools": [],
+      "savingThrows": ["Força", "Destreza"],
+      "skills": [
+        "Adestrar Animais",
+        "Atletismo",
+        "Insight",
+        "Investigação",
+        "Natureza",
+        "Percepção",
+        "Furtividade",
+        "Sobrevivência"
+      ],
+      "skillChoices": 3
+    },
+    "startingEquipment": [
+      "(a) armadura de couro batido ou (b) armadura de couro",
+      "(a) duas espadas curtas ou (b) duas armas simples corpo-a-corpo",
+      "(a) um pacote de explorador ou (b) um pacote de estudioso",
+      "Um arco longo e uma aljava com 20 flechas"
+    ],
+    "subclasses": ["Conclave da Besta", "Conclave do Caçador"],
+    "features": [
+      {
+        "name": "Favorito",
+        "description": "Você escolhe um tipo de criatura favorita para caçar.",
+        "level": 1,
+        "isPassive": true
+      },
+      {
+        "name": "Explorador Natural",
+        "description": "Você é particularmente familiarizado com um tipo de ambiente natural.",
+        "level": 1,
+        "isPassive": true
+      },
+      {
+        "name": "Conclave",
+        "description": "Você escolhe um conclave que reflete sua natureza como patrulheiro.",
+        "level": 3,
+        "isPassive": false
+      },
+      {
+        "name": "Ataque Extra",
+        "description": "Você pode atacar duas vezes, ao invés de uma, sempre que você realizar a ação de Ataque no seu turno.",
+        "level": 5,
+        "isPassive": true
+      }
+    ],
+    "spellcasting": {
+      "ability": "Sabedoria",
+      "spellSaveDC": 8,
+      "spellAttackBonus": 0,
+      "cantripsKnown": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      "spellsKnown": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      "spellSlots": [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0]
+      ]
+    }
+  },
+  {
+    "name": "Feiticeiro",
+    "description": "Um conjurador que canaliza magia através de linhagem mágica.",
+    "hitDie": 6,
+    "primaryAbility": "Carisma",
+    "secondaryAbility": "Constituição",
+    "suggestedBackground": "Órfão",
+    "flavorText": "Você é um conjurador que canaliza magia através de sua linhagem mágica, seja ela draconiana, selvagem ou outra origem sobrenatural.",
+    "proficiency": {
+      "armor": [],
+      "weapons": ["Adaga", "Dardo", "Besta leve", "Besta de mão", "Maça", "Cajado"],
+      "tools": [],
+      "savingThrows": ["Constituição", "Carisma"],
+      "skills": [
+        "Arcanismo",
+        "Decepção",
+        "Insight",
+        "Intimidação",
+        "Persuasão",
+        "Religião"
+      ],
+      "skillChoices": 2
+    },
+    "startingEquipment": [
+      "(a) uma maça ou (b) uma adaga",
+      "(a) uma besta leve e 20 virotes ou (b) qualquer arma simples",
+      "(a) um pacote de estudioso ou (b) um pacote de explorador",
+      "Dois componentes de conjuração"
+    ],
+    "subclasses": ["Linhagem Draconiana", "Magia Selvagem"],
+    "features": [
+      {
+        "name": "Conjuração",
+        "description": "Você conjura magias através de sua linhagem mágica.",
+        "level": 1,
+        "isPassive": true
+      },
+      {
+        "name": "Linhagem Mágica",
+        "description": "Você escolhe uma linhagem que reflete a origem da sua magia.",
+        "level": 1,
+        "isPassive": false
+      },
+      {
+        "name": "Pontos de Magia",
+        "description": "Você pode usar pontos de magia para criar slots de magia.",
+        "level": 2,
+        "isPassive": false
+      },
+      {
+        "name": "Metamagia",
+        "description": "Você aprende técnicas para modificar suas magias.",
+        "level": 3,
+        "isPassive": false
+      }
+    ],
+    "spellcasting": {
+      "ability": "Carisma",
+      "spellSaveDC": 8,
+      "spellAttackBonus": 0,
+      "cantripsKnown": [4, 4, 4, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6],
+      "spellsKnown": [2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+      "spellSlots": [
+        [2, 0, 0, 0, 0, 0, 0, 0, 0],
+        [3, 0, 0, 0, 0, 0, 0, 0, 0],
+        [3, 0, 0, 0, 0, 0, 0, 0, 0],
+        [3, 2, 0, 0, 0, 0, 0, 0, 0],
+        [3, 2, 0, 0, 0, 0, 0, 0, 0],
+        [3, 3, 0, 0, 0, 0, 0, 0, 0],
+        [3, 3, 1, 0, 0, 0, 0, 0, 0],
+        [3, 3, 1, 0, 0, 0, 0, 0, 0],
+        [3, 3, 2, 0, 0, 0, 0, 0, 0],
+        [4, 3, 2, 0, 0, 0, 0, 0, 0],
+        [4, 3, 2, 1, 0, 0, 0, 0, 0],
+        [4, 3, 2, 1, 0, 0, 0, 0, 0],
+        [4, 3, 2, 1, 1, 0, 0, 0, 0],
+        [4, 3, 2, 1, 1, 0, 0, 0, 0],
+        [4, 3, 2, 1, 1, 1, 0, 0, 0],
+        [4, 3, 2, 1, 1, 1, 0, 0, 0],
+        [4, 3, 2, 1, 1, 1, 1, 0, 0],
+        [4, 3, 2, 1, 1, 1, 1, 0, 0],
+        [4, 3, 2, 2, 1, 1, 1, 1, 0],
+        [4, 3, 2, 2, 2, 1, 1, 1, 1]
+      ]
+    }
+  },
+  {
+    "name": "Bruxo",
+    "description": "Um conjurador que obtém poder através de pactos com entidades sobrenaturais.",
+    "hitDie": 8,
+    "primaryAbility": "Carisma",
+    "secondaryAbility": "Constituição",
+    "suggestedBackground": "Charlatão",
+    "flavorText": "Você é um conjurador que obtém poder através de pactos com entidades sobrenaturais, seja um patrono celestial, infernal ou outro ser poderoso.",
+    "proficiency": {
+      "armor": ["Armaduras leves"],
+      "weapons": ["Armas simples"],
+      "tools": [],
+      "savingThrows": ["Sabedoria", "Carisma"],
+      "skills": [
+        "Arcanismo",
+        "Decepção",
+        "História",
+        "Intimidação",
+        "Investigação",
+        "Natureza",
+        "Religião"
+      ],
+      "skillChoices": 2
+    },
+    "startingEquipment": [
+      "(a) uma maça ou (b) uma adaga",
+      "(a) uma besta leve e 20 virotes ou (b) qualquer arma simples",
+      "(a) um pacote de estudioso ou (b) um pacote de explorador",
+      "Armadura de couro, qualquer arma simples e dois componentes de conjuração"
+    ],
+    "subclasses": ["Patrono Celestial", "Patrono Infernal", "Patrono das Profundezas"],
+    "features": [
+      {
+        "name": "Conjuração",
+        "description": "Você conjura magias através de pactos com entidades sobrenaturais.",
+        "level": 1,
+        "isPassive": true
+      },
+      {
+        "name": "Patrono Sobrenatural",
+        "description": "Você escolhe um patrono que reflete a origem da sua magia.",
+        "level": 1,
+        "isPassive": false
+      },
+      {
+        "name": "Invocações Místicas",
+        "description": "Você aprende invocações que concedem poderes especiais.",
+        "level": 2,
+        "isPassive": false
+      }
+    ],
+    "spellcasting": {
+      "ability": "Carisma",
+      "spellSaveDC": 8,
+      "spellAttackBonus": 0,
+      "cantripsKnown": [2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+      "spellsKnown": [2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+      "spellSlots": [
+        [1, 0, 0, 0, 0, 0, 0, 0, 0],
+        [2, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 2, 0, 0, 0, 0, 0, 0, 0],
+        [0, 2, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 2, 0, 0, 0, 0, 0, 0],
+        [0, 0, 2, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 2, 0, 0, 0, 0, 0],
+        [0, 0, 0, 2, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 2, 0, 0, 0, 0],
+        [0, 0, 0, 0, 2, 0, 0, 0, 0],
+        [0, 0, 0, 0, 3, 0, 0, 0, 0],
+        [0, 0, 0, 0, 3, 0, 0, 0, 0],
+        [0, 0, 0, 0, 3, 0, 0, 0, 0],
+        [0, 0, 0, 0, 3, 0, 0, 0, 0],
+        [0, 0, 0, 0, 3, 0, 0, 0, 0],
+        [0, 0, 0, 0, 3, 0, 0, 0, 0],
+        [0, 0, 0, 0, 4, 0, 0, 0, 0],
+        [0, 0, 0, 0, 4, 0, 0, 0, 0],
+        [0, 0, 0, 0, 4, 0, 0, 0, 0],
+        [0, 0, 0, 0, 4, 0, 0, 0, 0]
+      ]
+    }
+  },
+  {
+    "name": "Artífice",
+    "description": "Um inventor que combina magia com tecnologia.",
+    "hitDie": 8,
+    "primaryAbility": "Inteligência",
+    "secondaryAbility": "Constituição",
+    "suggestedBackground": "Guilda de Artesão",
+    "flavorText": "Você é um inventor que combina magia com tecnologia, capaz de criar itens mágicos e infundir objetos com poder arcano.",
+    "proficiency": {
+      "armor": ["Armaduras leves", "Armaduras médias", "Escudos"],
+      "weapons": ["Armas simples"],
+      "tools": ["Ferramentas de artesão", "Ferramentas de ladrão"],
+      "savingThrows": ["Constituição", "Inteligência"],
+      "skills": [
+        "Arcanismo",
+        "História",
+        "Investigação",
+        "Medicina",
+        "Natureza",
+        "Percepção",
+        "Religião",
+        "Sobrevivência"
+      ],
+      "skillChoices": 2
+    },
+    "startingEquipment": [
+      "(a) duas maças ou (b) qualquer arma simples",
+      "(a) uma besta leve e 20 virotes ou (b) qualquer arma simples",
+      "(a) um pacote de estudioso ou (b) um pacote de explorador",
+      "Armadura de couro batido e ferramentas de artesão"
+    ],
+    "subclasses": ["Mecânico Alquimista", "Mecânico Artilheiro", "Mecânico Batalhão"],
+    "features": [
+      {
+        "name": "Conjuração",
+        "description": "Você conjura magias através de ferramentas e invenções.",
+        "level": 1,
+        "isPassive": true
+      },
+      {
+        "name": "Infusões Mágicas",
+        "description": "Você pode infundir objetos com poder mágico.",
+        "level": 2,
+        "isPassive": false
+      },
+      {
+        "name": "Especialização",
+        "description": "Você escolhe uma especialização que reflete sua abordagem à invenção.",
+        "level": 3,
+        "isPassive": false
+      }
+    ],
+    "spellcasting": {
+      "ability": "Inteligência",
+      "spellSaveDC": 8,
+      "spellAttackBonus": 0,
+      "cantripsKnown": [2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+      "spellsKnown": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      "spellSlots": [
+        [2, 0, 0, 0, 0, 0, 0, 0, 0],
+        [3, 0, 0, 0, 0, 0, 0, 0, 0],
+        [3, 0, 0, 0, 0, 0, 0, 0, 0],
+        [3, 2, 0, 0, 0, 0, 0, 0, 0],
+        [3, 2, 0, 0, 0, 0, 0, 0, 0],
+        [3, 3, 0, 0, 0, 0, 0, 0, 0],
+        [3, 3, 1, 0, 0, 0, 0, 0, 0],
+        [3, 3, 1, 0, 0, 0, 0, 0, 0],
+        [3, 3, 2, 0, 0, 0, 0, 0, 0],
+        [4, 3, 2, 0, 0, 0, 0, 0, 0],
+        [4, 3, 2, 1, 0, 0, 0, 0, 0],
+        [4, 3, 2, 1, 0, 0, 0, 0, 0],
+        [4, 3, 2, 1, 1, 0, 0, 0, 0],
+        [4, 3, 2, 1, 1, 0, 0, 0, 0],
+        [4, 3, 2, 1, 1, 1, 0, 0, 0],
+        [4, 3, 2, 1, 1, 1, 0, 0, 0],
+        [4, 3, 2, 1, 1, 1, 1, 0, 0],
+        [4, 3, 2, 1, 1, 1, 1, 0, 0],
+        [4, 3, 2, 2, 1, 1, 1, 1, 0],
+        [4, 3, 2, 2, 2, 1, 1, 1, 1]
+      ]
+    }
+  }
+]

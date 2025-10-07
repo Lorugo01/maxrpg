@@ -1,0 +1,432 @@
+[
+  {
+    "name": "Acólito",
+    "description": "Você viveu a serviço de um templo de algum deus específico ou de um panteão de deuses. Você age como intermediário entre o reino dos mortais e o distante plano dos deuses, realizando ritos sagrados e oferecendo sacrifícios para manter os templos e servir aos deuses.",
+    "skillProficiencies": ["Intuição", "Religião"],
+    "toolProficiencies": [],
+    "languages": ["Dois à sua escolha"],
+    "equipment": [
+      {
+        "name": "Símbolo sagrado",
+        "description": "Um presente dado quando você entrou no templo"
+      },
+      {
+        "name": "Livro de preces",
+        "description": "Ou uma conta de orações"
+      },
+      {
+        "name": "Varetas de incenso",
+        "description": "5 unidades"
+      },
+      {
+        "name": "Vestimentas",
+        "description": "Roupas religiosas"
+      },
+      {
+        "name": "Roupas comuns",
+        "description": "Um conjunto"
+      },
+      {
+        "name": "Algibeira",
+        "description": "Contendo 15 po"
+      }
+    ],
+    "feature": {
+      "name": "Abrigo dos Fiéis",
+      "description": "Você detém o respeito daqueles que compartilham de sua fé e pode realizar cerimônias de sua divindade. Você e seus companheiros de aventura podem esperar receber gratuitamente cura e cuidados em um templo, santuário ou outro estabelecimento estabelecido de sua fé, embora você deva fornecer qualquer componente material necessário para magias. Aqueles que compartilham de sua religião apoiarão você (mas apenas você) a um estilo de vida modesto."
+    },
+    "startingGold": 15
+  },
+  {
+    "name": "Artesão de Guilda",
+    "description": "Você é membro de uma guilda de artesãos, perito em um campo específico e estreitamente associado a outros artesãos. Você entende a importância da comunidade entre artesãos e sabe como apresentar-se como um artesão respeitável e confiável.",
+    "skillProficiencies": ["Intuição", "Persuasão"],
+    "toolProficiencies": ["Um tipo de ferramenta de artesão"],
+    "languages": ["Uma à sua escolha"],
+    "equipment": [
+      {
+        "name": "Ferramentas de artesão",
+        "description": "À sua escolha"
+      },
+      {
+        "name": "Carta de apresentação",
+        "description": "Da sua guilda"
+      },
+      {
+        "name": "Roupas de viajante",
+        "description": "Um conjunto"
+      },
+      {
+        "name": "Algibeira",
+        "description": "Contendo 15 po"
+      }
+    ],
+    "feature": {
+      "name": "Associados da Guilda",
+      "description": "Como membro respeitado da guilda, você pode contar com certos benefícios que a sociedade garante. Você pode contar com a ajuda de outros membros da guilda para fornecer informações sobre oportunidades de trabalho ou informações sobre pessoas influentes. Você pode obter uma audiência com um líder local se precisar de ajuda para uma causa que a guilda considera importante."
+    },
+    "startingGold": 15
+  },
+  {
+    "name": "Artista",
+    "description": "Você cresce em frente a uma audiência. Você sabe como fasciná-los, entretê-los e inspirá-los. Você pode contar histórias que fazem seus ouvintes rirem ou chorarem, e você pode usar sua arte para despertar emoções poderosas em seus espectadores.",
+    "skillProficiencies": ["Acrobacia", "Atuação"],
+    "toolProficiencies": ["Kit de disfarce", "Um tipo de instrumento musical"],
+    "languages": [],
+    "equipment": [
+      {
+        "name": "Instrumento musical",
+        "description": "À sua escolha"
+      },
+      {
+        "name": "Presente de admirador",
+        "description": "Carta de amor, mecha de cabelo ou bijuteria"
+      },
+      {
+        "name": "Traje",
+        "description": "Roupas de apresentação"
+      },
+      {
+        "name": "Algibeira",
+        "description": "Contendo 15 po"
+      }
+    ],
+    "feature": {
+      "name": "Pela Demanda Popular",
+      "description": "Você sempre encontra um lugar para atuar, geralmente em tavernas ou estalagens, mas possivelmente em circos, teatros ou até mesmo nas ruas. Você pode executar lá onde você pode ganhar um salário modesto. Você pode obter uma audiência com um patrono local se precisar de ajuda para uma causa que considera importante."
+    },
+    "startingGold": 15
+  },
+  {
+    "name": "Charlatão",
+    "description": "Você sempre teve jeito com as pessoas. Você sabe o que os deixa extasiados, o que os faz rir e o que os faz chorar. Você manipula emoções e motivações com facilidade e ganha confiança rapidamente.",
+    "skillProficiencies": ["Enganação", "Prestidigitação"],
+    "toolProficiencies": ["Kit de disfarce", "Kit de falsificação"],
+    "languages": [],
+    "equipment": [
+      {
+        "name": "Roupas finas",
+        "description": "Um conjunto"
+      },
+      {
+        "name": "Kit de disfarce",
+        "description": "Para mudanças de aparência"
+      },
+      {
+        "name": "Ferramentas de trapaça",
+        "description": "Dados viciados, cartas marcadas, etc."
+      },
+      {
+        "name": "Algibeira",
+        "description": "Contendo 15 po"
+      }
+    ],
+    "feature": {
+      "name": "Identidade Falsa",
+      "description": "Você criou uma segunda identidade que inclui documentos, conhecidos e disfarces que permitem que você assuma essa persona. Além disso, você pode forjar documentos incluindo documentos oficiais e pessoais, desde que você tenha visto um exemplo do tipo de documento ou da assinatura que você está tentando copiar."
+    },
+    "startingGold": 15
+  },
+  {
+    "name": "Criminoso",
+    "description": "Você é um criminoso experiente com um histórico de contravenções. Você passou muito tempo entre outros criminosos e ainda tem contatos dentro do submundo criminal. Você está muito mais familiarizado do que a maioria das pessoas com o lado sombrio da vida.",
+    "skillProficiencies": ["Enganação", "Furtividade"],
+    "toolProficiencies": ["Um tipo de kit de jogo", "Ferramentas de ladrão"],
+    "languages": [],
+    "equipment": [
+      {
+        "name": "Pé de cabra",
+        "description": "Ferramenta versátil"
+      },
+      {
+        "name": "Roupas escuras",
+        "description": "Com capuz"
+      },
+      {
+        "name": "Algibeira",
+        "description": "Contendo 15 po"
+      }
+    ],
+    "feature": {
+      "name": "Contato Criminal",
+      "description": "Você possui contatos de confiança que agem como seus informantes em uma rede criminosa. Você sabe como entrar em contato com eles. Esses contatos podem fornecer informações sobre oportunidades de trabalho, pessoas influentes, segredos e outros assuntos de interesse."
+    },
+    "startingGold": 15
+  },
+  {
+    "name": "Eremita",
+    "description": "Você viveu em reclusão por um período importante da sua vida. Você pode ter sido um eremita religioso, um estudioso solitário ou um curandeiro que viveu longe da sociedade. Você aprendeu a confiar em seus próprios recursos e a encontrar sabedoria na solidão.",
+    "skillProficiencies": ["Medicina", "Religião"],
+    "toolProficiencies": ["Kit de herbalismo"],
+    "languages": ["Um à sua escolha"],
+    "equipment": [
+      {
+        "name": "Estojo de pergaminho",
+        "description": "Cheio de notas dos seus estudos"
+      },
+      {
+        "name": "Cobertor de inverno",
+        "description": "Para proteção contra o frio"
+      },
+      {
+        "name": "Roupas comuns",
+        "description": "Um conjunto"
+      },
+      {
+        "name": "Kit de herbalismo",
+        "description": "Para preparar remédios"
+      },
+      {
+        "name": "Algibeira",
+        "description": "Contendo 5 po"
+      }
+    ],
+    "feature": {
+      "name": "Descoberta",
+      "description": "A calma reclusão do seu eremitério prolongado lhe deu acesso a descobertas únicas e poderosas. A natureza exata dessas descobertas depende da natureza da sua reclusão. Você pode ter descoberto um grande segredo, uma verdade fundamental sobre o universo, informações que foram perdidas para o mundo, ou uma visão do futuro."
+    },
+    "startingGold": 5
+  },
+  {
+    "name": "Forasteiro",
+    "description": "Você cresceu em uma área selvagem, longe da civilização e dos confortos da cidade e da tecnologia. Você desenvolveu uma afinidade natural com a natureza e aprendeu a confiar em seus instintos e habilidades de sobrevivência.",
+    "skillProficiencies": ["Atletismo", "Sobrevivência"],
+    "toolProficiencies": ["Um tipo de instrumento musical"],
+    "languages": ["Um à sua escolha"],
+    "equipment": [
+      {
+        "name": "Bordão",
+        "description": "Arma simples"
+      },
+      {
+        "name": "Armadilha de caça",
+        "description": "Para capturar animais"
+      },
+      {
+        "name": "Fetiche de animal",
+        "description": "De um animal que você matou"
+      },
+      {
+        "name": "Roupas de viajante",
+        "description": "Um conjunto"
+      },
+      {
+        "name": "Algibeira",
+        "description": "Contendo 10 po"
+      }
+    ],
+    "feature": {
+      "name": "Andarilho",
+      "description": "Você tem uma memória excelente para mapas e geografia, e você sempre pode recordar o layout geral do terreno, assentamentos e outras características ao redor de você. Além disso, você pode encontrar comida e água fresca para você e até cinco outras pessoas cada dia, desde que a terra ofereça caça, plantas, água e assim por diante."
+    },
+    "startingGold": 10
+  },
+  {
+    "name": "Herói do Povo",
+    "description": "Você veio de uma parcela humilde da sociedade, mas está destinado a muito mais. Você pode ter sido um fazendeiro, um pastor, um artesão ou um comerciante, mas algo aconteceu que o transformou em um herói local.",
+    "skillProficiencies": ["Adestrar Animais", "Sobrevivência"],
+    "toolProficiencies": ["Um tipo de ferramenta de artesão", "Veículos (terrestre)"],
+    "languages": [],
+    "equipment": [
+      {
+        "name": "Ferramentas de artesão",
+        "description": "À sua escolha"
+      },
+      {
+        "name": "Pá",
+        "description": "Ferramenta de trabalho"
+      },
+      {
+        "name": "Pote de ferro",
+        "description": "Para cozinhar"
+      },
+      {
+        "name": "Roupas comuns",
+        "description": "Um conjunto"
+      },
+      {
+        "name": "Algibeira",
+        "description": "Contendo 10 po"
+      }
+    ],
+    "feature": {
+      "name": "Hospitalidade Rústica",
+      "description": "É fácil se misturar com pessoas comuns. Você pode encontrar lugar entre camponeses, trabalhadores e outras pessoas pobres e honestas. Você pode obter uma audiência com um líder local se precisar de ajuda para uma causa que considera importante."
+    },
+    "startingGold": 10
+  },
+  {
+    "name": "Marinheiro",
+    "description": "Você navegou em um navio pelo mar por anos. Você pode ter sido um marinheiro comum, um oficial ou até mesmo um capitão. Você conhece os perigos e oportunidades do mar e desenvolveu habilidades que são úteis tanto em terra quanto no mar.",
+    "skillProficiencies": ["Atletismo", "Percepção"],
+    "toolProficiencies": ["Ferramentas de navegador", "Veículo (aquático)"],
+    "languages": [],
+    "equipment": [
+      {
+        "name": "Malagueta",
+        "description": "Clava"
+      },
+      {
+        "name": "Corda de seda",
+        "description": "15 metros"
+      },
+      {
+        "name": "Amuleto da sorte",
+        "description": "Pé de coelho ou pedra com furo"
+      },
+      {
+        "name": "Trajes comuns",
+        "description": "Um conjunto"
+      },
+      {
+        "name": "Algibeira",
+        "description": "Contendo 10 po"
+      }
+    ],
+    "feature": {
+      "name": "Passagem de Navio",
+      "description": "Quando você precisa viajar, você pode obter passagem gratuita em um navio para você e seus companheiros de aventura. Você pode navegar em navios mercantes, navios de guerra ou navios de passageiros. Você provavelmente não pode obter passagem gratuita em um navio que não seja de propriedade de alguém que você conhece, e você pode ter que trabalhar para pagar sua passagem."
+    },
+    "startingGold": 10
+  },
+  {
+    "name": "Nobre",
+    "description": "Você entende de riqueza, poder e privilégios. Você nasceu ou foi adotado em uma família nobre e cresceu com luxo e conforto. Você aprendeu a navegar na política da corte e desenvolveu habilidades sociais que são úteis em ambientes aristocráticos.",
+    "skillProficiencies": ["História", "Persuasão"],
+    "toolProficiencies": ["Um tipo de kit de jogos"],
+    "languages": ["Um à sua escolha"],
+    "equipment": [
+      {
+        "name": "Trajes finos",
+        "description": "Um conjunto"
+      },
+      {
+        "name": "Anel de sinete",
+        "description": "Símbolo de nobreza"
+      },
+      {
+        "name": "Pergaminho de linhagem",
+        "description": "Documento da família"
+      },
+      {
+        "name": "Algibeira",
+        "description": "Contendo 25 po"
+      }
+    ],
+    "feature": {
+      "name": "Posição Privilegiada",
+      "description": "Graças a sua origem nobre, as pessoas tendem a pensar o melhor de você. Você é bem-vindo na alta sociedade, e as pessoas assumem que você tem o direito de estar onde quer que esteja. Os plebeus se esforçam para atendê-lo, e sua presença causa pouca agitação quando você visita lugares onde você não deveria estar."
+    },
+    "startingGold": 25
+  },
+  {
+    "name": "Órfão",
+    "description": "Você cresceu nas ruas, sozinho, órfão e pobre. Você aprendeu a sobreviver através de sua astúcia, determinação e habilidades de rua. Você desenvolveu uma rede de contatos e amigos que o ajudaram a sobreviver em um mundo que não se importa com você.",
+    "skillProficiencies": ["Furtividade", "Prestidigitação"],
+    "toolProficiencies": ["Kit de disfarce", "Ferramentas de ladrão"],
+    "languages": [],
+    "equipment": [
+      {
+        "name": "Faca pequena",
+        "description": "Arma simples"
+      },
+      {
+        "name": "Mapa da cidade",
+        "description": "Em que você cresceu"
+      },
+      {
+        "name": "Rato de estimação",
+        "description": "Companheiro"
+      },
+      {
+        "name": "Objeto dos pais",
+        "description": "Para lembrar deles"
+      },
+      {
+        "name": "Roupas comuns",
+        "description": "Um conjunto"
+      },
+      {
+        "name": "Algibeira",
+        "description": "Contendo 10 po"
+      }
+    ],
+    "feature": {
+      "name": "Segredos da Cidade",
+      "description": "Você conhece os padrões secretos e o fluxo das cidades. Você pode encontrar mensagens e informações que passam despercebidas por outros. Você pode obter uma audiência com um líder local se precisar de ajuda para uma causa que considera importante."
+    },
+    "startingGold": 10
+  },
+  {
+    "name": "Sábio",
+    "description": "Você ficou anos aprendendo sobre o conhecimento do multiverso. Você pode ter sido um estudioso, um pesquisador ou um professor. Você desenvolveu uma paixão por aprender e descobrir novas informações.",
+    "skillProficiencies": ["Arcanismo", "História"],
+    "toolProficiencies": [],
+    "languages": ["Dois à sua escolha"],
+    "equipment": [
+      {
+        "name": "Vidro de tinta escura",
+        "description": "Para escrever"
+      },
+      {
+        "name": "Pena",
+        "description": "Para escrever"
+      },
+      {
+        "name": "Faca pequena",
+        "description": "Ferramenta"
+      },
+      {
+        "name": "Carta de colega",
+        "description": "Falecido"
+      },
+      {
+        "name": "Roupas comuns",
+        "description": "Um conjunto"
+      },
+      {
+        "name": "Algibeira",
+        "description": "Contendo 10 po"
+      }
+    ],
+    "feature": {
+      "name": "Pesquisador",
+      "description": "Quando tentar obter conhecimento que você não saiba, você descobre onde pode obter essa informação. Você pode saber onde encontrar informações sobre quase qualquer coisa, desde que a informação não seja completamente secreta ou conhecida apenas por um pequeno grupo de pessoas."
+    },
+    "startingGold": 10
+  },
+  {
+    "name": "Soldado",
+    "description": "A guerra esteve na sua vida desde que você se recorda. Você pode ter sido um soldado comum, um oficial ou até mesmo um comandante. Você desenvolveu habilidades de combate e liderança que são úteis tanto em batalha quanto em situações civis.",
+    "skillProficiencies": ["Atletismo", "Intimidação"],
+    "toolProficiencies": ["Um tipo de kit de jogo", "Veículo (terrestre)"],
+    "languages": [],
+    "equipment": [
+      {
+        "name": "Insígnia de patente",
+        "description": "Símbolo militar"
+      },
+      {
+        "name": "Fetiche de inimigo",
+        "description": "Adaga, lâmina partida ou tira de estandarte"
+      },
+      {
+        "name": "Dados de osso",
+        "description": "Ou baralho"
+      },
+      {
+        "name": "Roupas comuns",
+        "description": "Um conjunto"
+      },
+      {
+        "name": "Algibeira",
+        "description": "Contendo 10 po"
+      }
+    ],
+    "feature": {
+      "name": "Patente Militar",
+      "description": "Você possui uma patente militar da sua época como soldado. Soldados reconhecem sua autoridade e influência, e eles se esforçam para atendê-lo, mesmo que não sejam obrigados a fazê-lo. Você pode obter uma audiência com um líder militar se precisar de ajuda para uma causa que considera importante."
+    },
+    "startingGold": 10
+  }
+]

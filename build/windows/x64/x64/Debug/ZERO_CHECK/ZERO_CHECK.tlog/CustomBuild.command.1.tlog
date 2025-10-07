@@ -1,0 +1,10 @@
+^C:\USERS\J.INFORMATICA\DESKTOP\APP\RPG\MAXRPG\BUILD\WINDOWS\X64\CMAKEFILES\0CD014B44DD82A0FEE194B5CC5B5B527\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SC:/Users/J.Informatica/Desktop/app/Rpg/maxrpg/windows -BC:/Users/J.Informatica/Desktop/app/Rpg/maxrpg/build/windows/x64 --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/J.Informatica/Desktop/app/Rpg/maxrpg/build/windows/x64/maxrpg.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\J.Informatica\Desktop\app\Rpg\maxrpg\build\windows\x64\CMakeFiles\c773c2b58086cc6095af19a08e7676d4\flutter_windows.dll.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\J.Informatica\Desktop\app\Rpg\maxrpg\build\windows\x64\CMakeFiles\c619b3bcff1c4994ee4af9afabf95f1d\flutter_assemble.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\J.Informatica\Desktop\app\Rpg\maxrpg\windows\flutter\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\J.Informatica\Desktop\app\Rpg\maxrpg\build\windows\x64\flutter\CMakeFiles\flutter_assemble" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{CBB20918-9FB7-3041-8CB6-30E28A97DA6B}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

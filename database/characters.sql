@@ -1,0 +1,50 @@
+create table public.characters (
+  id uuid not null default gen_random_uuid (),
+  user_id uuid null,
+  name character varying(100) not null,
+  race character varying(50) not null,
+  class_name character varying(50) not null,
+  background character varying(50) null,
+  level integer null default 1,
+  experience_points integer null default 0,
+  strength integer null default 10,
+  dexterity integer null default 10,
+  constitution integer null default 10,
+  intelligence integer null default 10,
+  wisdom integer null default 10,
+  charisma integer null default 10,
+  max_hit_points integer null default 8,
+  current_hit_points integer null default 8,
+  temporary_hit_points integer null default 0,
+  armor_class integer null default 10,
+  speed integer null default 30,
+  alignment character varying(20) null,
+  personality_traits text null,
+  ideals text null,
+  bonds text null,
+  flaws text null,
+  platinum_pieces integer null default 0,
+  gold_pieces integer null default 0,
+  electrum_pieces integer null default 0,
+  silver_pieces integer null default 0,
+  copper_pieces integer null default 0,
+  hit_dice_used integer null default 0,
+  death_save_successes integer null default 0,
+  death_save_failures integer null default 0,
+  created_at timestamp with time zone null default now(),
+  updated_at timestamp with time zone null default now(),
+  ability_scores jsonb null,
+  languages jsonb null default '[]'::jsonb,
+  proficiencies jsonb null default '[]'::jsonb,
+  selected_cantrips jsonb null default '[]'::jsonb,
+  selected_spells jsonb null default '[]'::jsonb,
+  known_spells jsonb null default '[]'::jsonb,
+  constraint characters_pkey primary key (id),
+  constraint characters_user_id_fkey foreign KEY (user_id) references auth.users (id) on delete CASCADE
+) TABLESPACE pg_default;
+
+create index IF not exists idx_characters_name on public.characters using btree (name) TABLESPACE pg_default;
+
+create trigger update_characters_updated_at BEFORE
+update on characters for EACH row
+execute FUNCTION update_updated_at_column ();
