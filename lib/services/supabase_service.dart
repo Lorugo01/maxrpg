@@ -8,10 +8,18 @@ class SupabaseService {
   static Future<void> initialize() async {
     try {
       debugPrint('SupabaseService: Inicializando Supabase...');
-      await Supabase.initialize(
-        url: SupabaseConfig.url,
-        anonKey: SupabaseConfig.anonKey,
-      );
+      final url = SupabaseConfig.url;
+      final anonKey = SupabaseConfig.anonKey;
+
+      if (url.isEmpty || anonKey.isEmpty) {
+        debugPrint(
+          'SupabaseService: Variáveis de ambiente ausentes. '
+          'Defina SUPABASE_URL e SUPABASE_ANON_KEY no arquivo .env',
+        );
+        throw Exception('SUPABASE_URL/ANON_KEY não definidos');
+      }
+
+      await Supabase.initialize(url: url, anonKey: anonKey);
       debugPrint('SupabaseService: Supabase inicializado com sucesso!');
     } catch (e) {
       debugPrint('SupabaseService: Erro ao inicializar Supabase: $e');

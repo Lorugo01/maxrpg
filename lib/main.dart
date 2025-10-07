@@ -3,10 +3,18 @@ import 'package:window_manager/window_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'services/supabase_service.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'screens/auth/auth_wrapper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Carregar variáveis de ambiente
+  try {
+    await dotenv.load(fileName: '.env');
+  } catch (e) {
+    debugPrint('Aviso: .env não encontrado ou erro ao carregar: $e');
+  }
 
   // Definir limites de tamanho de janela no desktop (Windows/Linux/macOS)
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {

@@ -96,25 +96,32 @@ class CharacterService {
       debugPrint('CharacterJson className: ${characterJson['className']}');
       debugPrint('CharacterJson class_name: ${characterJson['class_name']}');
 
-      // Converter abilityScores Map para colunas individuais
-      final abilityScores = Map<String, int>.from(
-        characterJson['abilityScores'] ?? {},
+      // Converter abilityScores Map para colunas individuais a partir do objeto Character
+      final abilityScores = Map<String, int>.from(character.abilityScores);
+      int getScore(Map<String, int> m, String pt, String en) =>
+          m[pt] ?? m[en] ?? 10;
+      characterJson['strength'] = getScore(abilityScores, 'Força', 'strength');
+      characterJson['dexterity'] = getScore(
+        abilityScores,
+        'Destreza',
+        'dexterity',
       );
-      int get(Map<String, int> m, String pt, String en) => m[pt] ?? m[en] ?? 10;
-      characterJson['strength'] = get(abilityScores, 'Força', 'strength');
-      characterJson['dexterity'] = get(abilityScores, 'Destreza', 'dexterity');
-      characterJson['constitution'] = get(
+      characterJson['constitution'] = getScore(
         abilityScores,
         'Constituição',
         'constitution',
       );
-      characterJson['intelligence'] = get(
+      characterJson['intelligence'] = getScore(
         abilityScores,
         'Inteligência',
         'intelligence',
       );
-      characterJson['wisdom'] = get(abilityScores, 'Sabedoria', 'wisdom');
-      characterJson['charisma'] = get(abilityScores, 'Carisma', 'charisma');
+      characterJson['wisdom'] = getScore(abilityScores, 'Sabedoria', 'wisdom');
+      characterJson['charisma'] = getScore(
+        abilityScores,
+        'Carisma',
+        'charisma',
+      );
       // Também persistir o JSON consolidado em ability_scores (coluna jsonb)
       characterJson['ability_scores'] = {
         'Força': characterJson['strength'],

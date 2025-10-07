@@ -1,13 +1,14 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 class SupabaseConfig {
-  // Substitua pelas suas credenciais do Supabase
-  static const String url = 'https://ztkncerlscxuklmdtmyj.supabase.co';
-  static const String anonKey =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp0a25jZXJsc2N4dWtsbWR0bXlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyODgxODQsImV4cCI6MjA3Mzg2NDE4NH0.NNcYp0lMt_YuUdU-bh7nyD3yYK2-Lesr0UNYM1ZjL7o';
+  // Lê do .env com fallback opcional (strings vazias) para evitar chave exposta no código
+  static String get url => dotenv.env['SUPABASE_URL'] ?? '';
+  static String get anonKey => dotenv.env['SUPABASE_ANON_KEY'] ?? '';
 
   // Configurações do projeto
   static const String projectId = 'maxrpg';
 
-  // URLs das tabelas
+  // Nomes das tabelas
   static const String charactersTable = 'characters';
   static const String skillsTable = 'skills';
   static const String itemsTable = 'items';
