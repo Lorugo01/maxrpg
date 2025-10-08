@@ -134,8 +134,31 @@ class _EditClassScreenState extends ConsumerState<EditClassScreen> {
     _nameController.text = classData['name'] ?? '';
     _descriptionController.text = classData['description'] ?? '';
     _hitDieController.text = classData['hit_die']?.toString() ?? '8';
-    _selectedPrimaryAbility = classData['primary_ability'];
-    _selectedSource = classData['source'];
+    // Validar habilidade primária
+    final primaryAbility = classData['primary_ability'];
+    final validPrimaryAbilities = [
+      'Força',
+      'Destreza',
+      'Constituição',
+      'Inteligência',
+      'Sabedoria',
+      'Carisma',
+      'Força e Constituição',
+      'Força e Carisma',
+      'Destreza e Inteligência',
+      'Destreza e Sabedoria',
+      'Destreza e Carisma',
+      'Constituição e Sabedoria',
+      'Inteligência e Sabedoria',
+      'Inteligência e Carisma',
+      'Sabedoria e Carisma',
+    ];
+    _selectedPrimaryAbility =
+        validPrimaryAbilities.contains(primaryAbility) ? primaryAbility : null;
+
+    // Validar fonte
+    final source = classData['source'];
+    _selectedSource = _sourceOptions.contains(source) ? source : null;
 
     // Carregar testes de resistência
     if (classData['saving_throws'] != null) {
@@ -191,8 +214,35 @@ class _EditClassScreenState extends ConsumerState<EditClassScreen> {
     _equipmentLadoAController.text = classData['equipment_lado_a'] ?? '';
     _equipmentLadoBController.text = classData['equipment_lado_b'] ?? '';
     _featuresController.text = classData['features'] ?? '';
-    _spellcastingController.text = classData['spellcasting'] ?? '';
-    _subclassesController.text = classData['subclasses'] ?? '';
+
+    // Tratar spellcasting que pode ser String ou Map
+    if (classData['spellcasting'] != null) {
+      if (classData['spellcasting'] is String) {
+        _spellcastingController.text = classData['spellcasting'];
+      } else if (classData['spellcasting'] is Map) {
+        // Converter Map para string legível
+        final spellcasting = classData['spellcasting'] as Map<String, dynamic>;
+        final ability = spellcasting['ability'] ?? '';
+        final type = spellcasting['type'] ?? '';
+        _spellcastingController.text = 'Habilidade: $ability, Tipo: $type';
+      }
+    } else {
+      _spellcastingController.text = '';
+    }
+
+    // Tratar subclasses que pode ser String ou JSON
+    if (classData['subclasses'] != null) {
+      if (classData['subclasses'] is String) {
+        _subclassesController.text = classData['subclasses'];
+      } else if (classData['subclasses'] is List) {
+        // Converter List para string legível
+        final subclasses = classData['subclasses'] as List;
+        final names = subclasses.map((s) => s['name'] ?? 'Sem nome').join(', ');
+        _subclassesController.text = 'Subclasses: $names';
+      }
+    } else {
+      _subclassesController.text = '';
+    }
 
     // Carregar características por nível
     if (classData['level_features'] != null) {
@@ -373,6 +423,15 @@ class _EditClassScreenState extends ConsumerState<EditClassScreen> {
                                     'Inteligência',
                                     'Sabedoria',
                                     'Carisma',
+                                    'Força e Constituição',
+                                    'Força e Carisma',
+                                    'Destreza e Inteligência',
+                                    'Destreza e Sabedoria',
+                                    'Destreza e Carisma',
+                                    'Constituição e Sabedoria',
+                                    'Inteligência e Sabedoria',
+                                    'Inteligência e Carisma',
+                                    'Sabedoria e Carisma',
                                   ]
                                   .map(
                                     (s) => DropdownMenuItem(

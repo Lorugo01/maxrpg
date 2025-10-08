@@ -13,7 +13,7 @@ class EquipmentService {
       final response = await SupabaseService.client
           .from('equipment')
           .select()
-          .order('name');
+          .order('name', ascending: true);
 
       _cache = response.map((json) => Equipment.fromJson(json)).toList();
       debugPrint('Equipamentos carregados do Supabase: ${_cache!.length}');

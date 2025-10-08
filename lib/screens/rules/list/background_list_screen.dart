@@ -36,7 +36,7 @@ class _BackgroundListScreenState extends ConsumerState<BackgroundListScreen> {
       final response = await SupabaseService.client
           .from('backgrounds')
           .select()
-          .order('name');
+          .order('name', ascending: true);
 
       setState(() {
         _backgrounds = List<Map<String, dynamic>>.from(response);

@@ -35,7 +35,7 @@ class _ClassListScreenState extends ConsumerState<ClassListScreen> {
       final response = await SupabaseService.client
           .from('classes')
           .select()
-          .order('name');
+          .order('name', ascending: true);
 
       setState(() {
         _classes = List<Map<String, dynamic>>.from(response);

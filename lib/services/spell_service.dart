@@ -13,7 +13,7 @@ class SpellService {
       final response = await SupabaseService.client
           .from('spells')
           .select()
-          .order('name');
+          .order('name', ascending: true);
 
       _cached = response.map((json) => Spell.fromJson(json)).toList();
       debugPrint('Magias carregadas do Supabase: ${_cached!.length}');

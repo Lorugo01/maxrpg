@@ -380,7 +380,7 @@ class _EditBackgroundScreenState extends ConsumerState<EditBackgroundScreen> {
       final response = await SupabaseService.client
           .from('feats')
           .select('id, name, description, prerequisite, source, category')
-          .order('name');
+          .order('name', ascending: true);
 
       setState(() {
         _availableFeats = List<Map<String, dynamic>>.from(response);

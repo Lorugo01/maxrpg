@@ -57,7 +57,7 @@ class _CharacterCreationScreenState
           .from('classes')
           .select()
           .eq('source', widget.version)
-          .order('name');
+          .order('name', ascending: true);
 
       setState(() {
         _classes = List<Map<String, dynamic>>.from(classesResponse);
@@ -69,7 +69,7 @@ class _CharacterCreationScreenState
           .from('races')
           .select()
           .eq('source', widget.version)
-          .order('name');
+          .order('name', ascending: true);
 
       setState(() {
         _races = List<Map<String, dynamic>>.from(racesResponse);
@@ -81,7 +81,7 @@ class _CharacterCreationScreenState
           .from('backgrounds')
           .select()
           .eq('source', widget.version)
-          .order('name');
+          .order('name', ascending: true);
 
       setState(() {
         _backgrounds = List<Map<String, dynamic>>.from(backgroundsResponse);

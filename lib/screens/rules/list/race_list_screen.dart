@@ -35,7 +35,7 @@ class _RaceListScreenState extends ConsumerState<RaceListScreen> {
       final response = await SupabaseService.client
           .from('races')
           .select()
-          .order('name');
+          .order('name', ascending: true);
 
       setState(() {
         _races = List<Map<String, dynamic>>.from(response);

@@ -119,19 +119,19 @@ class _CharacterCreationStepsScreenState
           .from('classes')
           .select()
           .eq('source', 'PHB 2024')
-          .order('name');
+          .order('name', ascending: true);
 
       final racesResponse = await SupabaseService.client
           .from('races')
           .select()
           .eq('source', 'PHB 2024')
-          .order('name');
+          .order('name', ascending: true);
 
       final backgroundsResponse = await SupabaseService.client
           .from('backgrounds')
           .select()
           .eq('source', 'PHB 2024')
-          .order('name');
+          .order('name', ascending: true);
 
       setState(() {
         _classes = List<Map<String, dynamic>>.from(classesResponse);
@@ -286,282 +286,304 @@ class _CharacterCreationStepsScreenState
   }
 
   Future<void> _createCharacter() async {
-    if (_characterName.isEmpty ||
-        _selectedClass == null ||
-        _selectedRace == null ||
-        _selectedBackground == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Preencha todos os campos obrigatórios'),
-          backgroundColor: Colors.orange,
-        ),
-      );
-      return;
-    }
+    // Bloquear botão durante a criação
+    if (_isLoading) return;
 
-    // Validar compra de pontos também ao finalizar
-    if (_distributionMethod == 'point_buy' && _pointBuyPoints != 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            _pointBuyPoints > 0
-                ? 'Distribua todos os pontos restantes ($_pointBuyPoints) antes de criar o personagem'
-                : 'Você excedeu o limite em ${-_pointBuyPoints} ponto(s). Ajuste os atributos.',
-          ),
-          backgroundColor: Colors.orange,
-        ),
-      );
-      return;
-    }
+    setState(() => _isLoading = true);
 
-    // Verificar se as perícias foram selecionadas corretamente
-    final classSkills = _getClassSkills();
-    final maxSelections = _getClassSkillCount();
-    if (classSkills.isNotEmpty && _selectedSkills.length != maxSelections) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Selecione exatamente $maxSelections perícia(s) da classe',
-          ),
-          backgroundColor: Colors.orange,
-        ),
-      );
-      return;
-    }
-
-    // Verificar se ao menos uma fonte de equipamento foi escolhida
-    if (_selectedClassOption == null && _selectedBackgroundOption == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Selecione pelo menos uma opção de equipamento da classe ou do antecedente',
-          ),
-          backgroundColor: Colors.orange,
-        ),
-      );
-      return;
-    }
-
-    // Se a classe for 'A', garantir escolhas obrigatórias da classe
-    final classChoices = _getClassEquipmentChoices();
-    if (_selectedClassOption == 'A' && classChoices.isNotEmpty) {
-      for (final choice in classChoices) {
-        final choiceKey = 'class_${choice['description']}';
-        if (!_selectedEquipmentChoices.containsKey(choiceKey)) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Selecione uma opção para: ${choice['description']}',
-              ),
-              backgroundColor: Colors.orange,
-            ),
-          );
-          return;
-        }
-      }
-    }
-
-    // Se o antecedente for 'A', garantir escolhas obrigatórias do antecedente
-    final backgroundChoices = _getBackgroundEquipmentChoices();
-    if (_selectedBackgroundOption == 'A' && backgroundChoices.isNotEmpty) {
-      for (final choice in backgroundChoices) {
-        final choiceKey = 'background_${choice['description']}';
-        if (!_selectedEquipmentChoices.containsKey(choiceKey)) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Selecione uma opção para: ${choice['description']}',
-              ),
-              backgroundColor: Colors.orange,
-            ),
-          );
-          return;
-        }
-      }
-    }
-
-    // Calcular atributos finais com bônus da origem
-    Map<String, int> finalAbilityScores = {};
-    for (final entry in _abilityScores.entries) {
-      final baseValue =
-          _distributionMethod == 'custom'
-              ? entry.value
-              : _baseAbilityScores[entry.key]!;
-      final bonus = _getOriginBonus(entry.key);
-      finalAbilityScores[entry.key] = baseValue + bonus;
-    }
-
-    // Combinar todas as proficiências (salvaguardas + perícias do antecedente + perícias da classe)
-    final savingThrows = _getSavingThrows();
-    final backgroundSkills = _getBackgroundSkills();
-    final allProficiencies = [
-      ...savingThrows,
-      ...backgroundSkills,
-      ..._selectedSkills,
-    ];
-
-    // Debug: verificar proficiências antes de criar o personagem
-    debugPrint('=== DEBUG CRIAÇÃO DE PERSONAGEM ===');
-    debugPrint('Salvaguardas: $savingThrows');
-    debugPrint('Perícias do antecedente: $backgroundSkills');
-    debugPrint('Perícias escolhidas: $_selectedSkills');
-    debugPrint('Todas as proficiências: $allProficiencies');
-    debugPrint('=====================================');
-
-    // Criar inventário inicial com equipamentos selecionados
-    final initialInventory = <Item>[];
-
-    // Adicionar equipamentos da classe selecionada
-    if (_selectedClassOption != null) {
-      final classEquipment = _getSelectedClassEquipment();
-      debugPrint(
-        'Equipamentos da classe selecionados: ${classEquipment.length}',
-      );
-      for (final equipment in classEquipment) {
-        debugPrint('Adicionando item da classe: ${equipment['name']}');
-        initialInventory.add(
-          Item(
-            id: DateTime.now().millisecondsSinceEpoch.toString(),
-            name: equipment['name'],
-            description: 'Equipamento inicial da classe',
-            quantity: equipment['quantity'] ?? 1,
-            weight:
-                double.tryParse(equipment['weight']?.toString() ?? '0') ?? 0.0,
-            value: int.tryParse(equipment['cost']?.toString() ?? '0') ?? 0,
-            type: _getItemTypeFromCategory(equipment['category']),
-            isEquipped: false,
+    try {
+      if (_characterName.isEmpty ||
+          _selectedClass == null ||
+          _selectedRace == null ||
+          _selectedBackground == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Preencha todos os campos obrigatórios'),
+            backgroundColor: Colors.orange,
           ),
         );
+        return;
       }
-    }
 
-    // Adicionar equipamentos do antecedente selecionado
-    if (_selectedBackgroundOption != null) {
-      final backgroundEquipment = _getSelectedBackgroundEquipment();
-      debugPrint(
-        'Equipamentos do antecedente selecionados: ${backgroundEquipment.length}',
-      );
-      for (final equipment in backgroundEquipment) {
-        debugPrint('Adicionando item do antecedente: ${equipment['name']}');
-        initialInventory.add(
-          Item(
-            id: DateTime.now().millisecondsSinceEpoch.toString(),
-            name: equipment['name'],
-            description: 'Equipamento inicial do antecedente',
-            quantity: equipment['quantity'] ?? 1,
-            weight:
-                double.tryParse(equipment['weight']?.toString() ?? '0') ?? 0.0,
-            value: int.tryParse(equipment['cost']?.toString() ?? '0') ?? 0,
-            type: _getItemTypeFromCategory(equipment['category']),
-            isEquipped: false,
+      // Validar compra de pontos também ao finalizar
+      if (_distributionMethod == 'point_buy' && _pointBuyPoints != 0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              _pointBuyPoints > 0
+                  ? 'Distribua todos os pontos restantes ($_pointBuyPoints) antes de criar o personagem'
+                  : 'Você excedeu o limite em ${-_pointBuyPoints} ponto(s). Ajuste os atributos.',
+            ),
+            backgroundColor: Colors.orange,
           ),
         );
+        return;
       }
-    }
 
-    // Adicionar equipamentos das escolhas selecionadas
-    for (final entry in _selectedEquipmentChoices.entries) {
-      final selectedOption = entry.value;
+      // Verificar se as perícias foram selecionadas corretamente
+      final classSkills = _getClassSkills();
+      final maxSelections = _getClassSkillCount();
+      if (classSkills.isNotEmpty && _selectedSkills.length != maxSelections) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Selecione exatamente $maxSelections perícia(s) da classe',
+            ),
+            backgroundColor: Colors.orange,
+          ),
+        );
+        return;
+      }
 
-      debugPrint('Adicionando item da escolha: ${selectedOption['name']}');
-      initialInventory.add(
-        Item(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          name: selectedOption['name'],
-          description: 'Equipamento escolhido',
-          quantity: 1,
-          weight:
-              double.tryParse(selectedOption['weight']?.toString() ?? '0') ??
-              0.0,
-          value: int.tryParse(selectedOption['cost']?.toString() ?? '0') ?? 0,
-          type: _getItemTypeFromCategory(selectedOption['category']),
-          isEquipped: false,
-        ),
-      );
-    }
+      // Verificar se ao menos uma fonte de equipamento foi escolhida
+      if (_selectedClassOption == null && _selectedBackgroundOption == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Selecione pelo menos uma opção de equipamento da classe ou do antecedente',
+            ),
+            backgroundColor: Colors.orange,
+          ),
+        );
+        return;
+      }
 
-    debugPrint(
-      'Inventário inicial criado com ${initialInventory.length} itens',
-    );
-    debugPrint('PO total: ${_calculateTotalPO()}');
-
-    final character = Character(
-      name: _characterName,
-      className: _selectedClass!['name'],
-      race: _selectedRace!['name'],
-      background: _selectedBackground!['name'],
-      level: 1,
-      abilityScores: finalAbilityScores,
-      languages: _languages,
-      alignment: _alignment,
-      proficiencies: allProficiencies,
-      inventory: initialInventory,
-      goldPieces: _calculateTotalPO(),
-    );
-
-    // Sincronizar proficiências com skills
-    _syncProficienciesWithSkills(character, allProficiencies);
-
-    // Calcular vida inicial (dado de vida + modificador de constituição)
-    final hitDie = _selectedClass!['hit_die'] as int? ?? 8;
-    final constitutionModifier = character.getAbilityModifier('Constituição');
-    final baseHitPoints = hitDie + constitutionModifier;
-
-    // Verificar aumento de vida racial
-    int racialHitPointIncrease = 0;
-    if (_selectedRace != null && _selectedRace!['traits'] is List) {
-      final traits = _selectedRace!['traits'] as List;
-      for (final trait in traits) {
-        if (trait is Map<String, dynamic> &&
-            trait['has_hit_point_increase'] == true) {
-          final increasePerLevel = trait['hit_point_increase_per_level'];
-          if (increasePerLevel is int) {
-            racialHitPointIncrease += increasePerLevel * character.level;
-          } else if (increasePerLevel is double) {
-            racialHitPointIncrease +=
-                (increasePerLevel * character.level).round();
-          } else {
-            racialHitPointIncrease += character.level; // padrão 1 por nível
+      // Se a classe for 'A', garantir escolhas obrigatórias da classe
+      final classChoices = _getClassEquipmentChoices();
+      if (_selectedClassOption == 'A' && classChoices.isNotEmpty) {
+        for (final choice in classChoices) {
+          final choiceKey = 'class_${choice['description']}';
+          if (!_selectedEquipmentChoices.containsKey(choiceKey)) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Selecione uma opção para: ${choice['description']}',
+                ),
+                backgroundColor: Colors.orange,
+              ),
+            );
+            return;
           }
         }
       }
-    }
 
-    final totalHitPoints = baseHitPoints + racialHitPointIncrease;
-    character.maxHitPoints = totalHitPoints;
-    character.currentHitPoints = totalHitPoints;
+      // Se o antecedente for 'A', garantir escolhas obrigatórias do antecedente
+      final backgroundChoices = _getBackgroundEquipmentChoices();
+      if (_selectedBackgroundOption == 'A' && backgroundChoices.isNotEmpty) {
+        for (final choice in backgroundChoices) {
+          final choiceKey = 'background_${choice['description']}';
+          if (!_selectedEquipmentChoices.containsKey(choiceKey)) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Selecione uma opção para: ${choice['description']}',
+                ),
+                backgroundColor: Colors.orange,
+              ),
+            );
+            return;
+          }
+        }
+      }
 
-    debugPrint(
-      'Vida inicial calculada: $hitDie (dado) + $constitutionModifier (mod) + $racialHitPointIncrease (racial) = $totalHitPoints',
-    );
+      // Calcular atributos finais com bônus da origem
+      Map<String, int> finalAbilityScores = {};
+      for (final entry in _abilityScores.entries) {
+        final baseValue =
+            _distributionMethod == 'custom'
+                ? entry.value
+                : _baseAbilityScores[entry.key]!;
+        final bonus = _getOriginBonus(entry.key);
+        finalAbilityScores[entry.key] = baseValue + bonus;
+      }
 
-    // Detectar automaticamente se é conjurador e o atributo de conjuração
-    _setSpellcastingInfo(character);
+      // Combinar todas as proficiências (salvaguardas + perícias do antecedente + perícias da classe)
+      final savingThrows = _getSavingThrows();
+      final backgroundSkills = _getBackgroundSkills();
+      final allProficiencies = [
+        ...savingThrows,
+        ...backgroundSkills,
+        ..._selectedSkills,
+      ];
 
-    await ref.read(charactersProvider.notifier).addCharacter(character);
+      // Debug: verificar proficiências antes de criar o personagem
+      debugPrint('=== DEBUG CRIAÇÃO DE PERSONAGEM ===');
+      debugPrint('Salvaguardas: $savingThrows');
+      debugPrint('Perícias do antecedente: $backgroundSkills');
+      debugPrint('Perícias escolhidas: $_selectedSkills');
+      debugPrint('Todas as proficiências: $allProficiencies');
+      debugPrint('=====================================');
 
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Personagem criado com sucesso!'),
-          backgroundColor: Colors.green,
-        ),
+      // Criar inventário inicial com equipamentos selecionados
+      final initialInventory = <Item>[];
+
+      // Adicionar equipamentos da classe selecionada
+      if (_selectedClassOption != null) {
+        final classEquipment = _getSelectedClassEquipment();
+        debugPrint(
+          'Equipamentos da classe selecionados: ${classEquipment.length}',
+        );
+        for (final equipment in classEquipment) {
+          debugPrint('Adicionando item da classe: ${equipment['name']}');
+          initialInventory.add(
+            Item(
+              id: DateTime.now().millisecondsSinceEpoch.toString(),
+              name: equipment['name'],
+              description: 'Equipamento inicial da classe',
+              quantity: equipment['quantity'] ?? 1,
+              weight:
+                  double.tryParse(equipment['weight']?.toString() ?? '0') ??
+                  0.0,
+              value: int.tryParse(equipment['cost']?.toString() ?? '0') ?? 0,
+              type: _getItemTypeFromCategory(equipment['category']),
+              isEquipped: false,
+            ),
+          );
+        }
+      }
+
+      // Adicionar equipamentos do antecedente selecionado
+      if (_selectedBackgroundOption != null) {
+        final backgroundEquipment = _getSelectedBackgroundEquipment();
+        debugPrint(
+          'Equipamentos do antecedente selecionados: ${backgroundEquipment.length}',
+        );
+        for (final equipment in backgroundEquipment) {
+          debugPrint('Adicionando item do antecedente: ${equipment['name']}');
+          initialInventory.add(
+            Item(
+              id: DateTime.now().millisecondsSinceEpoch.toString(),
+              name: equipment['name'],
+              description: 'Equipamento inicial do antecedente',
+              quantity: equipment['quantity'] ?? 1,
+              weight:
+                  double.tryParse(equipment['weight']?.toString() ?? '0') ??
+                  0.0,
+              value: int.tryParse(equipment['cost']?.toString() ?? '0') ?? 0,
+              type: _getItemTypeFromCategory(equipment['category']),
+              isEquipped: false,
+            ),
+          );
+        }
+      }
+
+      // Adicionar equipamentos das escolhas selecionadas
+      for (final entry in _selectedEquipmentChoices.entries) {
+        final selectedOption = entry.value;
+
+        debugPrint('Adicionando item da escolha: ${selectedOption['name']}');
+        initialInventory.add(
+          Item(
+            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            name: selectedOption['name'],
+            description: 'Equipamento escolhido',
+            quantity: 1,
+            weight:
+                double.tryParse(selectedOption['weight']?.toString() ?? '0') ??
+                0.0,
+            value: int.tryParse(selectedOption['cost']?.toString() ?? '0') ?? 0,
+            type: _getItemTypeFromCategory(selectedOption['category']),
+            isEquipped: false,
+          ),
+        );
+      }
+
+      debugPrint(
+        'Inventário inicial criado com ${initialInventory.length} itens',
+      );
+      debugPrint('PO total: ${_calculateTotalPO()}');
+
+      final character = Character(
+        name: _characterName,
+        className: _selectedClass!['name'],
+        race: _selectedRace!['name'],
+        background: _selectedBackground!['name'],
+        level: 1,
+        abilityScores: finalAbilityScores,
+        languages: _languages,
+        alignment: _alignment,
+        proficiencies: allProficiencies,
+        inventory: initialInventory,
+        goldPieces: _calculateTotalPO(),
       );
 
-      // Aguardar um pouco para garantir que o provider foi atualizado
-      await Future.delayed(const Duration(milliseconds: 500));
+      // Sincronizar proficiências com skills
+      _syncProficienciesWithSkills(character, allProficiencies);
 
-      // Navegar para a tela do personagem criado
-      final result = await Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => CharacterSheetScreen(character: character),
-        ),
+      // Calcular vida inicial (dado de vida + modificador de constituição)
+      final hitDie = _selectedClass!['hit_die'] as int? ?? 8;
+      final constitutionModifier = character.getAbilityModifier('Constituição');
+      final baseHitPoints = hitDie + constitutionModifier;
+
+      // Verificar aumento de vida racial
+      int racialHitPointIncrease = 0;
+      if (_selectedRace != null && _selectedRace!['traits'] is List) {
+        final traits = _selectedRace!['traits'] as List;
+        for (final trait in traits) {
+          if (trait is Map<String, dynamic> &&
+              trait['has_hit_point_increase'] == true) {
+            final increasePerLevel = trait['hit_point_increase_per_level'];
+            if (increasePerLevel is int) {
+              racialHitPointIncrease += increasePerLevel * character.level;
+            } else if (increasePerLevel is double) {
+              racialHitPointIncrease +=
+                  (increasePerLevel * character.level).round();
+            } else {
+              racialHitPointIncrease += character.level; // padrão 1 por nível
+            }
+          }
+        }
+      }
+
+      final totalHitPoints = baseHitPoints + racialHitPointIncrease;
+      character.maxHitPoints = totalHitPoints;
+      character.currentHitPoints = totalHitPoints;
+
+      debugPrint(
+        'Vida inicial calculada: $hitDie (dado) + $constitutionModifier (mod) + $racialHitPointIncrease (racial) = $totalHitPoints',
       );
 
-      // Se retornou da tela, recarregar os personagens para garantir sincronização
-      if (result != null) {
-        ref.read(charactersProvider.notifier).loadCharacters();
+      // Detectar automaticamente se é conjurador e o atributo de conjuração
+      _setSpellcastingInfo(character);
+
+      await ref.read(charactersProvider.notifier).addCharacter(character);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Personagem criado com sucesso!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        // Aguardar um pouco para garantir que o provider foi atualizado
+        await Future.delayed(const Duration(milliseconds: 500));
+
+        // Navegar para a tela do personagem criado
+        final result = await Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CharacterSheetScreen(character: character),
+          ),
+        );
+
+        // Se retornou da tela, recarregar os personagens para garantir sincronização
+        if (result != null) {
+          ref.read(charactersProvider.notifier).loadCharacters();
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao criar personagem: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
       }
     }
   }
@@ -590,6 +612,8 @@ class _CharacterCreationStepsScreenState
                   Expanded(
                     child: PageView(
                       controller: _pageController,
+                      physics:
+                          const NeverScrollableScrollPhysics(), // Desabilita swipe
                       onPageChanged: (index) {
                         setState(() => _currentStep = index);
                       },
@@ -1473,18 +1497,32 @@ class _CharacterCreationStepsScreenState
           Expanded(
             child: ElevatedButton(
               onPressed:
-                  _currentStep == _steps.length - 1
-                      ? _createCharacter
-                      : _nextStep,
+                  _isLoading
+                      ? null
+                      : (_currentStep == _steps.length - 1
+                          ? _createCharacter
+                          : _nextStep),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
                 foregroundColor: Colors.white,
               ),
-              child: Text(
-                _currentStep == _steps.length - 1
-                    ? 'Criar Personagem'
-                    : 'Próximo',
-              ),
+              child:
+                  _isLoading
+                      ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
+                        ),
+                      )
+                      : Text(
+                        _currentStep == _steps.length - 1
+                            ? 'Criar Personagem'
+                            : 'Próximo',
+                      ),
             ),
           ),
         ],

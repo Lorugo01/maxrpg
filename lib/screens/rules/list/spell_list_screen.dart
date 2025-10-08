@@ -35,7 +35,7 @@ class _SpellListScreenState extends ConsumerState<SpellListScreen> {
       final response = await SupabaseService.client
           .from('spells')
           .select()
-          .order('name');
+          .order('name', ascending: true);
 
       setState(() {
         _spells = List<Map<String, dynamic>>.from(response);

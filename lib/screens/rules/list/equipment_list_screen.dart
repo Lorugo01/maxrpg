@@ -36,7 +36,7 @@ class _EquipmentListScreenState extends ConsumerState<EquipmentListScreen> {
       final response = await SupabaseService.client
           .from('equipment')
           .select()
-          .order('name');
+          .order('name', ascending: true);
 
       setState(() {
         _equipment = List<Map<String, dynamic>>.from(response);

@@ -35,7 +35,7 @@ class _FeatListScreenState extends ConsumerState<FeatListScreen> {
       final response = await SupabaseService.client
           .from('feats')
           .select()
-          .order('name');
+          .order('name', ascending: true);
 
       setState(() {
         _feats = List<Map<String, dynamic>>.from(response);

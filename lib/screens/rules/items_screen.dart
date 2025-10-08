@@ -29,7 +29,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
       final data = await SupabaseService.client
           .from('items')
           .select()
-          .order('created_at', ascending: false);
+          .order('name', ascending: true);
       _items = List<Map<String, dynamic>>.from(data);
       _applyFilter();
     } catch (e) {

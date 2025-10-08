@@ -267,7 +267,7 @@ class _EditRaceScreenState extends ConsumerState<EditRaceScreen> {
       final data = await SupabaseService.client
           .from('spells')
           .select('name, level')
-          .order('name');
+          .order('name', ascending: true);
       _allSpells = List<Map<String, dynamic>>.from(data);
     } catch (_) {
       _allSpells = [];
