@@ -146,6 +146,11 @@ class _CharacterEditScreenState extends ConsumerState<CharacterEditScreen>
               .single();
       _classDataCache = classResponse;
 
+      // Detectar automaticamente conjuração se ainda não foi definido
+      if (_isSpellcaster == null && _classDataCache != null) {
+        _detectSpellcasting(_classDataCache!);
+      }
+
       // Carregar dados da raça
       final raceResponse =
           await SupabaseService.client
@@ -167,6 +172,51 @@ class _CharacterEditScreenState extends ConsumerState<CharacterEditScreen>
       setState(() {});
     } catch (e) {
       debugPrint('Erro ao carregar dados do personagem: $e');
+    }
+  }
+
+  void _detectSpellcasting(Map<String, dynamic> classData) {
+    final hasSpells = classData['has_spells'] as bool? ?? false;
+    final spellcasting = classData['spellcasting'];
+
+    if (hasSpells || spellcasting != null) {
+      _isSpellcaster = true;
+
+      // Tentar obter o atributo de conjuração
+      if (spellcasting is Map<String, dynamic>) {
+        final ability = spellcasting['ability'] as String?;
+        if (ability != null && ability.isNotEmpty) {
+          _customSpellcastingAbility = ability;
+          debugPrint('Atributo de conjuração detectado: $ability');
+          return;
+        }
+      } else if (spellcasting is String && spellcasting.isNotEmpty) {
+        try {
+          final parsed = jsonDecode(spellcasting) as Map<String, dynamic>;
+          final ability = parsed['ability'] as String?;
+          if (ability != null && ability.isNotEmpty) {
+            _customSpellcastingAbility = ability;
+            debugPrint('Atributo de conjuração detectado (string): $ability');
+            return;
+          }
+        } catch (e) {
+          debugPrint('Erro ao fazer parse de spellcasting: $e');
+        }
+      }
+
+      // Fallback: usar atributo primário
+      final primaryAbility = classData['primary_ability'] as String?;
+      if (primaryAbility != null && primaryAbility.isNotEmpty) {
+        _customSpellcastingAbility = primaryAbility;
+        debugPrint('Usando atributo primário como conjuração: $primaryAbility');
+      }
+
+      debugPrint(
+        'Classe configurada como conjuradora: ${_character.className}',
+      );
+    } else {
+      _isSpellcaster = false;
+      debugPrint('Classe NÃO é conjuradora: ${_character.className}');
     }
   }
 

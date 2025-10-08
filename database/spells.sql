@@ -1,27 +1,27 @@
 create table public.spells (
   id uuid not null default gen_random_uuid (),
   character_id uuid null,
-  name character varying(100) not null,
+  name text not null,
   level integer not null,
-  school character varying(100) not null,
-  casting_time character varying(400) not null,
-  range character varying(100) not null,
-  components character varying(100) not null,
-  duration character varying(100) not null,
+  school text not null,
+  casting_time text not null,
+  range text not null,
+  components text not null,
+  duration text not null,
   description text not null,
   -- Campos para efeito mecânico (dano/cura) e escalonamento por upcast
-  effect_type character varying(16) null, -- 'damage' | 'healing'
-  base_dice character varying(16) null,   -- ex: '2d8', '2d4'
+  effect_type text null, -- 'damage' | 'healing'
+  base_dice text null,   -- ex: '2d8', '2d4'
   include_spell_mod boolean null default false, -- soma mod de conjuração
-  damage_type character varying(32) null, -- ex: 'Fogo', 'Veneno'
-  upcast_dice_per_level character varying(16) null, -- ex: '1d8' ou '2d4'
+  damage_type text null, -- ex: 'Fogo', 'Veneno'
+  upcast_dice_per_level text null, -- ex: '1d8' ou '2d4'
   -- Truques: aumentos de dado por nível de personagem (lista de {level:int, dice:text})
   cantrip_dice_increases jsonb null,
   prepared boolean null default false,
   created_at timestamp with time zone null default now(),
   updated_at timestamp with time zone null default now(),
-  source character varying(100) null,
-  classes character varying(200) null,
+  source text null,
+  classes text null,
   ritual boolean null default false,
   concentration boolean null default false,
   constraint spells_pkey primary key (id),

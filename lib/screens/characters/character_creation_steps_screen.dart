@@ -245,6 +245,46 @@ class _CharacterCreationStepsScreenState
     }
   }
 
+  void _setSpellcastingInfo(Character character) {
+    if (_selectedClass == null) return;
+
+    // Verificar se a classe tem conjuração
+    final hasSpells = _selectedClass!['has_spells'] as bool? ?? false;
+    final spellcasting = _selectedClass!['spellcasting'];
+
+    // Se tem spellcasting definido ou has_spells = true
+    if (hasSpells || spellcasting != null) {
+      character.isSpellcaster = true;
+
+      // Tentar obter o atributo de conjuração da estrutura spellcasting
+      if (spellcasting is Map<String, dynamic>) {
+        final ability = spellcasting['ability'] as String?;
+        if (ability != null && ability.isNotEmpty) {
+          character.customSpellcastingAbility = ability;
+          debugPrint('Atributo de conjuração detectado: $ability');
+        }
+      }
+
+      // Se não encontrou no spellcasting, usar o atributo primário da classe
+      if (character.customSpellcastingAbility == null) {
+        final primaryAbility = _selectedClass!['primary_ability'] as String?;
+        if (primaryAbility != null && primaryAbility.isNotEmpty) {
+          character.customSpellcastingAbility = primaryAbility;
+          debugPrint(
+            'Usando atributo primário como conjuração: $primaryAbility',
+          );
+        }
+      }
+
+      debugPrint(
+        'Personagem configurado como conjurador: ${character.className}',
+      );
+    } else {
+      character.isSpellcaster = false;
+      debugPrint('Personagem NÃO é conjurador: ${character.className}');
+    }
+  }
+
   Future<void> _createCharacter() async {
     if (_characterName.isEmpty ||
         _selectedClass == null ||
@@ -494,6 +534,9 @@ class _CharacterCreationStepsScreenState
     debugPrint(
       'Vida inicial calculada: $hitDie (dado) + $constitutionModifier (mod) + $racialHitPointIncrease (racial) = $totalHitPoints',
     );
+
+    // Detectar automaticamente se é conjurador e o atributo de conjuração
+    _setSpellcastingInfo(character);
 
     await ref.read(charactersProvider.notifier).addCharacter(character);
 

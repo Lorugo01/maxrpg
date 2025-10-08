@@ -1,0 +1,6 @@
+INSERT INTO "public"."races" ("id", "name", "ability_score_increases", "size", "speed", "traits", "languages", "created_at", "updated_at", "source", "ability_score_increase", "subraces", "description", "traits_text", "racial_spells") VALUES ('ed91a19a-3a86-4ac5-8832-657620081ea2', 'Humano', '{}', 'MédioMédio (cerca de 4 a 7 pés de altura) ou Pequeno (cerca de 2 a 4 pés de altura)', '30', null, '', '2025-09-27 18:36:52.850198+00', '2025-09-27 21:36:54.089657+00', 'PHB 2024', null, '', 'Presentes em todo o multiverso, os humanos são variados e numerosos, buscando alcançar o máximo em seus anos de vida. Sua ambição e habilidade são admiradas, 
+respeitadas e temidas em muitos mundos. Os humanos são tão diversos em aparência quanto as populações da Terra e adoram muitos deuses. Embora 
+os estudiosos debatem a origem da humanidade, acredita-se que uma das primeiras reuniões humanas ocorreu em Sigil, a cidade em forma de toro no centro do mul
+tiverso, onde nasceu o idioma Comum. A partir desse ponto, os humanos se espalharam por todo o multiverso, levando ao cosmopolitismo da Cidade das Portas.', 'Engenhoso: Você ganha Inspiração Heroica sempre que termina um Descanso Longo
+Habilidoso: Você ganha proficiência em uma perícia de sua escolha
+Versátil: Você ganha um talento de Origem à sua escolha', '');

@@ -158,17 +158,83 @@ class ClassService {
           row['subclasses_details'],
         );
         final subclasses =
-            subclassesRawList.whereType<Map<String, dynamic>>().toList();
+            subclassesRawList
+                .whereType<Map<String, dynamic>>()
+                .map(
+                  (subclassData) => {
+                    'name': subclassData['name'] ?? '',
+                    'description': subclassData['description'] ?? '',
+                    'features':
+                        (subclassData['features'] as List<dynamic>?)?.map((
+                          feature,
+                        ) {
+                          final featureMap = feature as Map<String, dynamic>;
+                          return <String, dynamic>{
+                            'name': featureMap['name'] ?? '',
+                            'description': featureMap['description'] ?? '',
+                            'level':
+                                featureMap['level'] is int
+                                    ? featureMap['level']
+                                    : int.tryParse(
+                                          (featureMap['level'] ?? '1')
+                                              .toString(),
+                                        ) ??
+                                        1,
+                            'isPassive': featureMap['isPassive'] ?? true,
+                            // Incluir campos extras
+                            if (featureMap.containsKey('unarmored_defense'))
+                              'unarmored_defense':
+                                  featureMap['unarmored_defense'],
+                            if (featureMap.containsKey('usage_type'))
+                              'usage_type': featureMap['usage_type'],
+                            if (featureMap.containsKey('usage_value'))
+                              'usage_value': featureMap['usage_value'],
+                            if (featureMap.containsKey('usage_attribute'))
+                              'usage_attribute': featureMap['usage_attribute'],
+                            if (featureMap.containsKey('has_usage_limit'))
+                              'has_usage_limit': featureMap['has_usage_limit'],
+                          };
+                        }).toList() ??
+                        [],
+                  },
+                )
+                .toList();
 
         // Spellcasting safe parse (aceitar string JSON)
         final spellcasting = parseJsonMap(row['spellcasting']);
 
-        // DEBUG: Verificar dados de conjuração
+        // DEBUG: Verificar dados de conjuração e subclasses
         if (row['name'] != null) {
           debugPrint('=== DEBUG CLASSE: ${row['name']} ===');
           debugPrint('spellcasting raw: ${row['spellcasting']}');
           debugPrint('spellcasting parsed: $spellcasting');
           debugPrint('has_spells: ${row['has_spells']}');
+          debugPrint('subclasses_raw: ${row['subclasses_details']}');
+          debugPrint('subclasses_parsed: $subclasses');
+          debugPrint('level_features: ${row['level_features']}');
+
+          // Debug detalhado das subclasses
+          if (subclasses.isNotEmpty) {
+            debugPrint('=== DEBUG SUBCLASSES ===');
+            for (int i = 0; i < subclasses.length; i++) {
+              final subclass = subclasses[i];
+              debugPrint('Subclasse $i: ${subclass['name']}');
+              debugPrint('Features: ${subclass['features']?.length ?? 0}');
+              if (subclass['features'] != null) {
+                for (int j = 0; j < subclass['features'].length; j++) {
+                  final feature = subclass['features'][j];
+                  debugPrint(
+                    '  Feature $j: ${feature['name']} (nível ${feature['level']})',
+                  );
+                  if (feature.containsKey('unarmored_defense')) {
+                    debugPrint('    UD: ${feature['unarmored_defense']}');
+                  }
+                }
+              }
+            }
+            debugPrint('=== FIM DEBUG SUBCLASSES ===');
+          }
+
           debugPrint('=== FIM DEBUG CLASSE ===');
         }
 

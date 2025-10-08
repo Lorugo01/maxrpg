@@ -1,0 +1,1052 @@
+[
+  {
+    "name": "Acolchoada",
+    "category": "Armadura",
+    "subcategory": "Leve",
+    "cost": "5 po",
+    "weight": "4 kg",
+    "stats": {"CA": "11 + Des", "furtividade": "Desvantagem"},
+    "description": "Camadas de panos acolchoados e batidos."
+  },
+  {
+    "name": "Couro",
+    "category": "Armadura",
+    "subcategory": "Leve",
+    "cost": "10 po",
+    "weight": "5 kg",
+    "stats": {"CA": "11 + Des"},
+    "description": "Peitoral e ombreiras de couro endurecido em óleo."
+  },
+  {
+    "name": "Couro Batido",
+    "category": "Armadura",
+    "subcategory": "Leve",
+    "cost": "45 po",
+    "weight": "6,5 kg",
+    "stats": {"CA": "12 + Des"},
+    "description": "Couro resistente reforçado com rebites."
+  },
+  {
+    "name": "Gibão de Peles",
+    "category": "Armadura",
+    "subcategory": "Média",
+    "cost": "10 po",
+    "weight": "6 kg",
+    "stats": {"CA": "12 + Des (máx. +2)"},
+    "description": "Armadura feita de peles grossas e couro resistente."
+  },
+  {
+    "name": "Camisão de Malha",
+    "category": "Armadura",
+    "subcategory": "Média",
+    "cost": "50 po",
+    "weight": "10 kg",
+    "stats": {"CA": "13 + Des (máx. +2)"},
+    "description": "Anéis de metal intercalados usados sob as roupas."
+  },
+  {
+    "name": "Brunea",
+    "category": "Armadura",
+    "subcategory": "Média",
+    "cost": "50 po",
+    "weight": "22,5 kg",
+    "stats": {"CA": "14 + Des (máx. +2)", "furtividade": "Desvantagem"},
+    "description": "Casaco e calças de couro cobertos com peças de metal sobrepostas."
+  },
+  {
+    "name": "Peitoral",
+    "category": "Armadura",
+    "subcategory": "Média",
+    "cost": "400 po",
+    "weight": "10 kg",
+    "stats": {"CA": "14 + Des (máx. +2)"},
+    "description": "Armadura que protege apenas o torso, oferecendo boa mobilidade."
+  },
+  {
+    "name": "Meia-Armadura",
+    "category": "Armadura",
+    "subcategory": "Média",
+    "cost": "750 po",
+    "weight": "20 kg",
+    "stats": {"CA": "15 + Des (máx. +2)", "furtividade": "Desvantagem"},
+    "description": "Armadura que combina couro e placas de metal para proteção superior."
+  },
+  {
+    "name": "Cota de Anéis",
+    "category": "Armadura",
+    "subcategory": "Pesada",
+    "cost": "30 po",
+    "weight": "20 kg",
+    "stats": {"CA": "14", "furtividade": "Desvantagem"},
+    "description": "Armadura feita de anéis de metal interligados."
+  },
+  {
+    "name": "Cota de Malha",
+    "category": "Armadura",
+    "subcategory": "Pesada",
+    "cost": "75 po",
+    "weight": "27,5 kg",
+    "stats": {"CA": "16", "força": "13", "furtividade": "Desvantagem"},
+    "description": "Armadura feita de pequenos anéis de metal entrelaçados."
+  },
+  {
+    "name": "Cota de Talas",
+    "category": "Armadura",
+    "subcategory": "Pesada",
+    "cost": "200 po",
+    "weight": "30 kg",
+    "stats": {"CA": "17", "força": "15", "furtividade": "Desvantagem"},
+    "description": "Armadura feita de pequenas placas de metal presas a couro."
+  },
+  {
+    "name": "Placas",
+    "category": "Armadura",
+    "subcategory": "Pesada",
+    "cost": "1.500 po",
+    "weight": "32,5 kg",
+    "stats": {"CA": "18", "força": "15", "furtividade": "Desvantagem"},
+    "description": "Armadura completa feita de placas de metal moldadas."
+  },
+  {
+    "name": "Escudo",
+    "category": "Escudo",
+    "subcategory": "Escudo",
+    "cost": "10 po",
+    "weight": "3 kg",
+    "stats": {"CA": "+2"},
+    "description": "Escudo de madeira ou metal que oferece proteção adicional."
+  },
+  {
+    "name": "Adaga",
+    "category": "Arma",
+    "subcategory": "Simples Corpo-a-Corpo",
+    "cost": "2 po",
+    "weight": "0,5 kg",
+    "stats": {"dano": "1d4 perfurante", "propriedades": "Acuidade, leve, arremesso (distância 6/18)"},
+    "description": "Uma lâmina curta e afiada, ideal para ataques rápidos."
+  },
+  {
+    "name": "Azagaia",
+    "category": "Arma",
+    "subcategory": "Simples Corpo-a-Corpo",
+    "cost": "5 pp",
+    "weight": "1 kg",
+    "stats": {"dano": "1d6 perfurante", "propriedades": "Arremesso (distância 9/36)"},
+    "description": "Uma lança leve projetada para arremesso."
+  },
+  {
+    "name": "Bordão",
+    "category": "Arma",
+    "subcategory": "Simples Corpo-a-Corpo",
+    "cost": "2 pp",
+    "weight": "2 kg",
+    "stats": {"dano": "1d6 concussão", "propriedades": "Versátil (1d8)"},
+    "description": "Um bastão de madeira resistente."
+  },
+  {
+    "name": "Clava Grande",
+    "category": "Arma",
+    "subcategory": "Simples Corpo-a-Corpo",
+    "cost": "2 pp",
+    "weight": "5 kg",
+    "stats": {"dano": "1d8 concussão", "propriedades": "Pesada, duas mãos"},
+    "description": "Uma clava pesada que requer duas mãos para usar."
+  },
+  {
+    "name": "Foice Curta",
+    "category": "Arma",
+    "subcategory": "Simples Corpo-a-Corpo",
+    "cost": "1 po",
+    "weight": "1 kg",
+    "stats": {"dano": "1d4 cortante", "propriedades": "Leve"},
+    "description": "Uma foice pequena e leve."
+  },
+  {
+    "name": "Lança",
+    "category": "Arma",
+    "subcategory": "Simples Corpo-a-Corpo",
+    "cost": "1 po",
+    "weight": "1,5 kg",
+    "stats": {"dano": "1d6 perfurante", "propriedades": "Arremesso (distância 6/18), versátil (1d8)"},
+    "description": "Uma lança simples e versátil."
+  },
+  {
+    "name": "Maça",
+    "category": "Arma",
+    "subcategory": "Simples Corpo-a-Corpo",
+    "cost": "5 po",
+    "weight": "2 kg",
+    "stats": {"dano": "1d6 concussão"},
+    "description": "Uma arma contundente simples."
+  },
+  {
+    "name": "Machadinha",
+    "category": "Arma",
+    "subcategory": "Simples Corpo-a-Corpo",
+    "cost": "5 po",
+    "weight": "1 kg",
+    "stats": {"dano": "1d6 cortante", "propriedades": "Leve, arremesso (distância 6/18)"},
+    "description": "Um machado pequeno e leve."
+  },
+  {
+    "name": "Martelo Leve",
+    "category": "Arma",
+    "subcategory": "Simples Corpo-a-Corpo",
+    "cost": "2 po",
+    "weight": "1 kg",
+    "stats": {"dano": "1d4 concussão", "propriedades": "Leve, arremesso (distância 6/18)"},
+    "description": "Um martelo pequeno e leve."
+  },
+  {
+    "name": "Porrete",
+    "category": "Arma",
+    "subcategory": "Simples Corpo-a-Corpo",
+    "cost": "1 pp",
+    "weight": "1 kg",
+    "stats": {"dano": "1d4 concussão", "propriedades": "Leve"},
+    "description": "Um bastão curto e leve."
+  },
+  {
+    "name": "Arco Curto",
+    "category": "Arma",
+    "subcategory": "Simples À Distância",
+    "cost": "25 po",
+    "weight": "1 kg",
+    "stats": {"dano": "1d6 perfurante", "propriedades": "Munição (distância 24/96), duas mãos"},
+    "description": "Um arco pequeno e manejável."
+  },
+  {
+    "name": "Besta Leve",
+    "category": "Arma",
+    "subcategory": "Simples À Distância",
+    "cost": "25 po",
+    "weight": "2,5 kg",
+    "stats": {"dano": "1d8 perfurante", "propriedades": "Munição (distância 24/96), recarga, duas mãos"},
+    "description": "Uma besta leve e fácil de usar."
+  },
+  {
+    "name": "Dardo",
+    "category": "Arma",
+    "subcategory": "Simples À Distância",
+    "cost": "5 pc",
+    "weight": "0,1 kg",
+    "stats": {"dano": "1d4 perfurante", "propriedades": "Acuidade, arremesso (distância 6/18)"},
+    "description": "Um dardo pequeno e preciso."
+  },
+  {
+    "name": "Funda",
+    "category": "Arma",
+    "subcategory": "Simples À Distância",
+    "cost": "1 pp",
+    "weight": "-",
+    "stats": {"dano": "1d4 concussão", "propriedades": "Munição (distância 9/36)"},
+    "description": "Uma funda simples para arremessar projéteis."
+  },
+  {
+    "name": "Alabarda",
+    "category": "Arma",
+    "subcategory": "Marcial Corpo-a-Corpo",
+    "cost": "20 po",
+    "weight": "3 kg",
+    "stats": {"dano": "1d10 cortante", "propriedades": "Pesada, alcance, duas mãos"},
+    "description": "Uma arma de haste com lâmina de machado e ponta de lança."
+  },
+  {
+    "name": "Cimitarra",
+    "category": "Arma",
+    "subcategory": "Marcial Corpo-a-Corpo",
+    "cost": "25 po",
+    "weight": "1,5 kg",
+    "stats": {"dano": "1d6 cortante", "propriedades": "Acuidade, leve"},
+    "description": "Uma espada curva e leve."
+  },
+  {
+    "name": "Chicote",
+    "category": "Arma",
+    "subcategory": "Marcial Corpo-a-Corpo",
+    "cost": "2 po",
+    "weight": "1,5 kg",
+    "stats": {"dano": "1d4 cortante", "propriedades": "Acuidade, alcance"},
+    "description": "Um chicote de couro com alcance estendido."
+  },
+  {
+    "name": "Espada Curta",
+    "category": "Arma",
+    "subcategory": "Marcial Corpo-a-Corpo",
+    "cost": "10 po",
+    "weight": "1 kg",
+    "stats": {"dano": "1d6 perfurante", "propriedades": "Acuidade, leve"},
+    "description": "Uma espada pequena e ágil."
+  },
+  {
+    "name": "Espada Grande",
+    "category": "Arma",
+    "subcategory": "Marcial Corpo-a-Corpo",
+    "cost": "50 po",
+    "weight": "3 kg",
+    "stats": {"dano": "2d6 cortante", "propriedades": "Pesada, duas mãos"},
+    "description": "Uma espada grande e pesada que requer duas mãos."
+  },
+  {
+    "name": "Espada Longa",
+    "category": "Arma",
+    "subcategory": "Marcial Corpo-a-Corpo",
+    "cost": "15 po",
+    "weight": "1,5 kg",
+    "stats": {"dano": "1d8 cortante", "propriedades": "Versátil (1d10)"},
+    "description": "Uma espada versátil que pode ser usada com uma ou duas mãos."
+  },
+  {
+    "name": "Ábaco",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "2 po",
+    "weight": "1 kg",
+    "description": "Instrumento de cálculo com bastões e contas deslizantes."
+  },
+  {
+    "name": "Ácido (vidro)",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Consumível",
+    "cost": "25 po",
+    "weight": "0,5 kg",
+    "description": "Vidro de ácido que causa 2d6 de dano ácido ao ser arremessado."
+  },
+  {
+    "name": "Água Benta (frasco)",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Consumível",
+    "cost": "25 po",
+    "weight": "0,5 kg",
+    "description": "Frasco de água benta que causa 2d6 de dano radiante em corruptores e mortos-vivos."
+  },
+  {
+    "name": "Algemas",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "2 po",
+    "weight": "2 kg",
+    "description": "Algemas de metal para prender criaturas Pequenas ou Médias."
+  },
+  {
+    "name": "Algibeira",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Container",
+    "cost": "5 po",
+    "weight": "0,5 kg",
+    "description": "Bolsa de pano ou couro que pode armazenar até 20 munições de funda."
+  },
+  {
+    "name": "Aljava",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Container",
+    "cost": "1 po",
+    "weight": "0,5 kg",
+    "description": "Aljava que pode guardar até 20 flechas."
+  },
+  {
+    "name": "Antídoto (vidro)",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Consumível",
+    "cost": "50 po",
+    "weight": "-",
+    "description": "Líquido que concede vantagem em testes de resistência contra venenos por 1 hora."
+  },
+  {
+    "name": "Apito de Advertência",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "25 po",
+    "weight": "0,5 kg",
+    "description": "Apito que pode ser ouvido a até 600 metros de distância."
+  },
+  {
+    "name": "Aríete Portátil",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "4 po",
+    "weight": "17,5 kg",
+    "description": "Aríete que concede +4 em testes de Força para quebrar portas."
+  },
+  {
+    "name": "Armadilha de Caça",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "5 po",
+    "weight": "12,5 kg",
+    "description": "Armadilha de aço que causa 1d4 de dano perfurante e impede movimento."
+  },
+  {
+    "name": "Arpéu",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "2 po",
+    "weight": "2 kg",
+    "description": "Gancho de metal preso a uma corda para escalar."
+  },
+  {
+    "name": "Balança de Mercador",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "5 po",
+    "weight": "1,5 kg",
+    "description": "Balança pequena com pratos e pesos para medir objetos até 1 kg."
+  },
+  {
+    "name": "Balde",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Container",
+    "cost": "5 pc",
+    "weight": "1 kg",
+    "description": "Balde simples de madeira ou metal."
+  },
+  {
+    "name": "Barril",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Container",
+    "cost": "2 po",
+    "weight": "35 kg",
+    "description": "Barril de madeira para armazenar líquidos ou sólidos."
+  },
+  {
+    "name": "Baú",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Container",
+    "cost": "5 po",
+    "weight": "12,5 kg",
+    "description": "Baú de madeira com fechadura para armazenar equipamentos."
+  },
+  {
+    "name": "Bolsa de Componentes",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "25 po",
+    "weight": "1 kg",
+    "description": "Bolsa à prova d'água para armazenar componentes de magia."
+  },
+  {
+    "name": "Caixa de Fogo",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "5 pp",
+    "weight": "0,5 kg",
+    "description": "Recipiente com pederneira, isqueiro e pavio para acender fogo."
+  },
+  {
+    "name": "Caneca",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Container",
+    "cost": "2 pc",
+    "weight": "0,5 kg",
+    "description": "Caneca simples de cerâmica ou metal."
+  },
+  {
+    "name": "Caneta Tinteiro",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "2 pc",
+    "weight": "-",
+    "description": "Caneta com tinteiro para escrever."
+  },
+  {
+    "name": "Cantil",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Container",
+    "cost": "2 pp",
+    "weight": "2,5 kg",
+    "description": "Garrafa de couro ou metal para transportar água."
+  },
+  {
+    "name": "Cesto",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Container",
+    "cost": "4 pp",
+    "weight": "1 kg",
+    "description": "Cesto de vime ou madeira para transportar itens."
+  },
+  {
+    "name": "Cobertor de Inverno",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Roupa",
+    "cost": "5 pp",
+    "weight": "1,5 kg",
+    "description": "Cobertor quente para proteger do frio."
+  },
+  {
+    "name": "Corda de Cânhamo (15 metros)",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "1 po",
+    "weight": "5 kg",
+    "description": "Corda resistente de cânhamo com 15 metros de comprimento."
+  },
+  {
+    "name": "Corda de Seda (15 metros)",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "10 po",
+    "weight": "2,5 kg",
+    "description": "Corda leve e resistente de seda com 15 metros de comprimento."
+  },
+  {
+    "name": "Corrente (3 metros)",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "5 po",
+    "weight": "5 kg",
+    "description": "Corrente de metal com 3 metros de comprimento."
+  },
+  {
+    "name": "Equipamento de Pescaria",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "1 po",
+    "weight": "2 kg",
+    "description": "Kit completo para pescar incluindo vara, linha, anzóis e iscas."
+  },
+  {
+    "name": "Escada (3 metros)",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "1 pp",
+    "weight": "12,5 kg",
+    "description": "Escada de madeira com 3 metros de altura."
+  },
+  {
+    "name": "Esferas (sacola com 1.000)",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "1 po",
+    "weight": "1 kg",
+    "description": "Minúsculas esferas de metal que cobrem uma área de 3x3 metros e causam quedas."
+  },
+  {
+    "name": "Espelho de Aço",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "5 po",
+    "weight": "0,25 kg",
+    "description": "Espelho de aço polido para sinais e reflexos."
+  },
+  {
+    "name": "Estrepes (bolsa com 20)",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "1 po",
+    "weight": "1 kg",
+    "description": "Pequenos objetos pontiagudos que causam 1 de dano perfurante e reduzem movimento."
+  },
+  {
+    "name": "Fechadura",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "10 po",
+    "weight": "0,5 kg",
+    "description": "Fechadura de metal com chave para proteger baús e portas."
+  },
+  {
+    "name": "Foco Arcano - Bastão",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Foco",
+    "cost": "10 po",
+    "weight": "1 kg",
+    "description": "Bastão especial para canalizar magias arcanas."
+  },
+  {
+    "name": "Foco Arcano - Cajado",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Foco",
+    "cost": "5 po",
+    "weight": "2 kg",
+    "description": "Cajado especial para canalizar magias arcanas."
+  },
+  {
+    "name": "Foco Arcano - Cristal",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Foco",
+    "cost": "10 po",
+    "weight": "0,5 kg",
+    "description": "Cristal especial para canalizar magias arcanas."
+  },
+  {
+    "name": "Foco Arcano - Orbe",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Foco",
+    "cost": "20 po",
+    "weight": "1,5 kg",
+    "description": "Orbe especial para canalizar magias arcanas."
+  },
+  {
+    "name": "Foco Arcano - Varinha",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Foco",
+    "cost": "10 po",
+    "weight": "0,5 kg",
+    "description": "Varinha especial para canalizar magias arcanas."
+  },
+  {
+    "name": "Fogo Alquímico (frasco)",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Consumível",
+    "cost": "50 po",
+    "weight": "0,5 kg",
+    "description": "Líquido pegajoso que inflama em contato com o ar, causando 1d4 de dano de fogo por turno."
+  },
+  {
+    "name": "Frasco",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Container",
+    "cost": "2 pc",
+    "weight": "1 kg",
+    "description": "Frasco de vidro para armazenar líquidos."
+  },
+  {
+    "name": "Garrafa de Vidro",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Container",
+    "cost": "1 po",
+    "weight": "1 kg",
+    "description": "Garrafa de vidro para armazenar líquidos."
+  },
+  {
+    "name": "Giz (1 peça)",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "1 pc",
+    "weight": "-",
+    "description": "Pedaço de giz para marcar ou escrever."
+  },
+  {
+    "name": "Grimório",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "50 po",
+    "weight": "1,5 kg",
+    "description": "Livro encadernado em couro com 100 páginas para armazenar magias."
+  },
+  {
+    "name": "Jarra",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Container",
+    "cost": "4 pc",
+    "weight": "2 kg",
+    "description": "Jarra de cerâmica para armazenar líquidos."
+  },
+  {
+    "name": "Kit de Escalada",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "25 po",
+    "weight": "6 kg",
+    "description": "Kit com pítons, botas pontiagudas, luvas e cinto para escalar."
+  },
+  {
+    "name": "Kit de Primeiros Socorros",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "5 po",
+    "weight": "1,5 kg",
+    "description": "Kit com ataduras, pomadas e talas para estabilizar criaturas feridas."
+  },
+  {
+    "name": "Lâmpada",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "5 pp",
+    "weight": "0,5 kg",
+    "description": "Lâmpada que fornece luz plena em 4,5 metros e penumbra em 9 metros."
+  },
+  {
+    "name": "Lanterna Coberta",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "5 po",
+    "weight": "1 kg",
+    "description": "Lanterna que fornece luz plena em 9 metros e penumbra em 9 metros."
+  },
+  {
+    "name": "Lanterna Furta-Fogo",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "10 po",
+    "weight": "1 kg",
+    "description": "Lanterna que fornece luz plena em cone de 18 metros e penumbra em 18 metros."
+  },
+  {
+    "name": "Lente de Aumento",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "100 po",
+    "weight": "-",
+    "description": "Lente que concede vantagem em testes para avaliar itens pequenos ou detalhados."
+  },
+  {
+    "name": "Livro",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "25 po",
+    "weight": "2,5 kg",
+    "description": "Livro com poesia, relatos históricos ou informações sobre um campo específico."
+  },
+  {
+    "name": "Luneta",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "1.000 po",
+    "weight": "0,5 kg",
+    "description": "Instrumento que amplia objetos até o dobro do seu tamanho."
+  },
+  {
+    "name": "Manto",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Roupa",
+    "cost": "1 po",
+    "weight": "2 kg",
+    "description": "Manto simples de tecido."
+  },
+  {
+    "name": "Marreta",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "2 po",
+    "weight": "5 kg",
+    "description": "Martelo pesado para trabalhos pesados."
+  },
+  {
+    "name": "Martelo",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "1 po",
+    "weight": "1,5 kg",
+    "description": "Martelo simples para trabalhos básicos."
+  },
+  {
+    "name": "Mochila",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Container",
+    "cost": "2 po",
+    "weight": "2,5 kg",
+    "description": "Mochila para transportar equipamentos de aventura."
+  },
+  {
+    "name": "Balas de Funda (20)",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Munição",
+    "cost": "4 pc",
+    "weight": "0,75 kg",
+    "description": "20 balas de funda para usar com funda."
+  },
+  {
+    "name": "Flechas (20)",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Munição",
+    "cost": "1 po",
+    "weight": "0,5 kg",
+    "description": "20 flechas para usar com arco."
+  },
+  {
+    "name": "Virotes (20)",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Munição",
+    "cost": "1 po",
+    "weight": "0,75 kg",
+    "description": "20 virotes para usar com besta."
+  },
+  {
+    "name": "Zarabatana (50)",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Munição",
+    "cost": "1 po",
+    "weight": "0,5 kg",
+    "description": "50 dardos para usar com zarabatana."
+  },
+  {
+    "name": "Óleo (frasco)",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Consumível",
+    "cost": "1 pp",
+    "weight": "0,5 kg",
+    "description": "Frasco de óleo para lâmpadas ou como arma improvisada."
+  },
+  {
+    "name": "Pá",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "2 po",
+    "weight": "2,5 kg",
+    "description": "Pá para cavar ou mover terra."
+  },
+  {
+    "name": "Panela de Ferro",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "2 po",
+    "weight": "5 kg",
+    "description": "Panela de ferro para cozinhar."
+  },
+  {
+    "name": "Papel (uma folha)",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "2 pp",
+    "weight": "-",
+    "description": "Uma folha de papel para escrever."
+  },
+  {
+    "name": "Parafina",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "5 pp",
+    "weight": "-",
+    "description": "Parafina para selar documentos ou fazer velas."
+  },
+  {
+    "name": "Pé de Cabra",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "2 po",
+    "weight": "2,5 kg",
+    "description": "Ferramenta que concede vantagem em testes de Força onde uma alavanca possa ser aplicada."
+  },
+  {
+    "name": "Pedra de Amolar",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "1 pc",
+    "weight": "-",
+    "description": "Pedra para afiar lâminas."
+  },
+  {
+    "name": "Perfume (frasco)",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Consumível",
+    "cost": "5 po",
+    "weight": "-",
+    "description": "Frasco de perfume para uso pessoal."
+  },
+  {
+    "name": "Pergaminho (uma folha)",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "1 pp",
+    "weight": "-",
+    "description": "Uma folha de pergaminho para escrever."
+  },
+  {
+    "name": "Picareta de Minerador",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "2 po",
+    "weight": "5 kg",
+    "description": "Picareta para minerar ou cavar em rocha."
+  },
+  {
+    "name": "Píton",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "5 pc",
+    "weight": "-",
+    "description": "Pequeno pino de metal para escalar ou fixar cordas."
+  },
+  {
+    "name": "Poção de Cura",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Consumível",
+    "cost": "50 po",
+    "weight": "0,25 kg",
+    "description": "Poção mágica que recupera 2d4+2 pontos de vida."
+  },
+  {
+    "name": "Porta Mapas ou Pergaminhos",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Container",
+    "cost": "1 po",
+    "weight": "0,5 kg",
+    "description": "Estojo cilíndrico de couro para armazenar até 10 folhas de papel ou 5 pergaminhos."
+  },
+  {
+    "name": "Porta Virotes",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Container",
+    "cost": "1 po",
+    "weight": "0,5 kg",
+    "description": "Estojo de madeira para armazenar até 20 virotes de besta."
+  },
+  {
+    "name": "Pregos de Ferro (10)",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "1 po",
+    "weight": "2,5 kg",
+    "description": "10 pregos de ferro para construção ou reparos."
+  },
+  {
+    "name": "Rações de Viagem (1 dia)",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Consumível",
+    "cost": "5 pp",
+    "weight": "1 kg",
+    "description": "Alimentos desidratados adequados para viagens longas."
+  },
+  {
+    "name": "Robes",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Roupa",
+    "cost": "1 po",
+    "weight": "2 kg",
+    "description": "Roupas simples de tecido."
+  },
+  {
+    "name": "Roldana e Polia",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "1 po",
+    "weight": "2,5 kg",
+    "description": "Conjunto de roldanas que permite içar até quatro vezes o peso normal."
+  },
+  {
+    "name": "Roupas Comuns",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Roupa",
+    "cost": "5 pp",
+    "weight": "1,5 kg",
+    "description": "Roupas simples e práticas para uso diário."
+  },
+  {
+    "name": "Roupas de Viajante",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Roupa",
+    "cost": "2 po",
+    "weight": "2 kg",
+    "description": "Roupas resistentes adequadas para viagens."
+  },
+  {
+    "name": "Roupas de Entretenimento",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Roupa",
+    "cost": "5 po",
+    "weight": "2 kg",
+    "description": "Roupas elegantes para apresentações e eventos sociais."
+  },
+  {
+    "name": "Roupas Finas",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Roupa",
+    "cost": "15 po",
+    "weight": "3 kg",
+    "description": "Roupas de alta qualidade para ocasiões especiais."
+  },
+  {
+    "name": "Sabão",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Consumível",
+    "cost": "2 pc",
+    "weight": "-",
+    "description": "Sabão para limpeza pessoal e de roupas."
+  },
+  {
+    "name": "Saco",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Container",
+    "cost": "1 pc",
+    "weight": "0,25 kg",
+    "description": "Saco simples de pano para transportar itens."
+  },
+  {
+    "name": "Saco de Dormir",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "1 po",
+    "weight": "3,5 kg",
+    "description": "Saco de dormir para descansar ao ar livre."
+  },
+  {
+    "name": "Símbolo Sagrado - Amuleto",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Foco",
+    "cost": "5 po",
+    "weight": "0,5 kg",
+    "description": "Amuleto com símbolo de uma divindade para clérigos e paladinos."
+  },
+  {
+    "name": "Símbolo Sagrado - Emblema",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Foco",
+    "cost": "5 po",
+    "weight": "-",
+    "description": "Emblema com símbolo de uma divindade para clérigos e paladinos."
+  },
+  {
+    "name": "Símbolo Sagrado - Relicário",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Foco",
+    "cost": "5 po",
+    "weight": "1 kg",
+    "description": "Relicário com símbolo de uma divindade para clérigos e paladinos."
+  },
+  {
+    "name": "Sinete",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "5 po",
+    "weight": "-",
+    "description": "Sinete para selar documentos com cera."
+  },
+  {
+    "name": "Sino",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "1 po",
+    "weight": "-",
+    "description": "Sino pequeno para sinais ou alertas."
+  },
+  {
+    "name": "Tenda para Duas Pessoas",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "2 po",
+    "weight": "10 kg",
+    "description": "Abrigo simples e portátil que acomoda duas pessoas."
+  },
+  {
+    "name": "Tocha",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "1 pc",
+    "weight": "0,5 kg",
+    "description": "Tocha que queima por 1 hora fornecendo luz plena em 6 metros."
+  },
+  {
+    "name": "Tinta (frasco de 30ml)",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "10 po",
+    "weight": "-",
+    "description": "Frasco de tinta para escrever ou desenhar."
+  },
+  {
+    "name": "Vara (3 metros)",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "5 pc",
+    "weight": "3,5 kg",
+    "description": "Vara de madeira com 3 metros de comprimento."
+  },
+  {
+    "name": "Vela",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Ferramenta",
+    "cost": "1 pc",
+    "weight": "-",
+    "description": "Vela que fornece luz plena em 1,5 metro por 1 hora."
+  },
+  {
+    "name": "Veneno Básico (frasco)",
+    "category": "Equipamento de Aventura",
+    "subcategory": "Consumível",
+    "cost": "100 po",
+    "weight": "-",
+    "description": "Veneno que causa 1d4 de dano de veneno em testes de resistência de Constituição CD 10."
+  }
+]
+

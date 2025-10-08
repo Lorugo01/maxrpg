@@ -28,6 +28,11 @@ class Character {
   List<String> proficiencies;
   DndClass? dndClass;
 
+  // Subclasse
+  String? subclassName;
+  int? subclassLevel;
+  List<Map<String, dynamic>>? subclassFeatures;
+
   // Magias selecionadas na criação (por nome)
   List<String> selectedCantrips;
   List<String> selectedSpells;
@@ -91,6 +96,9 @@ class Character {
     List<String>? proficiencies,
     List<Spell>? knownSpells,
     this.dndClass,
+    this.subclassName,
+    this.subclassLevel,
+    this.subclassFeatures,
     List<String>? selectedCantrips,
     List<String>? selectedSpells,
     this.personalityTraits,
@@ -376,7 +384,7 @@ class Character {
       }
     } else {
       // Sem armadura - verificar se a classe tem Defesa sem Armadura
-      final unarmoredDefense = _getUnarmoredDefense();
+      final unarmoredDefense = getUnarmoredDefense();
       if (unarmoredDefense != null) {
         // Usar fórmula da Defesa sem Armadura
         baseAC = unarmoredDefense['base'] as int;
@@ -417,15 +425,46 @@ class Character {
     return baseAC;
   }
 
-  // Buscar configuração de Defesa sem Armadura da classe
-  Map<String, dynamic>? _getUnarmoredDefense() {
-    if (dndClass?.levelFeatures == null) return null;
-
-    // Procurar em todas as features de nível por uma que tenha unarmored_defense
-    for (final feature in dndClass!.levelFeatures!) {
-      if (feature.containsKey('unarmored_defense')) {
-        return feature['unarmored_defense'] as Map<String, dynamic>;
+  // Buscar configuração de Defesa sem Armadura da classe e subclasses
+  Map<String, dynamic>? getUnarmoredDefense() {
+    // 1. Procurar nas features de nível da classe principal
+    if (dndClass?.levelFeatures != null) {
+      for (final feature in dndClass!.levelFeatures!) {
+        if (feature.containsKey('unarmored_defense')) {
+          debugPrint('UD encontrada na classe principal: ${dndClass!.name}');
+          return feature['unarmored_defense'] as Map<String, dynamic>;
+        }
       }
+    }
+
+    // 2. Procurar apenas na subclasse SELECIONADA do personagem
+    if (subclassName != null &&
+        subclassName!.isNotEmpty &&
+        dndClass?.subclasses != null) {
+      // Normalizar o nome da subclasse para comparação
+      final targetSubclass = subclassName!.toLowerCase().trim();
+
+      debugPrint('Procurando UD na subclasse: $subclassName');
+
+      for (final subclass in dndClass!.subclasses) {
+        final subclassNameNormalized = subclass.name.toLowerCase().trim();
+
+        if (subclassNameNormalized == targetSubclass) {
+          debugPrint('Subclasse encontrada: ${subclass.name}');
+
+          for (final feature in subclass.features) {
+            // Verificar se a feature tem unarmored_defense
+            if (feature.unarmoredDefense != null) {
+              debugPrint(
+                'UD encontrada na subclasse ${subclass.name}: ${feature.unarmoredDefense}',
+              );
+              return feature.unarmoredDefense!;
+            }
+          }
+        }
+      }
+
+      debugPrint('Subclasse $subclassName não tem UD');
     }
 
     return null;
@@ -519,6 +558,12 @@ class Character {
           json['dndClass'] != null
               ? DndClass.fromJson(json['dndClass'] as Map<String, dynamic>)
               : null,
+      subclassName: json['subclass_name'] as String?,
+      subclassLevel: json['subclass_level'] as int?,
+      subclassFeatures:
+          (json['subclass_features'] as List<dynamic>?)
+              ?.map((e) => e as Map<String, dynamic>)
+              .toList(),
       selectedCantrips: List<String>.from(
         json['selected_cantrips'] ?? json['selectedCantrips'] ?? [],
       ),
@@ -578,6 +623,9 @@ class Character {
       'languages': languages,
       'proficiencies': proficiencies,
       'dndClass': dndClass?.toJson(),
+      'subclass_name': subclassName,
+      'subclass_level': subclassLevel,
+      'subclass_features': subclassFeatures,
       'selected_cantrips': selectedCantrips,
       'selected_spells': selectedSpells,
       'known_spells': knownSpells.map((s) => s.toJson()).toList(),

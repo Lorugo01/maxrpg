@@ -23,14 +23,6 @@ create table public.characters (
   ideals text null,
   bonds text null,
   flaws text null,
-  platinum_pieces integer null default 0,
-  gold_pieces integer null default 0,
-  electrum_pieces integer null default 0,
-  silver_pieces integer null default 0,
-  copper_pieces integer null default 0,
-  hit_dice_used integer null default 0,
-  death_save_successes integer null default 0,
-  death_save_failures integer null default 0,
   created_at timestamp with time zone null default now(),
   updated_at timestamp with time zone null default now(),
   ability_scores jsonb null,
@@ -39,11 +31,26 @@ create table public.characters (
   selected_cantrips jsonb null default '[]'::jsonb,
   selected_spells jsonb null default '[]'::jsonb,
   known_spells jsonb null default '[]'::jsonb,
+  platinum_pieces integer null default 0,
+  gold_pieces integer null default 0,
+  electrum_pieces integer null default 0,
+  silver_pieces integer null default 0,
+  copper_pieces integer null default 0,
+  death_save_successes integer null default 0,
+  death_save_failures integer null default 0,
+  hit_dice_used integer null default 0,
+  is_spellcaster boolean null,
+  custom_spellcasting_ability text null,
+  subclass_name character varying(50) null,
+  subclass_level integer null default 3,
+  subclass_features jsonb null default '[]'::jsonb,
   constraint characters_pkey primary key (id),
   constraint characters_user_id_fkey foreign KEY (user_id) references auth.users (id) on delete CASCADE
 ) TABLESPACE pg_default;
 
 create index IF not exists idx_characters_name on public.characters using btree (name) TABLESPACE pg_default;
+
+create index IF not exists idx_characters_subclass on public.characters using btree (subclass_name) TABLESPACE pg_default;
 
 create trigger update_characters_updated_at BEFORE
 update on characters for EACH row

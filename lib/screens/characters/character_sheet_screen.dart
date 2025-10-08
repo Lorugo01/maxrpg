@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '/services/equipment_service.dart';
@@ -219,12 +219,25 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
           'CharacterSheet: levelFeatures: ${dndClass.levelFeatures?.length ?? 0}',
         );
 
-        // Verificar se tem UD
+        // Verificar se tem UD nas features de nível
         if (dndClass.levelFeatures != null) {
           for (final feature in dndClass.levelFeatures!) {
             if (feature.containsKey('unarmored_defense')) {
               debugPrint(
-                'CharacterSheet: UD encontrada: ${feature['unarmored_defense']}',
+                'CharacterSheet: UD encontrada em levelFeatures: ${feature['unarmored_defense']}',
+              );
+            }
+          }
+        }
+
+        // Verificar se tem UD nas subclasses
+        for (final subclass in dndClass.subclasses) {
+          debugPrint('CharacterSheet: Verificando subclasse: ${subclass.name}');
+          for (final feature in subclass.features) {
+            final featureMap = feature.toJson();
+            if (featureMap.containsKey('unarmored_defense')) {
+              debugPrint(
+                'CharacterSheet: UD encontrada em subclasse ${subclass.name}: ${featureMap['unarmored_defense']}',
               );
             }
           }
@@ -770,6 +783,27 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
                                           color: Colors.grey.shade700,
                                         ),
                                       ),
+                                      if (_character.subclassName != null) ...[
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.category,
+                                              size: 14,
+                                              color: Colors.indigo,
+                                            ),
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              _character.subclassName!,
+                                              style: Theme.of(
+                                                context,
+                                              ).textTheme.bodyMedium?.copyWith(
+                                                color: Colors.indigo,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
                                       Text(
                                         'Nível ${_character.level} • ${_character.background}',
                                         style: Theme.of(
@@ -3293,9 +3327,13 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
     debugPrint('=== DEBUG CA ===');
     debugPrint('Personagem: ${_character.name}');
     debugPrint('Classe: ${_character.className}');
+    debugPrint('Subclasse: ${_character.subclassName ?? "Nenhuma"}');
     debugPrint('dndClass: ${_character.dndClass?.name}');
     debugPrint(
       'levelFeatures: ${_character.dndClass?.levelFeatures?.length ?? 0}',
+    );
+    debugPrint(
+      'subclasses disponíveis: ${_character.dndClass?.subclasses.length ?? 0}',
     );
     debugPrint('unarmoredDefense: $unarmoredDefense');
     debugPrint('hasUnarmoredDefense: $hasUnarmoredDefense');
@@ -3730,16 +3768,8 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
   }
 
   Map<String, dynamic>? _getUnarmoredDefense() {
-    if (_character.dndClass?.levelFeatures == null) return null;
-
-    // Procurar em todas as features de nível por uma que tenha unarmored_defense
-    for (final feature in _character.dndClass!.levelFeatures!) {
-      if (feature.containsKey('unarmored_defense')) {
-        return feature['unarmored_defense'] as Map<String, dynamic>;
-      }
-    }
-
-    return null;
+    // Usar o método do Character que já verifica classe e subclasse
+    return _character.getUnarmoredDefense();
   }
 
   void _showAbilityRollDialog(String abilityName, int modifier) {
@@ -4248,54 +4278,116 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
                   (a, b) => (a['level'] as int).compareTo(b['level'] as int),
                 );
 
-          // Carregar características das subclasses
+          // Carregar características da subclasse selecionada
           List<dynamic> subclassFeatures = [];
-          final subclassesDetails = classData['subclasses_details'];
-          if (subclassesDetails != null) {
-            List<dynamic> subclasses = [];
-            if (subclassesDetails is String) {
-              try {
-                subclasses = jsonDecode(subclassesDetails) as List<dynamic>;
-              } catch (e) {
-                subclasses = [];
-              }
-            } else if (subclassesDetails is List<dynamic>) {
-              subclasses = subclassesDetails;
-            }
+          String? selectedSubclassName = _character.subclassName;
 
-            // Coletar todas as características das subclasses do nível atual
-            for (final subclass in subclasses) {
-              final features = subclass['features'] as List<dynamic>? ?? [];
-              for (final feature in features) {
-                final level = feature['level'] as int?;
-                if (level != null && level <= _character.level) {
-                  subclassFeatures.add(feature);
-                }
-              }
-            }
+          if (selectedSubclassName != null &&
+              _character.subclassFeatures != null) {
+            // Usar as features salvas no personagem
+            subclassFeatures =
+                _character.subclassFeatures!.where((feature) {
+                  final level = feature['level'] as int?;
+                  return level != null && level <= _character.level;
+                }).toList();
           }
 
           // removido UD
 
-          if (currentLevelFeatures.isEmpty) {
+          if (currentLevelFeatures.isEmpty && subclassFeatures.isEmpty) {
             return _buildInfoCard(
               'Nenhuma habilidade disponível no nível ${_character.level}',
             );
           }
 
           return Column(
-            children:
-                currentLevelFeatures.map((feature) {
+            children: [
+              // Cabeçalho da classe principal
+              Container(
+                padding: const EdgeInsets.all(12),
+                margin: const EdgeInsets.only(bottom: 8),
+                decoration: BoxDecoration(
+                  color: Colors.purple.withAlpha(20),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.purple.withAlpha(50)),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.class_, color: Colors.purple),
+                    const SizedBox(width: 8),
+                    Text(
+                      classData['name'] ?? 'Classe',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Habilidades da classe principal
+              ...currentLevelFeatures.map((feature) {
+                final card = _buildAbilityCard(
+                  feature['name'] ?? 'Habilidade',
+                  feature['description'] ?? 'Descrição não disponível',
+                  Colors.purple,
+                  Icons.class_,
+                  meta: '${classData['name']} • Nível ${feature['level']}',
+                  abilityData: feature,
+                );
+                return card;
+              }),
+              // Cabeçalho da subclasse (se houver)
+              if (selectedSubclassName != null) ...[
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  margin: const EdgeInsets.only(bottom: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.indigo.withAlpha(20),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.indigo.withAlpha(50)),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.category, color: Colors.indigo),
+                      const SizedBox(width: 8),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            selectedSubclassName,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            'Subclasse (Nível ${_character.subclassLevel ?? 3})',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                // Habilidades da subclasse
+                ...subclassFeatures.map((feature) {
                   final card = _buildAbilityCard(
                     feature['name'] ?? 'Habilidade',
                     feature['description'] ?? 'Descrição não disponível',
-                    Colors.purple,
-                    Icons.class_,
-                    meta: '${classData['name']} • Nível ${feature['level']}',
+                    Colors.indigo,
+                    Icons.category,
+                    meta: '$selectedSubclassName • Nível ${feature['level']}',
                     abilityData: feature,
                   );
                   return card;
-                }).toList(),
+                }),
+              ],
+            ],
           );
         },
       ),

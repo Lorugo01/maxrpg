@@ -181,11 +181,14 @@ class SubclassFeature {
 
   bool isPassive;
 
+  Map<String, dynamic>? unarmoredDefense;
+
   SubclassFeature({
     required this.name,
     required this.description,
     required this.level,
     this.isPassive = true,
+    this.unarmoredDefense,
   });
 
   /// Converte JSON para SubclassFeature
@@ -195,6 +198,7 @@ class SubclassFeature {
       description: json['description'] as String,
       level: json['level'] as int,
       isPassive: json['isPassive'] as bool? ?? true,
+      unarmoredDefense: json['unarmored_defense'] as Map<String, dynamic>?,
     );
   }
 
@@ -205,6 +209,7 @@ class SubclassFeature {
       'description': description,
       'level': level,
       'isPassive': isPassive,
+      if (unarmoredDefense != null) 'unarmored_defense': unarmoredDefense,
     };
   }
 }

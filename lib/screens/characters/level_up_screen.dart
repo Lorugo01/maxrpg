@@ -1,12 +1,12 @@
-import 'dart:convert';
-import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '/models/character.dart';
 import '/models/dnd_class.dart';
 import '/models/level_up.dart';
 import '/providers/character_provider.dart';
+import '/services/character_service_supabase.dart';
 import '/services/class_service.dart';
+import '/services/feat_service.dart';
 
 class LevelUpScreen extends ConsumerStatefulWidget {
   final Character character;
@@ -88,44 +88,25 @@ class _LevelUpScreenState extends ConsumerState<LevelUpScreen> {
 
   Future<void> _loadFeatsFromJson() async {
     try {
-      final String jsonString = await rootBundle.loadString(
-        'assets/feats/phb_2024_ptbr.json',
-      );
-      final List<dynamic> jsonList = json.decode(jsonString);
+      // Carregar talentos do banco de dados Supabase
+      final feats = await FeatService.loadAll();
 
       availableFeats =
-          jsonList.map((feat) {
+          feats.map((feat) {
             return {
-              'name': feat['name'] as String,
-              'description': _formatFeatDescription(feat),
-              'details': _formatFeatDetails(feat),
+              'name': feat.name,
+              'description': feat.prerequisite ?? 'Sem pré-requisitos',
+              'details': feat.description,
+              'source': feat.source ?? 'PHB 2024',
             };
           }).toList();
+
+      debugPrint('Talentos carregados para level up: ${availableFeats.length}');
     } catch (e) {
+      debugPrint('Erro ao carregar talentos: $e');
       // Fallback para lista básica se houver erro
       availableFeats = _getBasicFeats();
     }
-  }
-
-  String _formatFeatDescription(Map<String, dynamic> feat) {
-    final prerequisites = feat['prerequisites'] as String?;
-    if (prerequisites != null && prerequisites.isNotEmpty) {
-      return prerequisites;
-    }
-    return 'Sem pré-requisitos';
-  }
-
-  String _formatFeatDetails(Map<String, dynamic> feat) {
-    final effects = feat['effects'] as List<dynamic>?;
-    if (effects != null && effects.isNotEmpty) {
-      return effects.join('\n• ');
-    }
-    return 'Detalhes não disponíveis';
-  }
-
-  String _formatFeatCategory(Map<String, dynamic> feat) {
-    final category = feat['category'] as String?;
-    return category ?? 'Geral';
   }
 
   void _showFeatDetailsDialog(Map<String, dynamic> feat) {
@@ -151,7 +132,7 @@ class _LevelUpScreenState extends ConsumerState<LevelUpScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Categoria
+                  // Fonte
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 8,
@@ -162,7 +143,7 @@ class _LevelUpScreenState extends ConsumerState<LevelUpScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
-                      _formatFeatCategory(feat),
+                      feat['source'] ?? 'PHB 2024',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
@@ -173,7 +154,8 @@ class _LevelUpScreenState extends ConsumerState<LevelUpScreen> {
                   const SizedBox(height: 12),
 
                   // Pré-requisitos
-                  if (_formatFeatDescription(feat) != 'Sem pré-requisitos') ...[
+                  if (feat['description'] != null &&
+                      feat['description'] != 'Sem pré-requisitos') ...[
                     Text(
                       'Pré-requisitos:',
                       style: TextStyle(
@@ -184,13 +166,13 @@ class _LevelUpScreenState extends ConsumerState<LevelUpScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      _formatFeatDescription(feat),
+                      feat['description'],
                       style: const TextStyle(fontSize: 14),
                     ),
                     const SizedBox(height: 12),
                   ],
 
-                  // Efeitos
+                  // Efeitos/Detalhes
                   Text(
                     'Efeitos:',
                     style: TextStyle(
@@ -201,7 +183,7 @@ class _LevelUpScreenState extends ConsumerState<LevelUpScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    _formatFeatDetails(feat),
+                    feat['details'] ?? 'Detalhes não disponíveis',
                     style: const TextStyle(fontSize: 14, height: 1.4),
                   ),
                 ],
@@ -1234,8 +1216,24 @@ class _LevelUpScreenState extends ConsumerState<LevelUpScreen> {
 
   void _changeAbilityScore(String ability, int change) {
     setState(() {
-      abilityScoreChanges[ability] = (abilityScoreChanges[ability]! + change)
-          .clamp(0, 2);
+      // Calcular total de pontos já distribuídos
+      final totalDistributed = abilityScoreChanges.values.reduce(
+        (a, b) => a + b,
+      );
+
+      // Novo valor para este atributo
+      final newValue = abilityScoreChanges[ability]! + change;
+
+      // Novo total se essa mudança for aplicada
+      final newTotal =
+          totalDistributed - abilityScoreChanges[ability]! + newValue;
+
+      // Regras:
+      // 1. Máximo +2 por atributo individual
+      // 2. Máximo +2 no total (pode ser +2 em um OU +1 em dois)
+      if (newValue >= 0 && newValue <= 2 && newTotal <= 2) {
+        abilityScoreChanges[ability] = newValue;
+      }
     });
   }
 
@@ -1497,8 +1495,48 @@ class _LevelUpScreenState extends ConsumerState<LevelUpScreen> {
         }
       }
 
+      // Aplicar seleção de subclasse (geralmente no nível 3)
+      if (levelUp!.selectedSubclass != null && dndClass != null) {
+        final selectedSubclassName = levelUp!.selectedSubclass!;
+
+        // Buscar a subclasse na classe
+        Subclass? selectedSubclass;
+        for (final subclass in dndClass!.subclasses) {
+          if (subclass.name == selectedSubclassName) {
+            selectedSubclass = subclass;
+            break;
+          }
+        }
+
+        if (selectedSubclass != null) {
+          character.subclassName = selectedSubclass.name;
+          character.subclassLevel = levelUp!.newLevel;
+
+          // Converter features da subclasse para Map
+          character.subclassFeatures =
+              selectedSubclass.features
+                  .map((feature) => feature.toJson())
+                  .toList();
+
+          debugPrint(
+            'Subclasse selecionada: ${selectedSubclass.name} (Nível ${levelUp!.newLevel})',
+          );
+          debugPrint(
+            'Features da subclasse: ${character.subclassFeatures?.length ?? 0}',
+          );
+        }
+      }
+
       // Salvar personagem
       await ref.read(charactersProvider.notifier).updateCharacter(character);
+
+      // Recarregar personagem com dndClass completo
+      final reloadedCharacter = await CharacterService.loadCharacter(
+        character.id,
+      );
+      if (reloadedCharacter == null) {
+        throw Exception('Falha ao recarregar personagem');
+      }
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -1507,7 +1545,7 @@ class _LevelUpScreenState extends ConsumerState<LevelUpScreen> {
             backgroundColor: Colors.green,
           ),
         );
-        Navigator.pop(context, character);
+        Navigator.pop(context, reloadedCharacter);
       }
     } catch (e) {
       if (mounted) {

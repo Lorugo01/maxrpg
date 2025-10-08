@@ -315,6 +315,42 @@ class CharacterService {
 
       final character = Character.fromJson(response);
 
+      // Carregar dados completos da classe
+      if (character.className.isNotEmpty) {
+        try {
+          debugPrint(
+            'CharacterService: Tentando carregar classe individual: ${character.className}',
+          );
+          final dndClass = await ClassService.loadByName(character.className);
+          if (dndClass != null) {
+            character.dndClass = dndClass;
+            debugPrint(
+              'CharacterService: Classe individual carregada para ${character.name}: ${dndClass.name}',
+            );
+            debugPrint(
+              'CharacterService: levelFeatures: ${dndClass.levelFeatures?.length ?? 0}',
+            );
+            if (dndClass.levelFeatures != null) {
+              for (final feature in dndClass.levelFeatures!) {
+                if (feature.containsKey('unarmored_defense')) {
+                  debugPrint(
+                    'CharacterService: UD encontrada individual: ${feature['unarmored_defense']}',
+                  );
+                }
+              }
+            }
+          } else {
+            debugPrint(
+              'CharacterService: Classe individual ${character.className} não encontrada',
+            );
+          }
+        } catch (e) {
+          debugPrint(
+            'CharacterService: Erro ao carregar classe individual ${character.className}: $e',
+          );
+        }
+      }
+
       // Sincronizar proficiências com skills após carregar
       _syncProficienciesWithSkills(character, character.proficiencies);
 
