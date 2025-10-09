@@ -30,7 +30,6 @@ class DataMigrationService {
           'spellcasting': classData['spellcasting'] ?? {},
         });
       }
-      debugPrint('Classes migradas com sucesso!');
     } catch (e) {
       debugPrint('Erro ao migrar classes: $e');
     }
@@ -53,7 +52,6 @@ class DataMigrationService {
           'languages': raceData['languages'] ?? '',
         });
       }
-      debugPrint('Raças migradas com sucesso!');
     } catch (e) {
       debugPrint('Erro ao migrar raças: $e');
     }
@@ -78,7 +76,6 @@ class DataMigrationService {
           'features': backgroundData['features'] ?? {},
         });
       }
-      debugPrint('Antecedentes migrados com sucesso!');
     } catch (e) {
       debugPrint('Erro ao migrar antecedentes: $e');
     }
@@ -99,7 +96,6 @@ class DataMigrationService {
           'benefits': featData['benefits'] ?? {},
         });
       }
-      debugPrint('Talentos migrados com sucesso!');
     } catch (e) {
       debugPrint('Erro ao migrar talentos: $e');
     }
@@ -127,7 +123,6 @@ class DataMigrationService {
               equipmentData['stealth_disadvantage'] ?? false,
         });
       }
-      debugPrint('Equipamentos migrados com sucesso!');
     } catch (e) {
       debugPrint('Erro ao migrar equipamentos: $e');
     }
@@ -152,7 +147,6 @@ class DataMigrationService {
           'description': spellData['description'] ?? '',
         });
       }
-      debugPrint('Magias migradas com sucesso!');
     } catch (e) {
       debugPrint('Erro ao migrar magias: $e');
     }
@@ -160,15 +154,11 @@ class DataMigrationService {
 
   // Executar todas as migrações
   static Future<void> migrateAllData() async {
-    debugPrint('Iniciando migração de dados...');
-
     await migrateClasses();
     await migrateRaces();
     await migrateBackgrounds();
     await migrateFeats();
     await migrateEquipment();
     await migrateSpells();
-
-    debugPrint('Migração concluída!');
   }
 }

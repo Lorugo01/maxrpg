@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 enum RaceType {
   dwarf,
 
@@ -238,14 +236,8 @@ class Race {
     }
 
     List<RaceTrait> parseTraits(Map<String, dynamic> json) {
-      debugPrint('=== DEBUG RACE PARSING ===');
-      debugPrint('JSON keys: ${json.keys.toList()}');
-      debugPrint('traits field: ${json['traits']}');
-      debugPrint('traits_text field: ${json['traits_text']}');
-
       // Primeiro tenta traits como lista JSON
       if (json['traits'] is List) {
-        debugPrint('Usando traits como lista JSON');
         return (json['traits'] as List)
             .whereType<Map<String, dynamic>>()
             .map((e) => RaceTrait.fromJson(e))
@@ -254,19 +246,11 @@ class Race {
 
       // Se não, tenta traits_text como texto
       final traitsText = json['traits_text'] as String?;
-      debugPrint('traits_text value: $traitsText');
       if (traitsText != null && traitsText.trim().isNotEmpty) {
-        debugPrint('Usando traits_text como texto');
         final parsed = parseTraitsFromText(traitsText);
-        debugPrint('Traits parseados: ${parsed.length}');
-        for (int i = 0; i < parsed.length; i++) {
-          debugPrint('Trait $i: ${parsed[i].name} - ${parsed[i].description}');
-        }
         return parsed;
       }
 
-      debugPrint('Nenhum trait encontrado');
-      debugPrint('=== FIM DEBUG RACE PARSING ===');
       return [];
     }
 

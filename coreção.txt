@@ -1,0 +1,169 @@
+As opções de invocação sobrenatural aparecem em ordem alfabética.
+
+Explosão Agonizante
+Pré-requisitos: Nível 2+, um truque de bruxo que causa dano
+
+Escolha um dos seus truques de Bruxo conhecidos que cause dano. Você pode adicionar seu modificador de Carisma às jogadas de dano daquela magia.
+
+Repetível. Você pode receber esta invocação mais de uma vez. A cada vez, escolha um truque elegível diferente.
+
+Armadura das Sombras
+Você pode conjurar Armadura de Mago em si mesmo sem gastar um espaço de magia.
+
+Passo Ascendente
+Pré-requisito: Nível 5+
+
+Você pode conjurar Levitar em si mesmo sem gastar um espaço de magia.
+
+Visão do Diabo
+Pré-requisito: Nível 2+
+
+Você pode enxergar normalmente em condições de penumbra e escuridão —tanto mágicas quanto não mágicas— a até 36 metros de distância de você.
+
+Lâmina Devoradora
+Pré-requisitos: Nível 12+, Lâmina Sedenta
+
+O Ataque Extra da sua invocação Lâmina Sedenta confere dois ataques extras em vez de um.
+
+Mente Sobrenatural
+Você tem Vantagem em testes de resistência de Constituição que você faz para manter a Concentração .
+
+Golpe Sobrenatural
+Pré-requisitos: Nível 5+, Pacto da Lâmina
+
+Uma vez por turno, quando você atinge uma criatura com sua arma de pacto, você pode gastar um espaço de magia de Pacto para causar 1d8 de dano de Força extra ao alvo, mais 1d8 por nível do espaço de magia, e você pode dar ao alvo a condição Prone se ele for Enorme ou menor.
+
+Lança Sobrenatural
+Pré-requisitos: Nível 2+, um truque de bruxo que causa dano
+
+Escolha um dos seus truques de Bruxo conhecidos que cause dano e tenha um alcance de 3 metros ou mais. Ao conjurar essa magia, seu alcance aumenta em um número de metros igual a 30 vezes o seu nível de Bruxo.
+
+Repetível. Você pode receber esta invocação mais de uma vez. A cada vez, escolha um truque elegível diferente.
+
+Vigor diabólico
+Pré-requisito: Nível 2+
+
+Você pode conjurar Vida Falsa em si mesmo sem gastar um espaço de magia. Ao conjurar a magia com esta habilidade, você não rola o dado para os Pontos de Vida Temporários ; você obtém automaticamente o maior número no dado.
+
+Olhar de Duas Mentes
+Pré-requisito: Nível 5+
+
+Você pode usar uma Ação Bônus para tocar uma criatura disposta e perceber através dos seus sentidos até o final do seu próximo turno. Enquanto a criatura estiver no mesmo plano de existência que você, você pode realizar uma Ação Bônus nos turnos subsequentes para manter essa conexão, estendendo a duração até o final do seu próximo turno. A conexão termina se você não a mantiver dessa forma.
+
+Ao perceber através dos sentidos da outra criatura, você se beneficia de quaisquer sentidos especiais possuídos por aquela criatura, e pode conjurar magias como se estivesse no seu espaço ou no espaço da outra criatura se vocês dois estiverem a até 18 metros um do outro.
+
+Presente das Profundezas
+Pré-requisito: Nível 5+
+
+Você pode respirar debaixo d'água e ganha uma Velocidade de Natação igual à sua Velocidade .
+
+Você também pode conjurar Respiração Aquática uma vez sem gastar um espaço de magia. Você recupera a habilidade de conjurá-la dessa forma novamente ao terminar um Descanso Longo .
+
+Presente dos Protetores
+Pré-requisitos: Nível 9+, Pacto do Tomo
+
+Uma nova página aparece no seu Livro das Sombras quando você a conjura. Com a sua permissão, uma criatura pode realizar uma ação para escrever seu nome naquela página, que pode conter um número de nomes igual ao seu modificador de Carisma (mínimo de um nome).
+
+Quando qualquer criatura cujo nome esteja na página for reduzida a 0 Pontos de Vida , mas não for morta imediatamente, a criatura magicamente cai para 1 Ponto de Vida . Uma vez que esta magia é ativada, nenhuma criatura pode se beneficiar dela até que você termine um Descanso Longo .
+
+Como uma ação mágica , você pode apagar um nome na página tocando nele.
+
+Investimento do Mestre da Cadeia
+Pré-requisitos: Nível 5+, Pacto da Corrente
+
+Ao conjurar Encontrar Familiar , você infunde o familiar invocado com uma medida do seu poder sobrenatural, concedendo à criatura os seguintes benefícios.
+
+Aéreo ou Aquático. O familiar ganha Velocidade de Voo ou Velocidade de Natação (à sua escolha) de 12 metros.
+
+Ataque Rápido. Como uma Ação Bônus , você pode comandar o familiar para realizar a ação de Ataque .
+
+Dano Necrótico ou Radiante. Sempre que o familiar causar dano Contundente, Perfurante ou Cortante, você pode fazer com que ele cause dano Necrótico ou Radiante.
+
+Sua CD de Resistência. Se o familiar forçar uma criatura a fazer um teste de resistência, ele usará sua CD de Resistência à Magia.
+
+Resistência. Quando o familiar sofre dano, você pode usar uma Reação para conceder a ele Resistência contra esse dano.
+
+Lições dos Primeiros
+Pré-requisito: Nível 2+
+
+Você recebeu conhecimento de uma entidade anciã do multiverso, permitindo que você ganhe um talento de Origem de sua escolha.
+
+Repetível. Você pode obter esta invocação mais de uma vez. Cada vez que fizer isso, escolha um talento de Origem diferente.
+
+Bebedor de vida
+Pré-requisitos: Nível 9+, Pacto da Lâmina
+
+Uma vez por turno, quando você atinge uma criatura com sua arma de pacto, você pode causar 1d6 de dano Necrótico, Psíquico ou Radiante extra (à sua escolha) à criatura, e pode gastar um de seus Dados de Pontos de Vida para rolá-lo e recuperar um número de Pontos de Vida igual ao resultado mais seu modificador de Constituição (mínimo de 1 Ponto de Vida ).
+
+Máscara de Muitas Faces
+Pré-requisito: Nível 2+
+
+Você pode conjurar Disfarçar- se sem gastar um espaço de magia.
+
+Mestre das Miríades de Formas
+Pré-requisito: Nível 5+
+
+Você pode conjurar Alterar-se sem gastar um espaço de magia.
+
+Visões nebulosas
+Pré-requisito: Nível 2+
+
+Você pode conjurar Imagem Silenciosa sem gastar um espaço de magia.
+
+Um com Sombras
+Pré-requisito: Nível 5+
+
+Enquanto estiver em uma área de Penumbra ou Escuridão , você pode lançar Invisibilidade em si mesmo sem gastar um espaço de magia.
+
+Salto sobrenatural
+Pré-requisito: Nível 2+
+
+Você pode conjurar Pular em si mesmo sem gastar um espaço de magia.
+
+Pacto da Lâmina
+Como uma Ação Bônus , você pode conjurar uma arma de pacto em sua mão — uma arma Corpo a Corpo Simples ou Marcial de sua escolha com a qual você se vincula — ou criar um vínculo com uma arma mágica que você tocar; você não pode se vincular a uma arma mágica se outra pessoa estiver sintonizada com ela ou se outro Bruxo estiver vinculado a ela. Até o término do vínculo, você tem proficiência com a arma e pode usá-la como um Foco em Conjuração .
+
+Sempre que você atacar com a arma vinculada, você pode usar seu modificador de Carisma para as jogadas de ataque e dano em vez de usar Força ou Destreza; e você pode fazer com que a arma cause dano Necrótico, Psíquico ou Radiante ou seu tipo de dano normal.
+
+Seu vínculo com a arma termina se você usar a Ação Bônus deste recurso novamente, se a arma estiver a mais de 1,5 metro de distância de você por 1 minuto ou mais, ou se você morrer. Uma arma conjurada desaparece quando o vínculo termina.
+
+Pacto da Corrente
+Você aprende a magia Encontrar Familiar e pode conjurá-la como uma ação de Magia sem gastar um espaço de magia.
+
+Ao conjurar a magia, você escolhe uma das formas normais para seu familiar ou uma das seguintes formas especiais: Diabrete , Pseudodragão , Quasit , Esqueleto , Girino Slaad , Esfinge da Maravilha , Duende ou Cobra Venenosa (veja o apêndice B para o bloco de estatísticas do familiar).
+
+Além disso, quando você realiza a ação de Ataque , você pode abrir mão de um dos seus próprios ataques para permitir que seu familiar faça um ataque próprio com sua Reação .
+
+Pacto do Tomo
+Costurando fios de sombra, você conjura um livro em sua mão ao final de um Descanso Curto ou Longo . Este Livro das Sombras (você determina sua aparência) contém magia sobrenatural que só você pode acessar, concedendo-lhe os benefícios abaixo. O livro desaparece se você conjurar outro livro com esta característica ou se você morrer.
+
+Truques e Rituais. Quando o livro aparecer, escolha três truques e duas magias de nível 1 que tenham a tag Ritual . As magias podem ser da lista de magias de qualquer classe e devem ser magias que você ainda não tenha preparado. Enquanto o livro estiver com você, você terá as magias escolhidas preparadas, e elas funcionarão como magias de Bruxo para você.
+
+Foco em Conjuração. Você pode usar o livro como um Foco em Conjuração .
+
+Explosão Repelente
+Pré-requisitos: Nível 2+, um truque de bruxo que causa dano por meio de uma jogada de ataque
+
+Escolha um dos seus truques de Bruxo conhecidos que exija uma jogada de ataque. Ao atingir uma criatura Grande ou menor com esse truque, você pode empurrá-la até 3 metros para longe de você.
+
+Repetível. Você pode receber esta invocação mais de uma vez. A cada vez, escolha um truque elegível diferente.
+
+Lâmina Sedenta
+Pré-requisitos: Nível 5+, Pacto da Lâmina
+
+Você ganha a habilidade Ataque Extra apenas para sua arma de pacto. Com essa habilidade, você pode atacar duas vezes com a arma em vez de uma ao realizar a ação de Ataque no seu turno.
+
+Visões de Reinos Distantes
+Pré-requisito: Nível 9+
+
+Você pode conjurar Olho Arcano sem gastar um espaço de magia.
+
+Sussurros do Túmulo
+Pré-requisito: Nível 7+
+
+Você pode conjurar Falar com os Mortos sem gastar um espaço de magia.
+
+Visão de Bruxa
+Pré-requisito: Nível 15+
+
+Você tem Truesight com um alcance de 9 metros.

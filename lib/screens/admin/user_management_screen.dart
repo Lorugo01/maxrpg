@@ -35,7 +35,7 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
             created_at,
             updated_at
           ''')
-          .order('name', ascending: true);
+          .order('display_name', ascending: true);
 
       setState(() {
         _users = List<Map<String, dynamic>>.from(response);

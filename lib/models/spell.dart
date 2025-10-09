@@ -1,7 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
-
 class Spell {
   final String name;
   final int level; // 0 = truque
@@ -51,9 +49,6 @@ class Spell {
   });
 
   factory Spell.fromMap(Map<String, dynamic> map) {
-    // Debug: imprimir o mapa para identificar o problema
-    debugPrint('Spell.fromMap: Mapa recebido: $map');
-
     // Mapear campos do banco para o modelo
     List<String> classesList = [];
     final classesData = map['classes'];

@@ -1959,7 +1959,9 @@ class _EditClassScreenState extends ConsumerState<EditClassScreen> {
   Widget _buildSubclassDiceInfo(Map<String, dynamic> feature) {
     final initialDice = feature['initial_dice'] ?? '';
     final diceIncreases =
-        feature['dice_increases'] as List<Map<String, dynamic>>? ?? [];
+        (feature['dice_increases'] as List<dynamic>?)
+            ?.cast<Map<String, dynamic>>() ??
+        [];
 
     String diceText = 'Dado: $initialDice';
     if (diceIncreases.isNotEmpty) {

@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 enum ClassType {
   barbarian,
   bard,
@@ -234,7 +232,8 @@ class Subclass {
       description: json['description'] as String,
       features:
           (json['features'] as List<dynamic>?)
-              ?.map((e) => SubclassFeature.fromJson(e as Map<String, dynamic>))
+              ?.where((e) => e != null)
+              .map((e) => SubclassFeature.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
     );
@@ -297,7 +296,8 @@ class ProgressionTable {
     return ProgressionTable(
       levels:
           (json['levels'] as List<dynamic>?)
-              ?.map((e) => ProgressionLevel.fromJson(e as Map<String, dynamic>))
+              ?.where((e) => e != null)
+              .map((e) => ProgressionLevel.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
     );
@@ -375,10 +375,6 @@ class DndClass {
 
   // Obter slots de magia por nível (se aplicável)
   List<int> getSpellSlotsAtLevel(int level) {
-    debugPrint(
-      'DndClass.getSpellSlotsAtLevel: name=$name, level=$level, spellcasting=$spellcasting',
-    );
-
     // Se tem conjuração (mesmo que spellcasting seja string vazia), retorna slots baseados no nível
     if (spellcasting != null || hasSpellcasting) {
       // Slots padrão para Bardo nível 1: [2, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -408,15 +404,9 @@ class DndClass {
       };
 
       final slots = slotsByLevel[level] ?? [0, 0, 0, 0, 0, 0, 0, 0, 0];
-      debugPrint(
-        'DndClass.getSpellSlotsAtLevel: Retornando slots para nível $level: $slots',
-      );
       return slots;
     }
 
-    debugPrint(
-      'DndClass.getSpellSlotsAtLevel: Sem conjuração, retornando lista vazia',
-    );
     return [];
   }
 
@@ -456,7 +446,8 @@ class DndClass {
       startingEquipment: List<String>.from(json['startingEquipment'] ?? []),
       features:
           (json['features'] as List<dynamic>?)
-              ?.map((e) => ClassFeature.fromJson(e as Map<String, dynamic>))
+              ?.where((e) => e != null)
+              .map((e) => ClassFeature.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
       spellcasting:
@@ -467,7 +458,8 @@ class DndClass {
               : null,
       subclasses:
           (json['subclasses'] as List<dynamic>?)
-              ?.map((e) => Subclass.fromJson(e as Map<String, dynamic>))
+              ?.where((e) => e != null)
+              .map((e) => Subclass.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
       flavorText: json['flavorText'] as String,
@@ -479,7 +471,8 @@ class DndClass {
               : null,
       levelFeatures:
           (json['levelFeatures'] as List<dynamic>?)
-              ?.map((e) => e as Map<String, dynamic>)
+              ?.where((e) => e != null)
+              .map((e) => e as Map<String, dynamic>)
               .toList(),
     );
   }

@@ -4,7 +4,7 @@ import '../models/skill.dart';
 import '../models/item.dart';
 import 'supabase_service.dart';
 import 'class_service.dart';
-import 'package:flutter/material.dart';
+
 import 'auth_service.dart';
 
 class CharacterService {
@@ -15,21 +15,12 @@ class CharacterService {
     try {
       final userId = AuthService.userId;
       if (userId.isEmpty) {
-        debugPrint('CharacterService: Usuário não autenticado');
         return [];
       }
-
-      debugPrint(
-        'CharacterService: Carregando personagens para usuário: $userId',
-      );
       final response = await SupabaseService.client
           .from('characters')
           .select()
           .eq('user_id', userId);
-
-      debugPrint(
-        'CharacterService: ${response.length} personagens encontrados no banco',
-      );
 
       final characters = <Character>[];
 
@@ -61,59 +52,24 @@ class CharacterService {
         json['selectedCantrips'] = json['selected_cantrips'] ?? [];
         json['selectedSpells'] = json['selected_spells'] ?? [];
 
-        // Debug: verificar proficiências carregadas
-        debugPrint('Proficiências carregadas: ${json['proficiencies']}');
-
         final character = Character.fromJson(json);
 
         // Carregar dados completos da classe
         if (character.className.isNotEmpty) {
-          try {
-            debugPrint(
-              'CharacterService: Tentando carregar classe: ${character.className}',
-            );
-            final dndClass = await ClassService.loadByName(character.className);
-            if (dndClass != null) {
-              character.dndClass = dndClass;
-              debugPrint(
-                'CharacterService: Classe carregada para ${character.name}: ${dndClass.name}',
-              );
-              debugPrint(
-                'CharacterService: levelFeatures: ${dndClass.levelFeatures?.length ?? 0}',
-              );
-              if (dndClass.levelFeatures != null) {
-                for (final feature in dndClass.levelFeatures!) {
-                  if (feature.containsKey('unarmored_defense')) {
-                    debugPrint(
-                      'CharacterService: UD encontrada: ${feature['unarmored_defense']}',
-                    );
-                  }
-                }
-              }
-            } else {
-              debugPrint(
-                'CharacterService: Classe ${character.className} não encontrada',
-              );
-            }
-          } catch (e) {
-            debugPrint(
-              'CharacterService: Erro ao carregar classe ${character.className}: $e',
-            );
-          }
+          final dndClass = await ClassService.loadByName(character.className);
+          if (dndClass != null) {
+            character.dndClass = dndClass;
+          } else {}
         }
 
         // Sincronizar proficiências com skills após carregar
         _syncProficienciesWithSkills(character, character.proficiencies);
 
-        debugPrint(
-          'CharacterService: Personagem carregado: ${character.name} (ID: ${character.id})',
-        );
         characters.add(character);
       }
 
       return characters;
     } catch (e) {
-      debugPrint('Erro ao carregar personagens: $e');
       return [];
     }
   }
@@ -126,16 +82,8 @@ class CharacterService {
         throw Exception('Usuário não autenticado');
       }
 
-      debugPrint(
-        'CharacterService: Salvando personagem ${character.name} (ID: ${character.id})',
-      );
-      debugPrint('Character className: ${character.className}');
-
       final characterJson = character.toJson();
       characterJson['user_id'] = userId;
-
-      debugPrint('CharacterJson className: ${characterJson['className']}');
-      debugPrint('CharacterJson class_name: ${characterJson['class_name']}');
 
       // Converter abilityScores Map para colunas individuais a partir do objeto Character
       final abilityScores = Map<String, int>.from(character.abilityScores);
@@ -201,11 +149,6 @@ class CharacterService {
           characterJson['selectedCantrips'] ?? [];
       characterJson['selected_spells'] = characterJson['selectedSpells'] ?? [];
 
-      // Debug: verificar proficiências antes de salvar
-      debugPrint(
-        'Proficiências sendo salvas: ${characterJson['proficiencies']}',
-      );
-
       // Remover campos que não existem na tabela
       characterJson.remove('abilityScores');
       characterJson.remove('className');
@@ -237,34 +180,25 @@ class CharacterService {
         // Criar novo personagem (usar id existente se fornecido)
         characterJson['id'] =
             character.id.isNotEmpty ? character.id : _uuid.v4();
-        debugPrint(
-          'CharacterService: Criando novo personagem com ID: ${characterJson['id']}',
-        );
+
         final response =
             await SupabaseService.client
                 .from('characters')
                 .insert(characterJson)
                 .select()
                 .single();
-        debugPrint(
-          'CharacterService: Personagem criado com sucesso: ${response['id']}',
-        );
+
         return response['id'];
       }
 
       // Atualizar personagem existente
-      debugPrint(
-        'CharacterService: Atualizando personagem existente: ${character.id}',
-      );
       await SupabaseService.client
           .from('characters')
           .update(characterJson)
           .eq('id', character.id)
           .eq('user_id', userId);
-      debugPrint('CharacterService: Personagem atualizado com sucesso');
       return character.id;
     } catch (e) {
-      debugPrint('Erro ao salvar personagem: $e');
       rethrow;
     }
   }
@@ -274,7 +208,6 @@ class CharacterService {
     try {
       final userId = AuthService.userId;
       if (userId.isEmpty) {
-        debugPrint('Usuário não autenticado');
         return null;
       }
 
@@ -317,49 +250,17 @@ class CharacterService {
 
       // Carregar dados completos da classe
       if (character.className.isNotEmpty) {
-        try {
-          debugPrint(
-            'CharacterService: Tentando carregar classe individual: ${character.className}',
-          );
-          final dndClass = await ClassService.loadByName(character.className);
-          if (dndClass != null) {
-            character.dndClass = dndClass;
-            debugPrint(
-              'CharacterService: Classe individual carregada para ${character.name}: ${dndClass.name}',
-            );
-            debugPrint(
-              'CharacterService: levelFeatures: ${dndClass.levelFeatures?.length ?? 0}',
-            );
-            if (dndClass.levelFeatures != null) {
-              for (final feature in dndClass.levelFeatures!) {
-                if (feature.containsKey('unarmored_defense')) {
-                  debugPrint(
-                    'CharacterService: UD encontrada individual: ${feature['unarmored_defense']}',
-                  );
-                }
-              }
-            }
-          } else {
-            debugPrint(
-              'CharacterService: Classe individual ${character.className} não encontrada',
-            );
-          }
-        } catch (e) {
-          debugPrint(
-            'CharacterService: Erro ao carregar classe individual ${character.className}: $e',
-          );
-        }
+        final dndClass = await ClassService.loadByName(character.className);
+        if (dndClass != null) {
+          character.dndClass = dndClass;
+        } else {}
       }
 
       // Sincronizar proficiências com skills após carregar
       _syncProficienciesWithSkills(character, character.proficiencies);
 
-      debugPrint(
-        'CharacterService: Personagem individual carregado: ${character.name} (ID: ${character.id})',
-      );
       return character;
     } catch (e) {
-      debugPrint('Erro ao carregar personagem: $e');
       return null;
     }
   }
@@ -372,17 +273,12 @@ class CharacterService {
         throw Exception('Usuário não autenticado');
       }
 
-      debugPrint(
-        'CharacterService: Removendo personagem com ID: $id para usuário: $userId',
-      );
       await SupabaseService.client
           .from('characters')
           .delete()
           .eq('id', id)
           .eq('user_id', userId);
-      debugPrint('CharacterService: Personagem removido com sucesso');
     } catch (e) {
-      debugPrint('Erro ao remover personagem: $e');
       rethrow;
     }
   }
@@ -390,10 +286,6 @@ class CharacterService {
   // Salvar perícias do personagem
   static Future<void> saveSkills(String characterId, List<Skill> skills) async {
     try {
-      debugPrint(
-        'CharacterService: Salvando ${skills.length} perícias para personagem: $characterId',
-      );
-
       // Primeiro, remover todas as perícias existentes
       await SupabaseService.client
           .from('skills')
@@ -418,14 +310,8 @@ class CharacterService {
                 .toList();
 
         await SupabaseService.client.from('skills').insert(skillsData);
-        debugPrint(
-          'CharacterService: ${skills.length} perícias salvas com sucesso',
-        );
-      } else {
-        debugPrint('CharacterService: Nenhuma perícia para salvar');
-      }
+      } else {}
     } catch (e) {
-      debugPrint('CharacterService: Erro ao salvar perícias: $e');
       rethrow;
     }
   }
@@ -435,12 +321,6 @@ class CharacterService {
     Character character,
     List<String> proficiencies,
   ) {
-    debugPrint(
-      'CharacterService: Sincronizando ${proficiencies.length} proficiências com skills',
-    );
-    debugPrint('CharacterService: Proficiências recebidas: $proficiencies');
-    debugPrint('CharacterService: Total de skills: ${character.skills.length}');
-
     // Mapear nomes de perícias do banco para nomes das perícias do modelo
     final Map<String, String> skillNameMapping = {
       'Adestrar Animais': 'Lidar com Animais',
@@ -464,13 +344,8 @@ class CharacterService {
             .toSet()
             .toList(); // Remove duplicatas
 
-    debugPrint(
-      'CharacterService: Perícias filtradas (sem atributos): $skillProficiencies',
-    );
-
     // Atualizar perícias proficientes
     for (final skill in character.skills) {
-      final wasProficient = skill.isProficient;
       bool isProficient = false;
 
       // Verificar nome direto
@@ -488,47 +363,21 @@ class CharacterService {
       }
 
       skill.isProficient = isProficient;
-
-      if (isProficient && !wasProficient) {
-        debugPrint(
-          'CharacterService: Marcando perícia como proficiente: ${skill.name}',
-        );
-      } else if (!isProficient && wasProficient) {
-        debugPrint(
-          'CharacterService: Removendo proficiência de: ${skill.name}',
-        );
-      }
     }
 
     // Debug: verificar resultado final
-    final proficientSkills =
-        character.skills
-            .where((s) => s.isProficient)
-            .map((s) => s.name)
-            .toList();
-    debugPrint(
-      'CharacterService: Perícias proficientes após sincronização: $proficientSkills',
-    );
 
     // As salvaguardas proficientes serão calculadas automaticamente
     // pelo método isSavingThrowProficient() usando a lista proficiencies
-    debugPrint('CharacterService: Sincronização de proficiências concluída');
   }
 
   // Carregar perícias do personagem
   static Future<List<Skill>> loadSkills(String characterId) async {
     try {
-      debugPrint(
-        'CharacterService: Carregando perícias para personagem: $characterId',
-      );
       final response = await SupabaseService.client
           .from('skills')
           .select()
           .eq('character_id', characterId);
-
-      debugPrint(
-        'CharacterService: ${response.length} perícias encontradas no banco',
-      );
 
       final skills =
           response
@@ -542,12 +391,8 @@ class CharacterService {
               )
               .toList();
 
-      debugPrint(
-        'CharacterService: ${skills.length} perícias convertidas para objetos Skill',
-      );
       return skills;
     } catch (e) {
-      debugPrint('CharacterService: Erro ao carregar perícias: $e');
       return [];
     }
   }
@@ -555,10 +400,6 @@ class CharacterService {
   // Salvar itens do inventário
   static Future<void> saveItems(String characterId, List<Item> items) async {
     try {
-      debugPrint(
-        'CharacterService: Salvando ${items.length} itens para personagem: $characterId',
-      );
-
       // Verificar se o usuário está autenticado
       final userId = AuthService.userId;
       if (userId.isEmpty) {
@@ -597,14 +438,8 @@ class CharacterService {
                 .toList();
 
         await SupabaseService.client.from('items').insert(itemsData);
-        debugPrint(
-          'CharacterService: ${items.length} itens salvos com sucesso',
-        );
-      } else {
-        debugPrint('CharacterService: Nenhum item para salvar');
-      }
+      } else {}
     } catch (e) {
-      debugPrint('Erro ao salvar itens: $e');
       rethrow;
     }
   }
@@ -612,26 +447,15 @@ class CharacterService {
   // Carregar itens do inventário
   static Future<List<Item>> loadItems(String characterId) async {
     try {
-      debugPrint('=== CHARACTER SERVICE: INÍCIO LOAD ITEMS ===');
-      debugPrint(
-        'CharacterService: Carregando itens para character_id: $characterId',
-      );
-
       // Verificar se o usuário está autenticado
       final userId = AuthService.userId;
       if (userId.isEmpty) {
-        debugPrint(
-          'CharacterService: Usuário não autenticado para carregar itens',
-        );
         return [];
       }
 
       // Verificar se o personagem pertence ao usuário
       final character = await loadCharacter(characterId);
       if (character == null) {
-        debugPrint(
-          'CharacterService: Personagem não encontrado ou não pertence ao usuário',
-        );
         return [];
       }
 
@@ -640,15 +464,8 @@ class CharacterService {
           .select()
           .eq('character_id', characterId);
 
-      debugPrint('=== CHARACTER SERVICE: RESPOSTA DO BANCO ===');
-      debugPrint(
-        'CharacterService: Resposta do banco: ${response.length} itens encontrados',
-      );
-      debugPrint('Dados brutos: $response');
-
       final items =
           response.map<Item>((data) {
-            debugPrint('Processando item: $data');
             return Item(
               id: data['id'] as String,
               name: data['name'] as String,
@@ -664,20 +481,8 @@ class CharacterService {
             );
           }).toList();
 
-      debugPrint('=== CHARACTER SERVICE: CONVERSÃO CONCLUÍDA ===');
-      debugPrint(
-        'CharacterService: ${items.length} itens convertidos para objetos Item',
-      );
-      for (int i = 0; i < items.length; i++) {
-        debugPrint('Item convertido $i: ${items[i].name} (${items[i].type})');
-      }
-      debugPrint('=== CHARACTER SERVICE: FIM LOAD ITEMS ===');
       return items;
-    } catch (e, stackTrace) {
-      debugPrint('=== CHARACTER SERVICE: ERRO LOAD ITEMS ===');
-      debugPrint('CharacterService: Erro ao carregar itens: $e');
-      debugPrint('Stack trace: $stackTrace');
-      debugPrint('=== CHARACTER SERVICE: FIM ERRO ===');
+    } catch (e) {
       return [];
     }
   }
@@ -687,9 +492,6 @@ class CharacterService {
     String table,
   ) async {
     try {
-      debugPrint(
-        'CharacterService: Carregando dados de referência da tabela: $table',
-      );
       switch (table) {
         case 'classes':
           return await SupabaseService.getClasses();
@@ -704,13 +506,9 @@ class CharacterService {
         case 'spells':
           return await SupabaseService.getSpells();
         default:
-          debugPrint('CharacterService: Tabela não reconhecida: $table');
           return [];
       }
     } catch (e) {
-      debugPrint(
-        'CharacterService: Erro ao carregar dados de referência ($table): $e',
-      );
       return [];
     }
   }

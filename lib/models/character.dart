@@ -1,5 +1,4 @@
 import 'package:uuid/uuid.dart';
-import 'package:flutter/foundation.dart';
 import 'skill.dart';
 import 'item.dart';
 import 'dnd_class.dart';
@@ -298,17 +297,10 @@ class Character {
 
   // Obter slots de magia por nível
   List<int> getSpellSlots() {
-    debugPrint(
-      'Character.getSpellSlots: dndClass=${dndClass?.name}, spellcasting=${dndClass?.spellcasting}, level=$level',
-    );
     if (dndClass?.spellcasting == null) {
-      debugPrint(
-        'Character.getSpellSlots: Sem conjuração, retornando lista vazia',
-      );
       return [];
     }
     final slots = dndClass!.getSpellSlotsAtLevel(level);
-    debugPrint('Character.getSpellSlots: slots=$slots');
     return slots;
   }
 
@@ -431,7 +423,6 @@ class Character {
     if (dndClass?.levelFeatures != null) {
       for (final feature in dndClass!.levelFeatures!) {
         if (feature.containsKey('unarmored_defense')) {
-          debugPrint('UD encontrada na classe principal: ${dndClass!.name}');
           return feature['unarmored_defense'] as Map<String, dynamic>;
         }
       }
@@ -444,27 +435,18 @@ class Character {
       // Normalizar o nome da subclasse para comparação
       final targetSubclass = subclassName!.toLowerCase().trim();
 
-      debugPrint('Procurando UD na subclasse: $subclassName');
-
       for (final subclass in dndClass!.subclasses) {
         final subclassNameNormalized = subclass.name.toLowerCase().trim();
 
         if (subclassNameNormalized == targetSubclass) {
-          debugPrint('Subclasse encontrada: ${subclass.name}');
-
           for (final feature in subclass.features) {
             // Verificar se a feature tem unarmored_defense
             if (feature.unarmoredDefense != null) {
-              debugPrint(
-                'UD encontrada na subclasse ${subclass.name}: ${feature.unarmoredDefense}',
-              );
               return feature.unarmoredDefense!;
             }
           }
         }
       }
-
-      debugPrint('Subclasse $subclassName não tem UD');
     }
 
     return null;

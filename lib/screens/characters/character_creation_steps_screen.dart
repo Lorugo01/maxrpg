@@ -261,7 +261,6 @@ class _CharacterCreationStepsScreenState
         final ability = spellcasting['ability'] as String?;
         if (ability != null && ability.isNotEmpty) {
           character.customSpellcastingAbility = ability;
-          debugPrint('Atributo de conjuração detectado: $ability');
         }
       }
 
@@ -270,18 +269,10 @@ class _CharacterCreationStepsScreenState
         final primaryAbility = _selectedClass!['primary_ability'] as String?;
         if (primaryAbility != null && primaryAbility.isNotEmpty) {
           character.customSpellcastingAbility = primaryAbility;
-          debugPrint(
-            'Usando atributo primário como conjuração: $primaryAbility',
-          );
         }
       }
-
-      debugPrint(
-        'Personagem configurado como conjurador: ${character.className}',
-      );
     } else {
       character.isSpellcaster = false;
-      debugPrint('Personagem NÃO é conjurador: ${character.className}');
     }
   }
 
@@ -406,25 +397,13 @@ class _CharacterCreationStepsScreenState
         ..._selectedSkills,
       ];
 
-      // Debug: verificar proficiências antes de criar o personagem
-      debugPrint('=== DEBUG CRIAÇÃO DE PERSONAGEM ===');
-      debugPrint('Salvaguardas: $savingThrows');
-      debugPrint('Perícias do antecedente: $backgroundSkills');
-      debugPrint('Perícias escolhidas: $_selectedSkills');
-      debugPrint('Todas as proficiências: $allProficiencies');
-      debugPrint('=====================================');
-
       // Criar inventário inicial com equipamentos selecionados
       final initialInventory = <Item>[];
 
       // Adicionar equipamentos da classe selecionada
       if (_selectedClassOption != null) {
         final classEquipment = _getSelectedClassEquipment();
-        debugPrint(
-          'Equipamentos da classe selecionados: ${classEquipment.length}',
-        );
         for (final equipment in classEquipment) {
-          debugPrint('Adicionando item da classe: ${equipment['name']}');
           initialInventory.add(
             Item(
               id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -445,11 +424,7 @@ class _CharacterCreationStepsScreenState
       // Adicionar equipamentos do antecedente selecionado
       if (_selectedBackgroundOption != null) {
         final backgroundEquipment = _getSelectedBackgroundEquipment();
-        debugPrint(
-          'Equipamentos do antecedente selecionados: ${backgroundEquipment.length}',
-        );
         for (final equipment in backgroundEquipment) {
-          debugPrint('Adicionando item do antecedente: ${equipment['name']}');
           initialInventory.add(
             Item(
               id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -471,7 +446,6 @@ class _CharacterCreationStepsScreenState
       for (final entry in _selectedEquipmentChoices.entries) {
         final selectedOption = entry.value;
 
-        debugPrint('Adicionando item da escolha: ${selectedOption['name']}');
         initialInventory.add(
           Item(
             id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -487,11 +461,6 @@ class _CharacterCreationStepsScreenState
           ),
         );
       }
-
-      debugPrint(
-        'Inventário inicial criado com ${initialInventory.length} itens',
-      );
-      debugPrint('PO total: ${_calculateTotalPO()}');
 
       final character = Character(
         name: _characterName,
@@ -538,10 +507,6 @@ class _CharacterCreationStepsScreenState
       final totalHitPoints = baseHitPoints + racialHitPointIncrease;
       character.maxHitPoints = totalHitPoints;
       character.currentHitPoints = totalHitPoints;
-
-      debugPrint(
-        'Vida inicial calculada: $hitDie (dado) + $constitutionModifier (mod) + $racialHitPointIncrease (racial) = $totalHitPoints',
-      );
 
       // Detectar automaticamente se é conjurador e o atributo de conjuração
       _setSpellcastingInfo(character);
@@ -3354,8 +3319,6 @@ class _CharacterCreationStepsScreenState
     if (_selectedClass == null) return [];
 
     final savingThrowsText = _selectedClass!['saving_throws']?.toString() ?? '';
-    debugPrint('Texto de salvaguardas da classe: "$savingThrowsText"');
-
     if (savingThrowsText.isEmpty) return [];
 
     final result =
@@ -3365,7 +3328,6 @@ class _CharacterCreationStepsScreenState
             .where((s) => s.isNotEmpty)
             .toList();
 
-    debugPrint('Salvaguardas processadas: $result');
     return result;
   }
 
@@ -3374,7 +3336,6 @@ class _CharacterCreationStepsScreenState
 
     final skillsText =
         _selectedBackground!['skill_proficiencies_2024']?.toString() ?? '';
-    debugPrint('Texto de perícias do antecedente: "$skillsText"');
 
     if (skillsText.isEmpty) return [];
 
@@ -3385,7 +3346,6 @@ class _CharacterCreationStepsScreenState
             .where((s) => s.isNotEmpty)
             .toList();
 
-    debugPrint('Perícias do antecedente processadas: $result');
     return result;
   }
 
@@ -3409,10 +3369,6 @@ class _CharacterCreationStepsScreenState
           return !backgroundSkills.contains(skill);
         }).toList();
 
-    debugPrint('Perícias da classe: $allClassSkills');
-    debugPrint('Perícias da origem: $backgroundSkills');
-    debugPrint('Perícias disponíveis para seleção: $availableSkills');
-
     return availableSkills;
   }
 
@@ -3425,7 +3381,6 @@ class _CharacterCreationStepsScreenState
     for (final skill in character.skills) {
       if (proficiencies.contains(skill.name)) {
         skill.isProficient = true;
-        debugPrint('Marcando perícia como proficiente: ${skill.name}');
       }
     }
 
@@ -3634,10 +3589,6 @@ class _CharacterCreationStepsScreenState
             ? _selectedClass!['equipment_lado_a_items'] as List? ?? []
             : _selectedClass!['equipment_lado_b_items'] as List? ?? [];
 
-    debugPrint('Opção da classe selecionada: $_selectedClassOption');
-    debugPrint('Equipamentos encontrados: ${equipment.length}');
-    debugPrint('Equipamentos: $equipment');
-
     return equipment.cast<Map<String, dynamic>>();
   }
 
@@ -3656,10 +3607,6 @@ class _CharacterCreationStepsScreenState
     } else if (_selectedBackgroundOption == '2014') {
       equipment = _selectedBackground!['equipment_2014_items'] as List? ?? [];
     }
-
-    debugPrint('Opção do antecedente selecionada: $_selectedBackgroundOption');
-    debugPrint('Equipamentos encontrados: ${equipment.length}');
-    debugPrint('Equipamentos: $equipment');
 
     return equipment.cast<Map<String, dynamic>>();
   }

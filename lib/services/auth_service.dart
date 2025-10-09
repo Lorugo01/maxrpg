@@ -29,9 +29,7 @@ class AuthService {
         data: displayName != null ? {'display_name': displayName} : null,
       );
 
-      if (response.user != null) {
-        debugPrint('Usuário registrado com sucesso: ${response.user!.email}');
-      }
+      if (response.user != null) {}
 
       return response;
     } catch (e) {
@@ -46,20 +44,12 @@ class AuthService {
     required String password,
   }) async {
     try {
-      debugPrint('AuthService: Tentando fazer login com email: $email');
       final response = await client.auth.signInWithPassword(
         email: email,
         password: password,
       );
 
-      if (response.user != null) {
-        debugPrint(
-          'AuthService: Login realizado com sucesso: ${response.user!.email}',
-        );
-        debugPrint('AuthService: Sessão criada: ${response.session != null}');
-      } else {
-        debugPrint('AuthService: Login falhou - usuário é null');
-      }
+      if (response.user != null) {}
 
       return response;
     } catch (e) {
@@ -72,7 +62,6 @@ class AuthService {
   static Future<void> signOut() async {
     try {
       await client.auth.signOut();
-      debugPrint('Logout realizado com sucesso');
     } catch (e) {
       debugPrint('Erro ao fazer logout: $e');
       rethrow;
@@ -83,7 +72,6 @@ class AuthService {
   static Future<void> resetPassword(String email) async {
     try {
       await client.auth.resetPasswordForEmail(email);
-      debugPrint('Email de redefinição enviado para: $email');
     } catch (e) {
       debugPrint('Erro ao enviar email de redefinição: $e');
       rethrow;
@@ -110,7 +98,6 @@ class AuthService {
         UserAttributes(data: updates),
       );
 
-      debugPrint('Perfil atualizado com sucesso');
       return response;
     } catch (e) {
       debugPrint('Erro ao atualizar perfil: $e');
@@ -185,7 +172,6 @@ class AuthService {
       await client.auth.updateUser(
         UserAttributes(data: {'user_type': userType.value}),
       );
-      debugPrint('Tipo de usuário atualizado para: ${userType.displayName}');
     } catch (e) {
       debugPrint('Erro ao atualizar tipo de usuário: $e');
       rethrow;
@@ -207,9 +193,6 @@ class AuthService {
       );
 
       if (response.user != null) {
-        debugPrint(
-          'Usuário registrado com sucesso: ${response.user!.email} (Usuário Simples)',
-        );
         // Aguardar um pouco para o trigger processar
         await Future.delayed(const Duration(seconds: 1));
         // Verificar se o perfil foi criado, se não, criar manualmente (sempre como simple)
@@ -249,9 +232,6 @@ class AuthService {
           'display_name': displayName,
           'user_type': userType.value,
         });
-        debugPrint(
-          'Perfil de usuário criado manualmente para: $displayName (${userType.value})',
-        );
       } else {
         // Se o perfil existe mas o tipo está errado, atualizar
         final currentType = existingProfile['user_type'] as String?;
@@ -260,9 +240,6 @@ class AuthService {
               .from('user_profiles')
               .update({'user_type': userType.value})
               .eq('user_id', userId);
-          debugPrint(
-            'Tipo de usuário atualizado de $currentType para ${userType.value}',
-          );
         }
       }
     } catch (e) {
@@ -289,7 +266,6 @@ class AuthService {
       if (metadataType != null) {
         final userType = UserType.fromString(metadataType);
         await _ensureUserProfile(user.id, displayName, userType);
-        debugPrint('Tipo de usuário sincronizado do metadata: $metadataType');
       }
     } catch (e) {
       debugPrint('Erro ao sincronizar tipo de usuário: $e');

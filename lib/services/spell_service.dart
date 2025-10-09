@@ -16,7 +16,6 @@ class SpellService {
           .order('name', ascending: true);
 
       _cached = response.map((json) => Spell.fromJson(json)).toList();
-      debugPrint('Magias carregadas do Supabase: ${_cached!.length}');
       return _cached!;
     } catch (e) {
       debugPrint('Erro ao carregar magias do Supabase: $e');

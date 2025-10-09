@@ -187,7 +187,6 @@ class _CharacterEditScreenState extends ConsumerState<CharacterEditScreen>
         final ability = spellcasting['ability'] as String?;
         if (ability != null && ability.isNotEmpty) {
           _customSpellcastingAbility = ability;
-          debugPrint('Atributo de conjuração detectado: $ability');
           return;
         }
       } else if (spellcasting is String && spellcasting.isNotEmpty) {
@@ -196,7 +195,6 @@ class _CharacterEditScreenState extends ConsumerState<CharacterEditScreen>
           final ability = parsed['ability'] as String?;
           if (ability != null && ability.isNotEmpty) {
             _customSpellcastingAbility = ability;
-            debugPrint('Atributo de conjuração detectado (string): $ability');
             return;
           }
         } catch (e) {
@@ -208,15 +206,9 @@ class _CharacterEditScreenState extends ConsumerState<CharacterEditScreen>
       final primaryAbility = classData['primary_ability'] as String?;
       if (primaryAbility != null && primaryAbility.isNotEmpty) {
         _customSpellcastingAbility = primaryAbility;
-        debugPrint('Usando atributo primário como conjuração: $primaryAbility');
       }
-
-      debugPrint(
-        'Classe configurada como conjuradora: ${_character.className}',
-      );
     } else {
       _isSpellcaster = false;
-      debugPrint('Classe NÃO é conjuradora: ${_character.className}');
     }
   }
 
@@ -2668,11 +2660,6 @@ class _CharacterEditScreenState extends ConsumerState<CharacterEditScreen>
       // Com armadura: usar cálculo do modelo Character
       _armorClass = _character.getCalculatedArmorClass();
     }
-
-    debugPrint(
-      'CA recalculada: $_armorClass (Destreza: ${_abilityScores['Destreza']}, Mod: $dexModifier)',
-    );
-
     // Atualizar a interface para mostrar a nova CA
     setState(() {
       // A CA será atualizada na próxima reconstrução da interface

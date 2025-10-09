@@ -30,10 +30,6 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
   List<Item> _items = [];
   bool _loadingItems = false;
 
-  // Debug mode
-  bool _debugMode = false;
-  DateTime? _debugStartTime;
-
   // Controle local de espaços de magia usados por nível (spellLevel -> usados)
   final Map<int, int> _usedSlotsByLevel = <int, int>{};
 
@@ -43,25 +39,12 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
     _character = widget.character;
     _tabController = TabController(length: 6, vsync: this);
 
-    debugPrint('=== INICIALIZAÇÃO DA FICHA ===');
-    debugPrint('Personagem: ${_character.name}');
-    debugPrint('Classe: ${_character.className}');
-    debugPrint('dndClass: ${_character.dndClass?.name}');
-    debugPrint(
-      'levelFeatures: ${_character.dndClass?.levelFeatures?.length ?? 0}',
-    );
-    debugPrint('CA inicial: ${_character.armorClass}');
-    debugPrint('Ability scores: ${_character.abilityScores}');
-
     _loadItems();
     _loadKnownSpells();
     _loadSpellsIndex();
     // Carregar classe se não estiver carregada
     _loadCharacterClass();
     // removido UD
-
-    // Verificar se o debug mode ainda está ativo
-    _checkDebugMode();
   }
 
   // --- Chips de efeito de magia (dano/cura) ---
@@ -180,75 +163,44 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
   }
 
   Future<void> _loadSpellsIndex() async {
-    try {
-      final spellsData = await SupabaseService.getSpells();
-      for (final m in spellsData) {
-        final name = m['name'] as String?;
-        if (name != null && name.isNotEmpty) {
-          _spellIndexByName[name] = m;
-        }
+    final spellsData = await SupabaseService.getSpells();
+    for (final m in spellsData) {
+      final name = m['name'] as String?;
+      if (name != null && name.isNotEmpty) {
+        _spellIndexByName[name] = m;
       }
-      if (mounted) setState(() {});
-    } catch (e) {
-      debugPrint('Erro ao carregar índice de magias: $e');
     }
+    if (mounted) setState(() {});
   }
 
   Future<void> _loadCharacterClass() async {
     if (_character.dndClass != null) {
-      debugPrint(
-        'CharacterSheet: Classe já carregada: ${_character.dndClass!.name}',
-      );
       return;
     }
 
     if (_character.className.isEmpty) {
-      debugPrint('CharacterSheet: Nome da classe vazio');
       return;
     }
+    final dndClass = await ClassService.loadByName(_character.className);
+    if (dndClass != null) {
+      setState(() {
+        _character.dndClass = dndClass;
+      });
 
-    try {
-      debugPrint('CharacterSheet: Carregando classe: ${_character.className}');
-      final dndClass = await ClassService.loadByName(_character.className);
-      if (dndClass != null) {
-        setState(() {
-          _character.dndClass = dndClass;
-        });
-        debugPrint('CharacterSheet: Classe carregada: ${dndClass.name}');
-        debugPrint(
-          'CharacterSheet: levelFeatures: ${dndClass.levelFeatures?.length ?? 0}',
-        );
-
-        // Verificar se tem UD nas features de nível
-        if (dndClass.levelFeatures != null) {
-          for (final feature in dndClass.levelFeatures!) {
-            if (feature.containsKey('unarmored_defense')) {
-              debugPrint(
-                'CharacterSheet: UD encontrada em levelFeatures: ${feature['unarmored_defense']}',
-              );
-            }
-          }
+      // Verificar se tem UD nas features de nível
+      if (dndClass.levelFeatures != null) {
+        for (final feature in dndClass.levelFeatures!) {
+          if (feature.containsKey('unarmored_defense')) {}
         }
-
-        // Verificar se tem UD nas subclasses
-        for (final subclass in dndClass.subclasses) {
-          debugPrint('CharacterSheet: Verificando subclasse: ${subclass.name}');
-          for (final feature in subclass.features) {
-            final featureMap = feature.toJson();
-            if (featureMap.containsKey('unarmored_defense')) {
-              debugPrint(
-                'CharacterSheet: UD encontrada em subclasse ${subclass.name}: ${featureMap['unarmored_defense']}',
-              );
-            }
-          }
-        }
-      } else {
-        debugPrint(
-          'CharacterSheet: Classe não encontrada: ${_character.className}',
-        );
       }
-    } catch (e) {
-      debugPrint('CharacterSheet: Erro ao carregar classe: $e');
+
+      // Verificar se tem UD nas subclasses
+      for (final subclass in dndClass.subclasses) {
+        for (final feature in subclass.features) {
+          final featureMap = feature.toJson();
+          if (featureMap.containsKey('unarmored_defense')) {}
+        }
+      }
     }
   }
 
@@ -416,166 +368,6 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
     }
   }
 
-  void _checkDebugMode() {
-    if (_debugStartTime != null) {
-      final now = DateTime.now();
-      final difference = now.difference(_debugStartTime!);
-      if (difference.inHours >= 1) {
-        setState(() {
-          _debugMode = false;
-          _debugStartTime = null;
-        });
-      } else {
-        setState(() {
-          _debugMode = true;
-        });
-      }
-    }
-  }
-
-  void _toggleDebugMode() {
-    setState(() {
-      if (_debugMode) {
-        _debugMode = false;
-        _debugStartTime = null;
-      } else {
-        _debugMode = true;
-        _debugStartTime = DateTime.now();
-      }
-    });
-  }
-
-  String _getDebugTimeRemaining() {
-    if (_debugStartTime == null) return '';
-    final now = DateTime.now();
-    final difference = now.difference(_debugStartTime!);
-    final remaining = Duration(hours: 1) - difference;
-    if (remaining.isNegative) return 'Expirado';
-    return '${remaining.inMinutes}m restantes';
-  }
-
-  void _debugAbility(String abilityName, Map<String, dynamic>? abilityData) {
-    if (!_debugMode) return;
-
-    debugPrint('=== DEBUG HABILIDADE: $abilityName ===');
-    debugPrint('Timestamp: ${DateTime.now()}');
-    debugPrint('Dados da habilidade: $abilityData');
-
-    if (abilityData != null) {
-      debugPrint('has_usage_limit: ${abilityData['has_usage_limit']}');
-      debugPrint('has_dice_increase: ${abilityData['has_dice_increase']}');
-      debugPrint('usage_type: ${abilityData['usage_type']}');
-      debugPrint('usage_value: ${abilityData['usage_value']}');
-      debugPrint('usage_recovery: ${abilityData['usage_recovery']}');
-      debugPrint('usage_attribute: ${abilityData['usage_attribute']}');
-      debugPrint('initial_dice: ${abilityData['initial_dice']}');
-      debugPrint('dice_increases: ${abilityData['dice_increases']}');
-      debugPrint(
-        'manual_level_increases: ${abilityData['manual_level_increases']}',
-      );
-      debugPrint(
-        'has_hit_point_increase: ${abilityData['has_hit_point_increase']}',
-      );
-      debugPrint(
-        'hit_point_increase_per_level: ${abilityData['hit_point_increase_per_level']}',
-      );
-      debugPrint(
-        'has_additional_features: ${abilityData['has_additional_features']}',
-      );
-      debugPrint(
-        'additional_feature_name: ${abilityData['additional_feature_name']}',
-      );
-      debugPrint(
-        'additional_feature_description: ${abilityData['additional_feature_description']}',
-      );
-    }
-
-    debugPrint('=== FIM DEBUG HABILIDADE ===');
-  }
-
-  Widget _buildDebugInfo(
-    String name,
-    Map<String, dynamic>? abilityData,
-    AbilityCalculation? calculation,
-  ) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.yellow.withAlpha(30),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.yellow.withAlpha(100)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(Icons.bug_report, size: 16, color: Colors.orange),
-              const SizedBox(width: 8),
-              Text(
-                'Debug Info - $name',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.orange,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          if (abilityData != null) ...[
-            Text('has_usage_limit: ${abilityData['has_usage_limit']}'),
-            Text('has_dice_increase: ${abilityData['has_dice_increase']}'),
-            Text('usage_type: ${abilityData['usage_type']}'),
-            Text('usage_value: ${abilityData['usage_value']}'),
-            Text('usage_recovery: ${abilityData['usage_recovery']}'),
-            Text('usage_attribute: ${abilityData['usage_attribute']}'),
-            Text('initial_dice: ${abilityData['initial_dice']}'),
-            Text('dice_increases: ${abilityData['dice_increases']}'),
-            Text(
-              'manual_level_increases: ${abilityData['manual_level_increases']}',
-            ),
-            Text(
-              'has_hit_point_increase: ${abilityData['has_hit_point_increase']}',
-            ),
-            Text(
-              'hit_point_increase_per_level: ${abilityData['hit_point_increase_per_level']}',
-            ),
-            Text(
-              'has_additional_features: ${abilityData['has_additional_features']}',
-            ),
-            Text(
-              'additional_feature_name: ${abilityData['additional_feature_name']}',
-            ),
-            Text(
-              'additional_feature_description: ${abilityData['additional_feature_description']}',
-            ),
-          ],
-          if (calculation != null) ...[
-            const SizedBox(height: 8),
-            Text('Tipo: ${calculation.type}'),
-            Text('Usos atuais: ${calculation.currentUses}'),
-            Text('Dado atual: ${calculation.currentDie}'),
-            Text('Tipo de recuperação: ${calculation.recoveryType}'),
-            Text(
-              'Tem funcionalidades adicionais: ${calculation.hasAdditionalFeatures}',
-            ),
-            Text(
-              'Nome da funcionalidade: ${calculation.additionalFeatureName}',
-            ),
-            Text(
-              'Descrição da funcionalidade: ${calculation.additionalFeatureDescription}',
-            ),
-          ],
-          const SizedBox(height: 8),
-          Text(
-            'Timestamp: ${DateTime.now()}',
-            style: const TextStyle(fontSize: 10, color: Colors.grey),
-          ),
-        ],
-      ),
-    );
-  }
-
   Future<void> _loadItems() async {
     if (_loadingItems) {
       return;
@@ -584,11 +376,7 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
     setState(() => _loadingItems = true);
     try {
       _items = await CharacterService.loadItems(_character.id);
-    } catch (e, stackTrace) {
-      debugPrint('=== ERRO NO CARREGAMENTO DE ITENS ===');
-      debugPrint('Erro: $e');
-      debugPrint('Stack trace: $stackTrace');
-      debugPrint('=== FIM DO ERRO ===');
+    } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -659,17 +447,6 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
                 });
               }
             },
-          ),
-          IconButton(
-            icon: Icon(
-              _debugMode ? Icons.bug_report : Icons.bug_report_outlined,
-              color: _debugMode ? Colors.yellow : Colors.white,
-            ),
-            tooltip:
-                _debugMode
-                    ? 'Debug Mode Ativo (${_getDebugTimeRemaining()})'
-                    : 'Ativar Debug Mode (1 hora)',
-            onPressed: _toggleDebugMode,
           ),
         ],
         bottom: TabBar(
@@ -2819,8 +2596,6 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
   }
 
   Widget _buildSavingThrowsCard() {
-    // Debug: verificar testes de resistência
-
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -3213,32 +2988,28 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
   }
 
   Future<void> _loadKnownSpells() async {
-    try {
-      final response =
-          await SupabaseService.client
-              .from('characters')
-              .select('known_spells')
-              .eq('id', _character.id)
-              .single();
+    final response =
+        await SupabaseService.client
+            .from('characters')
+            .select('known_spells')
+            .eq('id', _character.id)
+            .single();
 
-      final knownSpellsData = response['known_spells'] as List<dynamic>?;
+    final knownSpellsData = response['known_spells'] as List<dynamic>?;
 
-      if (knownSpellsData != null && knownSpellsData.isNotEmpty) {
-        final spells =
-            knownSpellsData
-                .map(
-                  (spellData) =>
-                      Spell.fromJson(spellData as Map<String, dynamic>),
-                )
-                .toList();
+    if (knownSpellsData != null && knownSpellsData.isNotEmpty) {
+      final spells =
+          knownSpellsData
+              .map(
+                (spellData) =>
+                    Spell.fromJson(spellData as Map<String, dynamic>),
+              )
+              .toList();
 
-        setState(() {
-          _character.knownSpells = spells;
-        });
-      } else {}
-    } catch (e) {
-      debugPrint('Erro ao carregar magias: $e');
-    }
+      setState(() {
+        _character.knownSpells = spells;
+      });
+    } else {}
   }
 
   Future<void> _testSaveAndLoad() async {
@@ -3250,8 +3021,6 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
 
     // Depois, carregar
     await _loadKnownSpells();
-
-    debugPrint('=== FIM DO TESTE ===');
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -3274,7 +3043,6 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
           .update({'known_spells': spellsJson})
           .eq('id', _character.id);
     } catch (e) {
-      debugPrint('Erro ao salvar magias: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -3306,7 +3074,6 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
         );
       }
     } catch (e) {
-      debugPrint('Erro ao salvar configurações de conjuração: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -3322,23 +3089,6 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
     final calculatedAC = _character.getCalculatedArmorClass();
     final unarmoredDefense = _getUnarmoredDefense();
     final hasUnarmoredDefense = unarmoredDefense != null;
-
-    // Debug: verificar se UD está sendo detectada
-    debugPrint('=== DEBUG CA ===');
-    debugPrint('Personagem: ${_character.name}');
-    debugPrint('Classe: ${_character.className}');
-    debugPrint('Subclasse: ${_character.subclassName ?? "Nenhuma"}');
-    debugPrint('dndClass: ${_character.dndClass?.name}');
-    debugPrint(
-      'levelFeatures: ${_character.dndClass?.levelFeatures?.length ?? 0}',
-    );
-    debugPrint(
-      'subclasses disponíveis: ${_character.dndClass?.subclasses.length ?? 0}',
-    );
-    debugPrint('unarmoredDefense: $unarmoredDefense');
-    debugPrint('hasUnarmoredDefense: $hasUnarmoredDefense');
-    debugPrint('calculatedAC: $calculatedAC');
-    debugPrint('=== FIM DEBUG CA ===');
 
     return Card(
       elevation: 2,
@@ -4155,7 +3905,6 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
           }
 
           if (snapshot.hasError) {
-            debugPrint('Erro ao carregar raça: ${snapshot.error}');
             return _buildErrorCard(
               'Erro ao carregar habilidades da raça',
               snapshot.error.toString(),
@@ -4240,7 +3989,6 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
           }
 
           if (snapshot.hasError) {
-            debugPrint('Erro ao carregar classe: ${snapshot.error}');
             return _buildErrorCard(
               'Erro ao carregar habilidades da classe',
               snapshot.error.toString(),
@@ -4409,9 +4157,6 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
         // Obter slots para o nível específico (level_1, level_2, etc.)
         final slotKey = 'level_$spellLevel';
         final slots = slotLevel[slotKey] as int? ?? 0;
-        debugPrint(
-          '_getSpellSlotsFromDatabase: characterLevel=${_character.level}, spellLevel=$spellLevel, slots=$slots',
-        );
         return slots;
       }
     }
@@ -4456,7 +4201,6 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
       _classDataCache = response;
       return response;
     } catch (e) {
-      debugPrint('Erro ao carregar classe: $e');
       rethrow;
     }
   }
@@ -4469,7 +4213,6 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
 
       return response;
     } catch (e) {
-      debugPrint('Erro ao carregar raça: $e');
       rethrow;
     }
   }
@@ -4490,7 +4233,6 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
 
       return response;
     } catch (e) {
-      debugPrint('Erro ao carregar antecedente: $e');
       rethrow;
     }
   }
@@ -4539,7 +4281,6 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
         return null;
       }
     } catch (e) {
-      debugPrint('Erro ao carregar talento da origem: $e');
       rethrow;
     }
   }
@@ -4558,7 +4299,6 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
               }
 
               if (snapshot.hasError) {
-                debugPrint('Erro ao carregar antecedente: ${snapshot.error}');
                 return _buildErrorCard(
                   'Erro ao carregar habilidades do antecedente',
                   snapshot.error.toString(),
@@ -4687,7 +4427,6 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
           }
 
           if (snapshot.hasError) {
-            debugPrint('Erro ao carregar talento da origem: ${snapshot.error}');
             return _buildErrorCard(
               'Erro ao carregar talento da origem',
               snapshot.error.toString(),
@@ -4862,9 +4601,6 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
     String? meta,
     Map<String, dynamic>? abilityData,
   }) {
-    // Debug da habilidade se o modo debug estiver ativo
-    _debugAbility(name, abilityData);
-
     // Usar o AbilityCalculator para cálculo automático
     AbilityCalculation? calculation;
     if (abilityData != null) {
@@ -4883,27 +4619,7 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: ExpansionTile(
-        leading: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: color),
-            if (_debugMode) ...[
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.all(2),
-                decoration: BoxDecoration(
-                  color: Colors.yellow,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: const Icon(
-                  Icons.bug_report,
-                  size: 12,
-                  color: Colors.black,
-                ),
-              ),
-            ],
-          ],
-        ),
+        leading: Icon(icon, color: color),
         title: _buildAbilityTitle(
           name: name,
           hasUsageLimit: hasUsageLimit && totalUses > 0,
@@ -4934,12 +4650,6 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
                 if (calculation?.hasAdditionalFeatures == true) ...[
                   const SizedBox(height: 12),
                   _buildAdditionalFeatures(calculation!),
-                ],
-
-                // Debug info (apenas quando debug mode estiver ativo)
-                if (_debugMode) ...[
-                  const SizedBox(height: 12),
-                  _buildDebugInfo(name, abilityData, calculation),
                 ],
               ],
             ),
@@ -6312,9 +6022,6 @@ class _AddSpellDialogState extends State<_AddSpellDialog> {
                 try {
                   return Spell.fromJson(data);
                 } catch (e) {
-                  debugPrint(
-                    '_AddSpellDialog: Erro ao converter magia ${data['name']}: $e',
-                  );
                   return null;
                 }
               })
@@ -6322,17 +6029,12 @@ class _AddSpellDialogState extends State<_AddSpellDialog> {
               .cast<Spell>()
               .toList();
 
-      debugPrint(
-        '_AddSpellDialog: ${spells.length} magias convertidas com sucesso',
-      );
-
       setState(() {
         _availableSpells = spells;
         _filteredSpells = spells;
         _isLoading = false;
       });
     } catch (e) {
-      debugPrint('_AddSpellDialog: Erro ao carregar magias: $e');
       setState(() {
         _isLoading = false;
       });
@@ -6517,12 +6219,17 @@ class _AddSpellDialogState extends State<_AddSpellDialog> {
                                   onPressed: () => _showSpellDetails(spell),
                                 ),
                                 const SizedBox(width: 4),
-                                ElevatedButton(
+                                IconButton(
+                                  tooltip: 'Adicionar magia',
                                   onPressed: () {
                                     widget.onSpellAdded(spell);
                                     Navigator.of(context).pop();
                                   },
-                                  child: const Text('Adicionar'),
+                                  icon: const Icon(Icons.add),
+                                  style: IconButton.styleFrom(
+                                    backgroundColor: Colors.green,
+                                    foregroundColor: Colors.white,
+                                  ),
                                 ),
                               ],
                             ),

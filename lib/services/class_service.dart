@@ -42,23 +42,12 @@ class ClassService {
 
   /// Carrega uma classe específica pelo nome
   static Future<DndClass?> loadByName(String name) async {
-    debugPrint('ClassService: Carregando classe: $name');
     final classes = await loadAll();
-    debugPrint('ClassService: ${classes.length} classes carregadas');
     try {
       final target = _normalize(name);
-      debugPrint('ClassService: Procurando por: $target');
       final found = classes.firstWhere((c) => _normalize(c.name) == target);
-      debugPrint('ClassService: Classe encontrada: ${found.name}');
-      debugPrint(
-        'ClassService: levelFeatures: ${found.levelFeatures?.length ?? 0}',
-      );
       return found;
     } catch (e) {
-      debugPrint('ClassService: Classe não encontrada: $name');
-      debugPrint(
-        'ClassService: Classes disponíveis: ${classes.map((c) => c.name).toList()}',
-      );
       return null;
     }
   }
@@ -70,10 +59,7 @@ class ClassService {
     }
 
     try {
-      debugPrint('Carregando classes do Supabase...');
       final response = await SupabaseService.getClasses();
-
-      debugPrint('Classes carregadas do Supabase: ${response.length}');
 
       List<String> split(dynamic v) {
         if (v == null) return [];
@@ -93,7 +79,9 @@ class ClassService {
         final s = v.toString().trim();
         if ((s.startsWith('[') && s.endsWith(']'))) {
           try {
-            return (jsonDecode(s) as List);
+            final decoded = jsonDecode(s);
+            if (decoded is List) return decoded;
+            return [];
           } catch (_) {
             return [];
           }
@@ -107,7 +95,9 @@ class ClassService {
         final s = v.toString().trim();
         if ((s.startsWith('{') && s.endsWith('}'))) {
           try {
-            return (jsonDecode(s) as Map<String, dynamic>);
+            final decoded = jsonDecode(s);
+            if (decoded is Map<String, dynamic>) return decoded;
+            return null;
           } catch (_) {
             return null;
           }
@@ -165,36 +155,42 @@ class ClassService {
                     'name': subclassData['name'] ?? '',
                     'description': subclassData['description'] ?? '',
                     'features':
-                        (subclassData['features'] as List<dynamic>?)?.map((
-                          feature,
-                        ) {
-                          final featureMap = feature as Map<String, dynamic>;
-                          return <String, dynamic>{
-                            'name': featureMap['name'] ?? '',
-                            'description': featureMap['description'] ?? '',
-                            'level':
-                                featureMap['level'] is int
-                                    ? featureMap['level']
-                                    : int.tryParse(
-                                          (featureMap['level'] ?? '1')
-                                              .toString(),
-                                        ) ??
-                                        1,
-                            'isPassive': featureMap['isPassive'] ?? true,
-                            // Incluir campos extras
-                            if (featureMap.containsKey('unarmored_defense'))
-                              'unarmored_defense':
-                                  featureMap['unarmored_defense'],
-                            if (featureMap.containsKey('usage_type'))
-                              'usage_type': featureMap['usage_type'],
-                            if (featureMap.containsKey('usage_value'))
-                              'usage_value': featureMap['usage_value'],
-                            if (featureMap.containsKey('usage_attribute'))
-                              'usage_attribute': featureMap['usage_attribute'],
-                            if (featureMap.containsKey('has_usage_limit'))
-                              'has_usage_limit': featureMap['has_usage_limit'],
-                          };
-                        }).toList() ??
+                        (subclassData['features'] as List<dynamic>?)
+                            ?.map((feature) {
+                              if (feature == null) return null;
+                              final featureMap =
+                                  feature as Map<String, dynamic>;
+                              return <String, dynamic>{
+                                'name': featureMap['name'] ?? '',
+                                'description': featureMap['description'] ?? '',
+                                'level':
+                                    featureMap['level'] is int
+                                        ? featureMap['level']
+                                        : int.tryParse(
+                                              (featureMap['level'] ?? '1')
+                                                  .toString(),
+                                            ) ??
+                                            1,
+                                'isPassive': featureMap['isPassive'] ?? true,
+                                // Incluir campos extras
+                                if (featureMap.containsKey('unarmored_defense'))
+                                  'unarmored_defense':
+                                      featureMap['unarmored_defense'],
+                                if (featureMap.containsKey('usage_type'))
+                                  'usage_type': featureMap['usage_type'],
+                                if (featureMap.containsKey('usage_value'))
+                                  'usage_value': featureMap['usage_value'],
+                                if (featureMap.containsKey('usage_attribute'))
+                                  'usage_attribute':
+                                      featureMap['usage_attribute'],
+                                if (featureMap.containsKey('has_usage_limit'))
+                                  'has_usage_limit':
+                                      featureMap['has_usage_limit'],
+                              };
+                            })
+                            .where((f) => f != null)
+                            .cast<Map<String, dynamic>>()
+                            .toList() ??
                         [],
                   },
                 )
@@ -202,41 +198,6 @@ class ClassService {
 
         // Spellcasting safe parse (aceitar string JSON)
         final spellcasting = parseJsonMap(row['spellcasting']);
-
-        // DEBUG: Verificar dados de conjuração e subclasses
-        if (row['name'] != null) {
-          debugPrint('=== DEBUG CLASSE: ${row['name']} ===');
-          debugPrint('spellcasting raw: ${row['spellcasting']}');
-          debugPrint('spellcasting parsed: $spellcasting');
-          debugPrint('has_spells: ${row['has_spells']}');
-          debugPrint('subclasses_raw: ${row['subclasses_details']}');
-          debugPrint('subclasses_parsed: $subclasses');
-          debugPrint('level_features: ${row['level_features']}');
-
-          // Debug detalhado das subclasses
-          if (subclasses.isNotEmpty) {
-            debugPrint('=== DEBUG SUBCLASSES ===');
-            for (int i = 0; i < subclasses.length; i++) {
-              final subclass = subclasses[i];
-              debugPrint('Subclasse $i: ${subclass['name']}');
-              debugPrint('Features: ${subclass['features']?.length ?? 0}');
-              if (subclass['features'] != null) {
-                for (int j = 0; j < subclass['features'].length; j++) {
-                  final feature = subclass['features'][j];
-                  debugPrint(
-                    '  Feature $j: ${feature['name']} (nível ${feature['level']})',
-                  );
-                  if (feature.containsKey('unarmored_defense')) {
-                    debugPrint('    UD: ${feature['unarmored_defense']}');
-                  }
-                }
-              }
-            }
-            debugPrint('=== FIM DEBUG SUBCLASSES ===');
-          }
-
-          debugPrint('=== FIM DEBUG CLASSE ===');
-        }
 
         return {
           'name': row['name'] ?? '',
@@ -273,7 +234,6 @@ class ClassService {
             }
           }).toList();
 
-      debugPrint('Classes convertidas com sucesso: ${_classes!.length}');
       return _classes!;
     } catch (e) {
       debugPrint('Erro ao carregar classes do Supabase: $e');

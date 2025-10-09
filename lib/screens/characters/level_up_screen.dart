@@ -50,11 +50,13 @@ class _LevelUpScreenState extends ConsumerState<LevelUpScreen> {
 
   Future<void> _initializeLevelUp() async {
     try {
-      dndClass =
-          await ClassService.getByName(widget.character.className) ??
-          (throw Exception(
-            'Classe ${widget.character.className} não encontrada',
-          ));
+      // Tentar carregar a classe
+      dndClass = await ClassService.getByName(widget.character.className);
+
+      if (dndClass == null) {
+        throw Exception('Classe ${widget.character.className} não encontrada');
+      }
+
       levelUp = LevelUp.fromClass(dndClass!, widget.character.level);
 
       // Carregar talentos do JSON
@@ -100,8 +102,6 @@ class _LevelUpScreenState extends ConsumerState<LevelUpScreen> {
               'source': feat.source ?? 'PHB 2024',
             };
           }).toList();
-
-      debugPrint('Talentos carregados para level up: ${availableFeats.length}');
     } catch (e) {
       debugPrint('Erro ao carregar talentos: $e');
       // Fallback para lista básica se houver erro
@@ -1262,26 +1262,11 @@ class _LevelUpScreenState extends ConsumerState<LevelUpScreen> {
             .map((skill) => skill.name)
             .toList();
 
-    // Debug: verificar perícias proficientes
-    debugPrint('=== DEBUG PERÍCIAS PROFICIENTES ===');
-    debugPrint(
-      'Total de perícias do personagem: ${widget.character.skills.length}',
-    );
-    debugPrint('Perícias proficientes encontradas: $proficientSkills');
-    debugPrint('=== FIM DEBUG ===');
-
     return proficientSkills;
   }
 
   void _showProficiencySelectionDialog() {
     final availableSkills = _getAvailableSkillsForProficiency();
-
-    // Debug: verificar se há perícias disponíveis
-    debugPrint('=== DEBUG DIÁLOGO DE ESPECIALIZAÇÃO ===');
-    debugPrint('Perícias disponíveis: $availableSkills');
-    debugPrint('Perícias já selecionadas: $selectedProficiencySkills');
-    debugPrint('Número necessário: $proficiencySkillCount');
-    debugPrint('=== FIM DEBUG ===');
 
     if (availableSkills.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -1470,10 +1455,6 @@ class _LevelUpScreenState extends ConsumerState<LevelUpScreen> {
       character.maxHitPoints += totalHitPointsToAdd;
       character.currentHitPoints += totalHitPointsToAdd;
 
-      debugPrint(
-        'Level up PV: $hitPointsToAdd (classe) + $racialHitPointIncrease (racial) = $totalHitPointsToAdd',
-      );
-
       // Aplicar melhorias de atributos
       for (final entry in abilityScoreChanges.entries) {
         if (entry.value > 0) {
@@ -1490,7 +1471,6 @@ class _LevelUpScreenState extends ConsumerState<LevelUpScreen> {
           );
           if (skillIndex != -1) {
             character.skills[skillIndex].hasExpertise = true;
-            debugPrint('Aplicada especialização na perícia: $skillName');
           }
         }
       }
@@ -1517,13 +1497,6 @@ class _LevelUpScreenState extends ConsumerState<LevelUpScreen> {
               selectedSubclass.features
                   .map((feature) => feature.toJson())
                   .toList();
-
-          debugPrint(
-            'Subclasse selecionada: ${selectedSubclass.name} (Nível ${levelUp!.newLevel})',
-          );
-          debugPrint(
-            'Features da subclasse: ${character.subclassFeatures?.length ?? 0}',
-          );
         }
       }
 
