@@ -127,15 +127,38 @@ class _EditRaceScreenState extends ConsumerState<EditRaceScreen> {
   List<Map<String, dynamic>> _allSpells = [];
   bool _loadingSpells = false;
 
+  // Controle de subraças
+  final List<Map<String, dynamic>> _subraces = [];
+
   @override
   void initState() {
     super.initState();
     final r = widget.race;
-    _nameController = TextEditingController(text: r['name'] ?? '');
-    _descriptionController = TextEditingController(
-      text: r['description'] ?? '',
-    );
-    _sizeController = TextEditingController(text: r['size'] ?? 'Médio');
+    _nameController = TextEditingController(text: r['name']?.toString() ?? '');
+
+    // Tratar description como string ou lista
+    final dynamic descriptionData = r['description'];
+    String descriptionText = '';
+    if (descriptionData is String) {
+      descriptionText = descriptionData;
+    } else if (descriptionData is List) {
+      descriptionText = descriptionData.map((e) => e.toString()).join('\n');
+    } else {
+      descriptionText = descriptionData?.toString() ?? '';
+    }
+    _descriptionController = TextEditingController(text: descriptionText);
+
+    // Tratar size como string ou lista
+    final dynamic sizeData = r['size'];
+    String sizeText = '';
+    if (sizeData is String) {
+      sizeText = sizeData;
+    } else if (sizeData is List) {
+      sizeText = sizeData.map((e) => e.toString()).join(', ');
+    } else {
+      sizeText = sizeData?.toString() ?? 'Médio';
+    }
+    _sizeController = TextEditingController(text: sizeText);
     _speedController = TextEditingController(
       text: (r['speed'] ?? 30).toString(),
     );
@@ -149,9 +172,55 @@ class _EditRaceScreenState extends ConsumerState<EditRaceScreen> {
       asiText = asi.toString();
     }
     _abilityScoreIncreaseController = TextEditingController(text: asiText);
-    _languagesController = TextEditingController(text: r['languages'] ?? '');
-    _subracesController = TextEditingController(text: r['subraces'] ?? '');
+
+    // Tratar languages como string ou lista
+    final dynamic languagesData = r['languages'];
+    String languagesText = '';
+    if (languagesData is String) {
+      languagesText = languagesData;
+    } else if (languagesData is List) {
+      languagesText = languagesData.map((e) => e.toString()).join(', ');
+    } else {
+      languagesText = languagesData?.toString() ?? '';
+    }
+    _languagesController = TextEditingController(text: languagesText);
+
+    // Tratar subraces como string ou lista
+    final dynamic subracesData = r['subraces'];
+    String subracesText = '';
+    if (subracesData is String) {
+      subracesText = subracesData;
+    } else if (subracesData is List) {
+      subracesText = subracesData.map((e) => e.toString()).join(', ');
+    } else {
+      subracesText = subracesData?.toString() ?? '';
+    }
+    _subracesController = TextEditingController(text: subracesText);
+
     _selectedSource = (r['source'] as String?) ?? _sourceOptions.first;
+
+    // Carregar subraças existentes
+    if (subracesData is List) {
+      for (final subrace in subracesData) {
+        if (subrace is Map<String, dynamic>) {
+          final subraceMap = Map<String, dynamic>.from(subrace);
+          // Criar controllers para os campos da subraça
+          subraceMap['nameController'] = TextEditingController(
+            text: subraceMap['name'] ?? '',
+          );
+          subraceMap['descriptionController'] = TextEditingController(
+            text: subraceMap['description'] ?? '',
+          );
+          subraceMap['traitsController'] = TextEditingController(
+            text: subraceMap['traits'] ?? '',
+          );
+          subraceMap['spellsController'] = TextEditingController(
+            text: subraceMap['spells'] ?? '',
+          );
+          _subraces.add(subraceMap);
+        }
+      }
+    }
     _isPHB2014 = _selectedSource == 'PHB 2014';
 
     // Inicializar traços a partir de traits (JSONB) ou traits_text (string)
@@ -198,7 +267,18 @@ class _EditRaceScreenState extends ConsumerState<EditRaceScreen> {
       }
     } else {
       // Fallback para traits_text (string)
-      final String traitsText = (r['traits_text'] ?? '').toString();
+      final dynamic traitsTextData = r['traits_text'];
+      String traitsText = '';
+
+      if (traitsTextData is String) {
+        traitsText = traitsTextData;
+      } else if (traitsTextData is List) {
+        // Se for uma lista, converter para string
+        traitsText = traitsTextData.map((e) => e.toString()).join('\n');
+      } else {
+        traitsText = traitsTextData?.toString() ?? '';
+      }
+
       if (traitsText.trim().isEmpty) {
         _traitEntries.add(_TraitEntry());
       } else {
@@ -219,7 +299,18 @@ class _EditRaceScreenState extends ConsumerState<EditRaceScreen> {
     if (_traitEntries.isEmpty) _traitEntries.add(_TraitEntry());
 
     // Inicializar magias a partir de racial_spells
-    final String spellsText = (r['racial_spells'] ?? '').toString();
+    final dynamic racialSpellsData = r['racial_spells'];
+    String spellsText = '';
+
+    if (racialSpellsData is String) {
+      spellsText = racialSpellsData;
+    } else if (racialSpellsData is List) {
+      // Se for uma lista, converter para string
+      spellsText = racialSpellsData.map((e) => e.toString()).join('\n');
+    } else {
+      spellsText = racialSpellsData?.toString() ?? '';
+    }
+
     if (spellsText.trim().isNotEmpty) {
       final lines = spellsText.split('\n');
       for (final line in lines) {
@@ -250,6 +341,13 @@ class _EditRaceScreenState extends ConsumerState<EditRaceScreen> {
     }
     for (final s in _spellEntries) {
       s.dispose();
+    }
+    // Dispose dos controllers das subraças
+    for (final subrace in _subraces) {
+      subrace['nameController']?.dispose();
+      subrace['descriptionController']?.dispose();
+      subrace['traitsController']?.dispose();
+      subrace['spellsController']?.dispose();
     }
     super.dispose();
   }
@@ -356,6 +454,115 @@ class _EditRaceScreenState extends ConsumerState<EditRaceScreen> {
         controller.level.text = (selected['level'] ?? '').toString();
       });
     }
+  }
+
+  Widget _buildSubraceCard(int index) {
+    final subrace = _subraces[index];
+
+    // Criar controllers para esta subraça se não existirem
+    if (subrace['nameController'] == null) {
+      subrace['nameController'] = TextEditingController(
+        text: subrace['name'] ?? '',
+      );
+    }
+    if (subrace['descriptionController'] == null) {
+      subrace['descriptionController'] = TextEditingController(
+        text: subrace['description'] ?? '',
+      );
+    }
+    if (subrace['traitsController'] == null) {
+      subrace['traitsController'] = TextEditingController(
+        text: subrace['traits'] ?? '',
+      );
+    }
+    if (subrace['spellsController'] == null) {
+      subrace['spellsController'] = TextEditingController(
+        text: subrace['spells'] ?? '',
+      );
+    }
+
+    return Card(
+      elevation: 1,
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: subrace['nameController'],
+                    decoration: const InputDecoration(
+                      labelText: 'Nome da Subraça *',
+                      hintText: 'Ex: Abissal',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) {
+                      _subraces[index]['name'] = value;
+                    },
+                  ),
+                ),
+                const SizedBox(width: 8),
+                IconButton(
+                  tooltip: 'Remover',
+                  onPressed: () {
+                    // Dispose dos controllers antes de remover
+                    subrace['nameController']?.dispose();
+                    subrace['descriptionController']?.dispose();
+                    subrace['traitsController']?.dispose();
+                    subrace['spellsController']?.dispose();
+                    setState(() => _subraces.removeAt(index));
+                  },
+                  icon: const Icon(Icons.delete, color: Colors.red),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: subrace['descriptionController'],
+              decoration: const InputDecoration(
+                labelText: 'Descrição da Subraça',
+                hintText: 'Descrição das habilidades específicas...',
+                border: OutlineInputBorder(),
+              ),
+              maxLines: 3,
+              onChanged: (value) {
+                _subraces[index]['description'] = value;
+              },
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: subrace['traitsController'],
+              decoration: const InputDecoration(
+                labelText: 'Traços Específicos',
+                hintText:
+                    'Ex: Resistência a dano de Veneno, conhece truque Spray de Veneno',
+                border: OutlineInputBorder(),
+              ),
+              maxLines: 2,
+              onChanged: (value) {
+                _subraces[index]['traits'] = value;
+              },
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: subrace['spellsController'],
+              decoration: const InputDecoration(
+                labelText: 'Magias Específicas',
+                hintText:
+                    'Ex: Raio da Doença (nível 3), Segurar Pessoa (nível 5)',
+                border: OutlineInputBorder(),
+              ),
+              maxLines: 2,
+              onChanged: (value) {
+                _subraces[index]['spells'] = value;
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -705,11 +912,39 @@ class _EditRaceScreenState extends ConsumerState<EditRaceScreen> {
                 Icons.category,
                 Colors.purple,
                 [
-                  _buildTextField(
-                    controller: _subracesController,
-                    label: 'Subraças',
-                    hint: 'Ex: Alto Elfo, Elfo da Floresta...',
-                    maxLines: 2,
+                  Text(
+                    'Subraças com habilidades específicas',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Column(
+                    children: [
+                      ..._subraces.asMap().entries.map((entry) {
+                        final index = entry.key;
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12.0),
+                          child: _buildSubraceCard(index),
+                        );
+                      }),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: TextButton.icon(
+                          onPressed:
+                              () => setState(() {
+                                _subraces.add({
+                                  'name': '',
+                                  'description': '',
+                                  'traits': '',
+                                  'spells': '',
+                                });
+                              }),
+                          icon: const Icon(Icons.add),
+                          label: const Text('Adicionar Subraça'),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -806,7 +1041,10 @@ class _EditRaceScreenState extends ConsumerState<EditRaceScreen> {
         'speed': int.tryParse(_speedController.text.trim()) ?? 30,
         'source': _selectedSource,
         'languages': _languagesController.text.trim(),
-        'subraces': _subracesController.text.trim(),
+        'subraces':
+            _subraces
+                .where((s) => s['name']?.toString().trim().isNotEmpty == true)
+                .toList(),
         'updated_at': DateTime.now().toIso8601String(),
       };
 

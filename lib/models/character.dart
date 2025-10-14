@@ -9,6 +9,7 @@ class Character {
   String? userId; // user_id do banco
   String name;
   String race;
+  String? subrace;
   String className;
   String background;
   int level;
@@ -75,6 +76,7 @@ class Character {
     this.userId,
     required this.name,
     required this.race,
+    this.subrace,
     required this.className,
     required this.background,
     this.level = 1,
@@ -500,6 +502,7 @@ class Character {
       userId: json['user_id'] as String?,
       name: json['name'] as String,
       race: json['race'] as String,
+      subrace: json['subrace'] as String?,
       className: json['class_name'] as String? ?? json['className'] as String,
       background: json['background'] as String,
       level: json['level'] as int? ?? 1,
@@ -589,6 +592,7 @@ class Character {
       'user_id': userId,
       'name': name,
       'race': race,
+      'subrace': subrace,
       'class_name': className,
       'background': background,
       'level': level,

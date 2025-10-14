@@ -33,6 +33,9 @@ class _AddClassScreenState extends ConsumerState<AddClassScreen> {
   final _subclassesController = TextEditingController();
   String? _selectedSource;
 
+  // Estado da edição
+  Map<String, dynamic>? _initialData;
+
   // Estrutura para ganhos por nível
   final List<Map<String, dynamic>> _levelFeatures = [];
 
@@ -124,6 +127,103 @@ class _AddClassScreenState extends ConsumerState<AddClassScreen> {
   bool _isLoading = false;
 
   @override
+  void initState() {
+    super.initState();
+    _initializeChangeTracking();
+  }
+
+  void _initializeChangeTracking() {
+    // Aguardar um frame para garantir que os dados foram inicializados
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initialData = _getCurrentFormData();
+    });
+  }
+
+  Map<String, dynamic> _getCurrentFormData() {
+    return {
+      'name': _nameController.text,
+      'description': _descriptionController.text,
+      'hit_die': _hitDieController.text,
+      'primary_ability': _selectedPrimaryAbility,
+      'saving_throws': List.from(_selectedSavingThrows),
+      'armor_proficiencies': List.from(_selectedArmorProficiencies),
+      'weapon_proficiencies': List.from(_selectedWeaponProficiencies),
+      'tool_proficiencies': List.from(_selectedToolProficiencies),
+      'skill_proficiencies': List.from(_selectedSkillProficiencies),
+      'skill_count': _skillCountController.text,
+      'equipment': _equipmentController.text,
+      'equipment_lado_a': _equipmentLadoAController.text,
+      'equipment_lado_b': _equipmentLadoBController.text,
+      'features': _featuresController.text,
+      'spellcasting': _spellcastingController.text,
+      'subclasses': _subclassesController.text,
+      'source': _selectedSource,
+      'level_features': List.from(_levelFeatures),
+      'has_spells': _hasSpells,
+      'spell_levels': List.from(_spellLevels),
+    };
+  }
+
+  bool _hasUnsavedChanges() {
+    if (_initialData == null) return false;
+    final currentData = _getCurrentFormData();
+
+    // Comparar dados principais
+    for (final key in _initialData!.keys) {
+      if (_initialData![key] != currentData[key]) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  Future<bool?> _showExitConfirmationDialog() {
+    return showDialog<bool>(
+      context: context,
+      builder:
+          (ctx) => AlertDialog(
+            title: const Text('Alterações não salvas'),
+            content: const Text(
+              'Você tem alterações não salvas. Deseja realmente sair sem salvar?',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: const Text('Cancelar'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(true),
+                child: const Text('Sair sem salvar'),
+              ),
+            ],
+          ),
+    );
+  }
+
+  void _onPopInvokedWithResult(bool didPop, Object? result) async {
+    if (didPop) {
+      return; // O pop já aconteceu (ex: via gesto), não faça nada
+    }
+
+    // Se tem mudanças, pergunte ao usuário
+    if (_hasUnsavedChanges()) {
+      final bool? shouldPop = await _showExitConfirmationDialog();
+
+      if (shouldPop == true) {
+        // Se o usuário confirmou, fazemos o pop manualmente
+        if (mounted) {
+          Navigator.of(context).pop();
+        }
+      }
+    } else {
+      // Se não tem mudanças, permita o pop
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
+    }
+  }
+
+  @override
   void dispose() {
     _nameController.dispose();
     _descriptionController.dispose();
@@ -156,248 +256,292 @@ class _AddClassScreenState extends ConsumerState<AddClassScreen> {
       );
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Adicionar Classe'),
-        backgroundColor: Colors.purple,
-        foregroundColor: Colors.white,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.save),
-            onPressed: _isLoading ? null : _saveClass,
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Informações Básicas
-              _buildSectionCard(
-                context,
-                'Informações Básicas',
-                Icons.info,
-                Colors.purple,
-                [
-                  _buildTextField(
-                    controller: _nameController,
-                    label: 'Nome da Classe *',
-                    hint: 'Ex: Guerreiro',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Nome é obrigatório';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  _buildTextField(
-                    controller: _descriptionController,
-                    label: 'Descrição',
-                    hint: 'Descrição da classe...',
-                    maxLines: 3,
-                  ),
-                  const SizedBox(height: 16),
-                  LayoutBuilder(
-                    builder: (context, constraints) {
-                      final bool isNarrow = constraints.maxWidth < 420;
-                      if (isNarrow) {
-                        return Column(
-                          children: [
-                            _buildTextField(
-                              controller: _hitDieController,
-                              label: 'Dado de Vida',
-                              hint: '8',
-                              keyboardType: TextInputType.number,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Dado de vida é obrigatório';
-                                }
-                                final die = int.tryParse(value);
-                                if (die == null || die < 4 || die > 20) {
-                                  return 'Dado deve ser entre 4 e 20';
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 12),
-                            DropdownButtonFormField<String>(
-                              value: _selectedPrimaryAbility,
-                              decoration: const InputDecoration(
-                                labelText: 'Habilidade Primária',
-                                border: OutlineInputBorder(),
-                                contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 8,
-                                ),
+    return PopScope(
+      canPop: !_hasUnsavedChanges(),
+      onPopInvokedWithResult: _onPopInvokedWithResult,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Adicionar Classe'),
+          backgroundColor: Colors.purple,
+          foregroundColor: Colors.white,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.save),
+              onPressed: _isLoading ? null : _saveClass,
+            ),
+          ],
+        ),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Informações Básicas
+                _buildSectionCard(
+                  context,
+                  'Informações Básicas',
+                  Icons.info,
+                  Colors.purple,
+                  [
+                    _buildTextField(
+                      controller: _nameController,
+                      label: 'Nome da Classe *',
+                      hint: 'Ex: Guerreiro',
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Nome é obrigatório';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    _buildTextField(
+                      controller: _descriptionController,
+                      label: 'Descrição',
+                      hint: 'Descrição da classe...',
+                      maxLines: 3,
+                    ),
+                    const SizedBox(height: 16),
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        final bool isNarrow = constraints.maxWidth < 420;
+                        if (isNarrow) {
+                          return Column(
+                            children: [
+                              _buildTextField(
+                                controller: _hitDieController,
+                                label: 'Dado de Vida',
+                                hint: '8',
+                                keyboardType: TextInputType.number,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Dado de vida é obrigatório';
+                                  }
+                                  final die = int.tryParse(value);
+                                  if (die == null || die < 4 || die > 20) {
+                                    return 'Dado deve ser entre 4 e 20';
+                                  }
+                                  return null;
+                                },
                               ),
-                              items:
-                                  const [
-                                        'Força',
-                                        'Destreza',
-                                        'Constituição',
-                                        'Inteligência',
-                                        'Sabedoria',
-                                        'Carisma',
-                                      ]
-                                      .map(
-                                        (s) => DropdownMenuItem(
-                                          value: s,
-                                          child: Text(s),
-                                        ),
-                                      )
-                                      .toList(),
-                              onChanged:
-                                  (v) => setState(
-                                    () => _selectedPrimaryAbility = v,
+                              const SizedBox(height: 12),
+                              DropdownButtonFormField<String>(
+                                value: _selectedPrimaryAbility,
+                                decoration: const InputDecoration(
+                                  labelText: 'Habilidade Primária',
+                                  border: OutlineInputBorder(),
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 8,
                                   ),
+                                ),
+                                items:
+                                    const [
+                                          'Força',
+                                          'Destreza',
+                                          'Constituição',
+                                          'Inteligência',
+                                          'Sabedoria',
+                                          'Carisma',
+                                        ]
+                                        .map(
+                                          (s) => DropdownMenuItem(
+                                            value: s,
+                                            child: Text(s),
+                                          ),
+                                        )
+                                        .toList(),
+                                onChanged:
+                                    (v) => setState(
+                                      () => _selectedPrimaryAbility = v,
+                                    ),
+                              ),
+                            ],
+                          );
+                        }
+                        return Row(
+                          children: [
+                            Expanded(
+                              child: _buildTextField(
+                                controller: _hitDieController,
+                                label: 'Dado de Vida',
+                                hint: '8',
+                                keyboardType: TextInputType.number,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Dado de vida é obrigatório';
+                                  }
+                                  final die = int.tryParse(value);
+                                  if (die == null || die < 4 || die > 20) {
+                                    return 'Dado deve ser entre 4 e 20';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: DropdownButtonFormField<String>(
+                                value: _selectedPrimaryAbility,
+                                decoration: const InputDecoration(
+                                  labelText: 'Habilidade Primária',
+                                  border: OutlineInputBorder(),
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 8,
+                                  ),
+                                ),
+                                items:
+                                    const [
+                                          'Força',
+                                          'Destreza',
+                                          'Constituição',
+                                          'Inteligência',
+                                          'Sabedoria',
+                                          'Carisma',
+                                        ]
+                                        .map(
+                                          (s) => DropdownMenuItem(
+                                            value: s,
+                                            child: Text(s),
+                                          ),
+                                        )
+                                        .toList(),
+                                onChanged:
+                                    (v) => setState(
+                                      () => _selectedPrimaryAbility = v,
+                                    ),
+                              ),
                             ),
                           ],
                         );
-                      }
-                      return Row(
-                        children: [
-                          Expanded(
-                            child: _buildTextField(
-                              controller: _hitDieController,
-                              label: 'Dado de Vida',
-                              hint: '8',
-                              keyboardType: TextInputType.number,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Dado de vida é obrigatório';
-                                }
-                                final die = int.tryParse(value);
-                                if (die == null || die < 4 || die > 20) {
-                                  return 'Dado deve ser entre 4 e 20';
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: DropdownButtonFormField<String>(
-                              value: _selectedPrimaryAbility,
-                              decoration: const InputDecoration(
-                                labelText: 'Habilidade Primária',
-                                border: OutlineInputBorder(),
-                                contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 8,
-                                ),
-                              ),
-                              items:
-                                  const [
-                                        'Força',
-                                        'Destreza',
-                                        'Constituição',
-                                        'Inteligência',
-                                        'Sabedoria',
-                                        'Carisma',
-                                      ]
-                                      .map(
-                                        (s) => DropdownMenuItem(
-                                          value: s,
-                                          child: Text(s),
-                                        ),
-                                      )
-                                      .toList(),
-                              onChanged:
-                                  (v) => setState(
-                                    () => _selectedPrimaryAbility = v,
-                                  ),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  DropdownButtonFormField<String>(
-                    value: _selectedSource,
-                    decoration: const InputDecoration(
-                      labelText: 'Fonte *',
-                      border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
+                      },
                     ),
-                    items:
-                        _sourceOptions
-                            .map(
-                              (s) => DropdownMenuItem(value: s, child: Text(s)),
-                            )
-                            .toList(),
-                    onChanged: (v) => setState(() => _selectedSource = v),
-                    validator:
-                        (v) =>
-                            (v == null || v.isEmpty)
-                                ? 'Fonte é obrigatória'
-                                : null,
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 24),
-
-              // Proficiências
-              _buildSectionCard(
-                context,
-                'Proficiências',
-                Icons.shield,
-                Colors.blue,
-                [
-                  _buildMultiSelectField(
-                    label: 'Testes de Resistência',
-                    selectedItems: _selectedSavingThrows,
-                    options: _savingThrowOptions,
-                    onChanged:
-                        (items) =>
-                            setState(() => _selectedSavingThrows = items),
-                  ),
-                  const SizedBox(height: 16),
-                  _buildMultiSelectField(
-                    label: 'Proficiência em Armaduras',
-                    selectedItems: _selectedArmorProficiencies,
-                    options: _armorProficiencyOptions,
-                    onChanged:
-                        (items) =>
-                            setState(() => _selectedArmorProficiencies = items),
-                  ),
-                  const SizedBox(height: 16),
-                  _buildMultiSelectField(
-                    label: 'Proficiência em Armas',
-                    selectedItems: _selectedWeaponProficiencies,
-                    options: _weaponProficiencyOptions,
-                    onChanged:
-                        (items) => setState(
-                          () => _selectedWeaponProficiencies = items,
+                    const SizedBox(height: 16),
+                    DropdownButtonFormField<String>(
+                      value: _selectedSource,
+                      decoration: const InputDecoration(
+                        labelText: 'Fonte *',
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
                         ),
-                  ),
-                  const SizedBox(height: 16),
-                  _buildMultiSelectField(
-                    label: 'Proficiência em Ferramentas',
-                    selectedItems: _selectedToolProficiencies,
-                    options: _toolProficiencyOptions,
-                    onChanged:
-                        (items) =>
-                            setState(() => _selectedToolProficiencies = items),
-                  ),
-                  const SizedBox(height: 16),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      LayoutBuilder(
-                        builder: (context, constraints) {
-                          final bool isNarrow = constraints.maxWidth < 420;
-                          if (isNarrow) {
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                      ),
+                      items:
+                          _sourceOptions
+                              .map(
+                                (s) =>
+                                    DropdownMenuItem(value: s, child: Text(s)),
+                              )
+                              .toList(),
+                      onChanged: (v) => setState(() => _selectedSource = v),
+                      validator:
+                          (v) =>
+                              (v == null || v.isEmpty)
+                                  ? 'Fonte é obrigatória'
+                                  : null,
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 24),
+
+                // Proficiências
+                _buildSectionCard(
+                  context,
+                  'Proficiências',
+                  Icons.shield,
+                  Colors.blue,
+                  [
+                    _buildMultiSelectField(
+                      label: 'Testes de Resistência',
+                      selectedItems: _selectedSavingThrows,
+                      options: _savingThrowOptions,
+                      onChanged:
+                          (items) =>
+                              setState(() => _selectedSavingThrows = items),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildMultiSelectField(
+                      label: 'Proficiência em Armaduras',
+                      selectedItems: _selectedArmorProficiencies,
+                      options: _armorProficiencyOptions,
+                      onChanged:
+                          (items) => setState(
+                            () => _selectedArmorProficiencies = items,
+                          ),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildMultiSelectField(
+                      label: 'Proficiência em Armas',
+                      selectedItems: _selectedWeaponProficiencies,
+                      options: _weaponProficiencyOptions,
+                      onChanged:
+                          (items) => setState(
+                            () => _selectedWeaponProficiencies = items,
+                          ),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildMultiSelectField(
+                      label: 'Proficiência em Ferramentas',
+                      selectedItems: _selectedToolProficiencies,
+                      options: _toolProficiencyOptions,
+                      onChanged:
+                          (items) => setState(
+                            () => _selectedToolProficiencies = items,
+                          ),
+                    ),
+                    const SizedBox(height: 16),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            final bool isNarrow = constraints.maxWidth < 420;
+                            if (isNarrow) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Proficiência em Perícias',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Wrap(
+                                    spacing: 8,
+                                    children: [
+                                      TextButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            _selectedSkillProficiencies =
+                                                List.from(
+                                                  _skillProficiencyOptions,
+                                                );
+                                          });
+                                        },
+                                        child: const Text('Todas'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            _selectedSkillProficiencies.clear();
+                                          });
+                                        },
+                                        child: const Text('Nenhuma'),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              );
+                            }
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 const Text(
                                   'Proficiência em Perícias',
@@ -406,9 +550,7 @@ class _AddClassScreenState extends ConsumerState<AddClassScreen> {
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
-                                const SizedBox(height: 8),
-                                Wrap(
-                                  spacing: 8,
+                                Row(
                                   children: [
                                     TextButton(
                                       onPressed: () {
@@ -433,263 +575,229 @@ class _AddClassScreenState extends ConsumerState<AddClassScreen> {
                                 ),
                               ],
                             );
-                          }
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
+                          },
+                        ),
+                        const SizedBox(height: 8),
+                        InkWell(
+                          onTap:
+                              () => _showMultiSelectDialog(
                                 'Proficiência em Perícias',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
+                                _selectedSkillProficiencies,
+                                _skillProficiencyOptions,
+                                (items) => setState(
+                                  () => _selectedSkillProficiencies = items,
                                 ),
                               ),
-                              Row(
-                                children: [
-                                  TextButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        _selectedSkillProficiencies = List.from(
-                                          _skillProficiencyOptions,
-                                        );
-                                      });
-                                    },
-                                    child: const Text('Todas'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        _selectedSkillProficiencies.clear();
-                                      });
-                                    },
-                                    child: const Text('Nenhuma'),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 8),
-                      InkWell(
-                        onTap:
-                            () => _showMultiSelectDialog(
-                              'Proficiência em Perícias',
-                              _selectedSkillProficiencies,
-                              _skillProficiencyOptions,
-                              (items) => setState(
-                                () => _selectedSkillProficiencies = items,
-                              ),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 16,
                             ),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 16,
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  _selectedSkillProficiencies.isEmpty
-                                      ? 'Selecione as perícias...'
-                                      : '${_selectedSkillProficiencies.length} perícias selecionadas',
-                                  style: TextStyle(
-                                    color:
-                                        _selectedSkillProficiencies.isEmpty
-                                            ? Colors.grey
-                                            : Colors.black,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    _selectedSkillProficiencies.isEmpty
+                                        ? 'Selecione as perícias...'
+                                        : '${_selectedSkillProficiencies.length} perícias selecionadas',
+                                    style: TextStyle(
+                                      color:
+                                          _selectedSkillProficiencies.isEmpty
+                                              ? Colors.grey
+                                              : Colors.black,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              const Icon(Icons.arrow_drop_down),
-                            ],
+                                const Icon(Icons.arrow_drop_down),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  _buildTextField(
-                    controller: _skillCountController,
-                    label: 'Número de Perícias Escolhíveis',
-                    hint: 'Ex: 2',
-                    keyboardType: TextInputType.number,
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 24),
-
-              // Equipamentos e Recursos
-              _buildSectionCard(
-                context,
-                'Equipamentos e Recursos',
-                Icons.inventory,
-                Colors.green,
-                [
-                  _buildEquipmentPicker(
-                    title: 'Selecionar Itens (Lado A) a partir do BD',
-                    selected: _equipmentLadoAItems,
-                    onChanged:
-                        (items) => setState(() {
-                          _equipmentLadoAItems
-                            ..clear()
-                            ..addAll(items);
-                        }),
-                  ),
-                  if (_equipmentLadoAItems.isNotEmpty) ...[
-                    const SizedBox(height: 8),
-                    _buildSelectedEquipmentChips(_equipmentLadoAItems, (e) {
-                      setState(() => _equipmentLadoAItems.remove(e));
-                    }),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    _buildTextField(
+                      controller: _skillCountController,
+                      label: 'Número de Perícias Escolhíveis',
+                      hint: 'Ex: 2',
+                      keyboardType: TextInputType.number,
+                    ),
                   ],
-                  const SizedBox(height: 12),
-                  _buildTextField(
-                    controller: _poLadoAController,
-                    label: 'PO (Peças de Ouro) - Lado A',
-                    hint: 'Ex: 100',
-                    keyboardType: TextInputType.number,
-                  ),
-                  const SizedBox(height: 12),
-                  _buildEquipmentPicker(
-                    title: 'Selecionar Itens (Lado B) a partir do BD',
-                    selected: _equipmentLadoBItems,
-                    onChanged:
-                        (items) => setState(() {
-                          _equipmentLadoBItems
-                            ..clear()
-                            ..addAll(items);
-                        }),
-                  ),
-                  if (_equipmentLadoBItems.isNotEmpty) ...[
-                    const SizedBox(height: 8),
-                    _buildSelectedEquipmentChips(_equipmentLadoBItems, (e) {
-                      setState(() => _equipmentLadoBItems.remove(e));
-                    }),
-                  ],
-                  const SizedBox(height: 12),
-                  _buildTextField(
-                    controller: _poLadoBController,
-                    label: 'PO (Peças de Ouro) - Lado B',
-                    hint: 'Ex: 100',
-                    keyboardType: TextInputType.number,
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 24),
-
-              // Escolhas de Equipamento
-              _buildSectionCard(
-                context,
-                'Escolhas de Equipamento',
-                Icons.checklist,
-                Colors.amber,
-                [_buildEquipmentChoicesSection()],
-              ),
-
-              const SizedBox(height: 24),
-
-              // Ganhos por Nível
-              _buildSectionCard(
-                context,
-                'Ganhos por Nível',
-                Icons.trending_up,
-                Colors.orange,
-                [_buildLevelFeaturesSection()],
-              ),
-
-              const SizedBox(height: 24),
-
-              // Bônus de Proficiência
-              _buildSectionCard(
-                context,
-                'Bônus de Proficiência',
-                Icons.trending_up,
-                Colors.purple,
-                [_buildProficiencyBonusTable()],
-              ),
-
-              const SizedBox(height: 24),
-
-              // Magias
-              _buildSectionCard(
-                context,
-                'Magias',
-                Icons.auto_awesome,
-                Colors.indigo,
-                [_buildSpellsSection()],
-              ),
-
-              const SizedBox(height: 24),
-
-              // Subclasses
-              _buildSectionCard(
-                context,
-                'Subclasses',
-                Icons.account_tree,
-                Colors.teal,
-                [_buildSubclassesSection()],
-              ),
-
-              const SizedBox(height: 32),
-
-              // Botão Salvar
-              ElevatedButton.icon(
-                onPressed: _isLoading ? null : _saveClass,
-                icon:
-                    _isLoading
-                        ? const SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                        : const Icon(Icons.save),
-                label: Text(_isLoading ? 'Salvando...' : 'Salvar Classe'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.purple,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
-              ),
 
-              const SizedBox(height: 16),
+                const SizedBox(height: 24),
 
-              // Informações
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.info, color: Colors.blue),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Dicas',
-                            style: Theme.of(context).textTheme.titleSmall
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
+                // Equipamentos e Recursos
+                _buildSectionCard(
+                  context,
+                  'Equipamentos e Recursos',
+                  Icons.inventory,
+                  Colors.green,
+                  [
+                    _buildEquipmentPicker(
+                      title: 'Selecionar Itens (Lado A) a partir do BD',
+                      selected: _equipmentLadoAItems,
+                      onChanged:
+                          (items) => setState(() {
+                            _equipmentLadoAItems
+                              ..clear()
+                              ..addAll(items);
+                          }),
+                    ),
+                    if (_equipmentLadoAItems.isNotEmpty) ...[
                       const SizedBox(height: 8),
-                      const Text(
-                        '• Campos marcados com * são obrigatórios\n'
-                        '• Use vírgulas para separar múltiplos itens\n'
-                        '• As informações serão validadas antes de salvar\n'
-                        '• A classe ficará disponível para todos os usuários',
-                        style: TextStyle(fontSize: 12, color: Colors.grey),
-                      ),
+                      _buildSelectedEquipmentChips(_equipmentLadoAItems, (e) {
+                        setState(() => _equipmentLadoAItems.remove(e));
+                      }),
                     ],
+                    const SizedBox(height: 12),
+                    _buildTextField(
+                      controller: _poLadoAController,
+                      label: 'PO (Peças de Ouro) - Lado A',
+                      hint: 'Ex: 100',
+                      keyboardType: TextInputType.number,
+                    ),
+                    const SizedBox(height: 12),
+                    _buildEquipmentPicker(
+                      title: 'Selecionar Itens (Lado B) a partir do BD',
+                      selected: _equipmentLadoBItems,
+                      onChanged:
+                          (items) => setState(() {
+                            _equipmentLadoBItems
+                              ..clear()
+                              ..addAll(items);
+                          }),
+                    ),
+                    if (_equipmentLadoBItems.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      _buildSelectedEquipmentChips(_equipmentLadoBItems, (e) {
+                        setState(() => _equipmentLadoBItems.remove(e));
+                      }),
+                    ],
+                    const SizedBox(height: 12),
+                    _buildTextField(
+                      controller: _poLadoBController,
+                      label: 'PO (Peças de Ouro) - Lado B',
+                      hint: 'Ex: 100',
+                      keyboardType: TextInputType.number,
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 24),
+
+                // Escolhas de Equipamento
+                _buildSectionCard(
+                  context,
+                  'Escolhas de Equipamento',
+                  Icons.checklist,
+                  Colors.amber,
+                  [_buildEquipmentChoicesSection()],
+                ),
+
+                const SizedBox(height: 24),
+
+                // Ganhos por Nível
+                _buildSectionCard(
+                  context,
+                  'Ganhos por Nível',
+                  Icons.trending_up,
+                  Colors.orange,
+                  [_buildLevelFeaturesSection()],
+                ),
+
+                const SizedBox(height: 24),
+
+                // Bônus de Proficiência
+                _buildSectionCard(
+                  context,
+                  'Bônus de Proficiência',
+                  Icons.trending_up,
+                  Colors.purple,
+                  [_buildProficiencyBonusTable()],
+                ),
+
+                const SizedBox(height: 24),
+
+                // Magias
+                _buildSectionCard(
+                  context,
+                  'Magias',
+                  Icons.auto_awesome,
+                  Colors.indigo,
+                  [_buildSpellsSection()],
+                ),
+
+                const SizedBox(height: 24),
+
+                // Subclasses
+                _buildSectionCard(
+                  context,
+                  'Subclasses',
+                  Icons.account_tree,
+                  Colors.teal,
+                  [_buildSubclassesSection()],
+                ),
+
+                const SizedBox(height: 32),
+
+                // Botão Salvar
+                ElevatedButton.icon(
+                  onPressed: _isLoading ? null : _saveClass,
+                  icon:
+                      _isLoading
+                          ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                          : const Icon(Icons.save),
+                  label: Text(_isLoading ? 'Salvando...' : 'Salvar Classe'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.purple,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
                 ),
-              ),
-            ],
+
+                const SizedBox(height: 16),
+
+                // Informações
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.info, color: Colors.blue),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Dicas',
+                              style: Theme.of(context).textTheme.titleSmall
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          '• Campos marcados com * são obrigatórios\n'
+                          '• Use vírgulas para separar múltiplos itens\n'
+                          '• As informações serão validadas antes de salvar\n'
+                          '• A classe ficará disponível para todos os usuários',
+                          style: TextStyle(fontSize: 12, color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

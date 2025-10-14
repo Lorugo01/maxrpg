@@ -2,10 +2,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/character.dart';
 import '../services/character_service_supabase.dart';
 
+// Instância singleton do notifier
+CharactersNotifier? _charactersNotifierInstance;
+
 // Provider para lista de personagens
 final charactersProvider =
     StateNotifierProvider<CharactersNotifier, List<Character>>((ref) {
-      return CharactersNotifier();
+      // Retornar instância existente ou criar nova se não existir
+      _charactersNotifierInstance ??= CharactersNotifier();
+      return _charactersNotifierInstance!;
     });
 
 class CharactersNotifier extends StateNotifier<List<Character>> {
@@ -17,7 +22,16 @@ class CharactersNotifier extends StateNotifier<List<Character>> {
   Future<void> loadCharacters() async {
     try {
       final characters = await CharacterService.loadCharacters();
-      state = characters;
+
+      // Remover duplicatas baseado no ID
+      final uniqueCharacters = <String, Character>{};
+      for (final character in characters) {
+        if (character.id.isNotEmpty) {
+          uniqueCharacters[character.id] = character;
+        }
+      }
+
+      state = uniqueCharacters.values.toList();
     } catch (e) {
       // Em caso de erro, manter lista vazia
       state = [];
@@ -32,7 +46,11 @@ class CharactersNotifier extends StateNotifier<List<Character>> {
       // Persistir perícias e inventário
       await CharacterService.saveSkills(id, character.skills);
       await CharacterService.saveItems(id, character.inventory);
-      state = [...state, character];
+
+      // Verificar se o personagem já existe na lista antes de adicionar
+      if (!state.any((c) => c.id == character.id)) {
+        state = [...state, character];
+      }
     } catch (e) {
       throw Exception('Erro ao salvar personagem: $e');
     }
@@ -71,5 +89,10 @@ class CharactersNotifier extends StateNotifier<List<Character>> {
           character.name.toLowerCase() == name.toLowerCase() &&
           character.id != excludeId,
     );
+  }
+
+  // Resetar instância (útil para logout)
+  static void resetInstance() {
+    _charactersNotifierInstance = null;
   }
 }

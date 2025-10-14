@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/auth_service.dart';
 import '../models/user_type.dart';
+import 'character_provider.dart';
 
 // Provider para o estado de autenticação
 final authStateProvider = StreamProvider<AuthState>((ref) {
@@ -119,6 +120,8 @@ class AuthNotifier extends StateNotifier<AsyncValue<void>> {
 
     try {
       await AuthService.signOut();
+      // Resetar instância do provider de personagens
+      CharactersNotifier.resetInstance();
       state = const AsyncValue.data(null);
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);

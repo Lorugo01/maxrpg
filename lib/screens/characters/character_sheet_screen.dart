@@ -1,4 +1,5 @@
 ﻿import 'dart:convert';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '/services/equipment_service.dart';
@@ -45,98 +46,6 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
     // Carregar classe se não estiver carregada
     _loadCharacterClass();
     // removido UD
-  }
-
-  // --- Chips de efeito de magia (dano/cura) ---
-  Widget? _buildSpellEffectChip(Spell spell) {
-    String? effectType =
-        spell.effectType; // 'Dano' | 'Cura' | 'damage' | 'healing'
-    String? baseDice = spell.baseDice; // ex: 1d8
-    bool includeMod = spell.includeSpellMod;
-    List<Map<String, dynamic>>? increases = spell.cantripDiceIncreases;
-
-    // Fallback: enriquecer a partir do índice global de magias (tabela spells)
-    if ((effectType == null || effectType.isEmpty) &&
-        _spellIndexByName.isNotEmpty) {
-      final data = _spellIndexByName[spell.name];
-      if (data != null) {
-        effectType = data['effect_type'] as String?;
-        baseDice = data['base_dice'] as String?;
-        includeMod = (data['include_spell_mod'] as bool?) ?? includeMod;
-        final cdi = data['cantrip_dice_increases'];
-        if (cdi is List) {
-          increases =
-              cdi
-                  .map(
-                    (e) => (e as Map).map((k, v) => MapEntry(k.toString(), v)),
-                  )
-                  .cast<Map<String, dynamic>>()
-                  .toList();
-        }
-      }
-    }
-
-    if (effectType == null || effectType.isEmpty) return null;
-
-    String diceLabel = baseDice ?? '';
-
-    // Truques escalam com nível do personagem
-    if (spell.level == 0) {
-      final scaled = _getCurrentCantripDice(
-        spell,
-        increasesOverride: increases,
-      );
-      if (scaled != null && scaled.isNotEmpty) {
-        diceLabel = scaled;
-      }
-    }
-
-    final String modSuffix = includeMod ? ' + mod' : '';
-    final String label =
-        '${(effectType.toLowerCase() == 'cura' || effectType.toLowerCase() == 'healing') ? 'Cura' : 'Dano'}: ${diceLabel.isEmpty ? '?' : diceLabel}$modSuffix';
-
-    final bool isHealing =
-        (effectType.toLowerCase() == 'cura' ||
-            effectType.toLowerCase() == 'healing');
-    final Color color = isHealing ? Colors.green : Colors.red;
-    return Container(
-      margin: const EdgeInsets.only(left: 4),
-      child: Chip(
-        backgroundColor: color.withAlpha(24),
-        side: BorderSide(color: color.withAlpha(80)),
-        label: Text(
-          label,
-          style: TextStyle(
-            color: color,
-            fontSize: 11,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 0),
-      ),
-    );
-  }
-
-  String? _getCurrentCantripDice(
-    Spell spell, {
-    List<Map<String, dynamic>>? increasesOverride,
-  }) {
-    final List<Map<String, dynamic>>? increases =
-        increasesOverride ?? spell.cantripDiceIncreases;
-    if (increases == null || increases.isEmpty) {
-      return spell.baseDice;
-    }
-
-    String? current = spell.baseDice;
-    for (final inc in increases) {
-      final int lvl = (inc['level'] as num?)?.toInt() ?? 0;
-      final String dice = inc['dice']?.toString() ?? '';
-      if (lvl <= _character.level && dice.isNotEmpty) {
-        current = dice;
-      }
-    }
-    return current;
   }
 
   // Índice global de magias (tabela spells) por nome para enriquecer truques salvos sem campos mecânicos
@@ -451,21 +360,49 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
         ],
         bottom: TabBar(
           controller: _tabController,
+          isScrollable: true,
           labelColor: Colors.white,
           unselectedLabelColor: Colors.white70,
           indicatorColor: Colors.white,
+          indicatorWeight: 3,
+          labelStyle: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+          ),
+          unselectedLabelStyle: const TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.normal,
+          ),
+          tabAlignment: TabAlignment.center,
           tabs: const [
-            Tab(icon: Icon(Icons.person), text: 'Básico'),
-            Tab(icon: Icon(Icons.fitness_center), text: 'Atributos'),
-            Tab(icon: Icon(Icons.star), text: 'Perícias'),
-            Tab(icon: Icon(Icons.inventory), text: 'Inventário'),
-            Tab(icon: Icon(Icons.auto_awesome), text: 'Magias'),
-            Tab(icon: Icon(Icons.psychology), text: 'Habilidades'),
+            Tab(icon: Icon(Icons.person, size: 20), text: 'Básico', height: 60),
+            Tab(
+              icon: Icon(Icons.fitness_center, size: 20),
+              text: 'Atributos',
+              height: 60,
+            ),
+            Tab(icon: Icon(Icons.star, size: 20), text: 'Perícias', height: 60),
+            Tab(
+              icon: Icon(Icons.inventory, size: 20),
+              text: 'Inventário',
+              height: 60,
+            ),
+            Tab(
+              icon: Icon(Icons.auto_awesome, size: 20),
+              text: 'Magias',
+              height: 60,
+            ),
+            Tab(
+              icon: Icon(Icons.psychology, size: 20),
+              text: 'Habilidades',
+              height: 60,
+            ),
           ],
         ),
       ),
       body: TabBarView(
         controller: _tabController,
+        physics: const BouncingScrollPhysics(),
         children: [
           _buildBasicInfoTab(),
           _buildAttributesTab(),
@@ -553,7 +490,7 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        '${_character.race} ${_character.className}',
+                                        '${_character.race}${_character.subrace != null ? ' (${_character.subrace})' : ''} ${_character.className}',
                                         style: Theme.of(
                                           context,
                                         ).textTheme.titleMedium?.copyWith(
@@ -783,9 +720,9 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           'Vida',
@@ -795,7 +732,10 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
+                                        const SizedBox(height: 8),
                                         Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
                                             IconButton(
                                               tooltip: '-5 PV',
@@ -812,25 +752,25 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
                                                   () => _adjustHitPoints(-1),
                                               icon: const Icon(Icons.remove),
                                             ),
-                                            const SizedBox(width: 4),
-                                            AnimatedDefaultTextStyle(
-                                              duration: const Duration(
-                                                milliseconds: 200,
-                                              ),
-                                              style:
-                                                  Theme.of(context)
-                                                      .textTheme
-                                                      .titleMedium
-                                                      ?.copyWith(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ) ??
-                                                  const TextStyle(),
+                                            Container(
+                                              width: 80,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 8,
+                                                    vertical: 8,
+                                                  ),
                                               child: Text(
                                                 '${_character.currentHitPoints}/${_character.maxHitPoints}',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleMedium
+                                                    ?.copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                textAlign: TextAlign.center,
                                               ),
                                             ),
-                                            const SizedBox(width: 4),
                                             IconButton(
                                               tooltip: '+1 PV',
                                               onPressed:
@@ -855,9 +795,9 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
                                     _buildHitPointBar(),
 
                                     const SizedBox(height: 12),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           'PV Temporários',
@@ -866,7 +806,10 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
                                                 context,
                                               ).textTheme.titleSmall,
                                         ),
+                                        const SizedBox(height: 8),
                                         Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
                                             IconButton(
                                               tooltip: '-5 PV Temp',
@@ -885,26 +828,21 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
                                                       _adjustTempHitPoints(-1),
                                               icon: const Icon(Icons.remove),
                                             ),
-                                            AnimatedContainer(
-                                              duration: const Duration(
-                                                milliseconds: 200,
-                                              ),
+                                            Container(
+                                              width: 60,
                                               padding:
                                                   const EdgeInsets.symmetric(
                                                     horizontal: 8,
-                                                    vertical: 4,
+                                                    vertical: 8,
                                                   ),
-                                              decoration: BoxDecoration(
-                                                color: Colors.blue.shade50,
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                              ),
                                               child: Text(
                                                 '${_character.temporaryHitPoints}',
                                                 style: TextStyle(
                                                   color: Colors.blue.shade700,
                                                   fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
                                                 ),
+                                                textAlign: TextAlign.center,
                                               ),
                                             ),
                                             IconButton(
@@ -1573,6 +1511,11 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
           TabBar(
             labelColor: Theme.of(context).primaryColor,
             unselectedLabelColor: Colors.grey,
+            indicatorColor: Theme.of(context).primaryColor,
+            labelStyle: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+            ),
             tabs: const [Tab(text: 'Resistências'), Tab(text: 'Perícias')],
           ),
           Expanded(
@@ -2807,31 +2750,25 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
         leading: CircleAvatar(
           backgroundColor: Colors.indigo.withAlpha(32),
           child: Text(
-            '${spell.level}',
+            spell.level == 0 ? 'T' : '${spell.level}',
             style: const TextStyle(
               color: Colors.indigo,
               fontWeight: FontWeight.bold,
             ),
           ),
         ),
-        title: Row(
-          children: [
-            Expanded(
-              child: Text(
-                spell.name,
-                style: const TextStyle(fontWeight: FontWeight.w600),
-              ),
-            ),
-            if (_buildSpellEffectChip(spell) != null)
-              Padding(
-                padding: const EdgeInsets.only(right: 6),
-                child: _buildSpellEffectChip(spell)!,
-              ),
-            if (spell.concentration) _buildSpellFlag('Concentração'),
-            if (spell.ritual) _buildSpellFlag('Ritual'),
-          ],
+        title: Text(
+          spell.name,
+          maxLines: 2,
+          overflow: TextOverflow.visible,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
-        subtitle: Text('Nível ${spell.level} • ${spell.school}'),
+        subtitle: Text(
+          spell.level == 0
+              ? 'Truque • ${spell.school}'
+              : 'Nível ${spell.level} • ${spell.school}',
+          style: const TextStyle(color: Colors.grey, fontSize: 12),
+        ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -2849,6 +2786,19 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Flags especiais
+                if (spell.concentration || spell.ritual) ...[
+                  Row(
+                    children: [
+                      if (spell.concentration) _buildSpellFlag('Concentração'),
+                      if (spell.concentration && spell.ritual)
+                        const SizedBox(width: 8),
+                      if (spell.ritual) _buildSpellFlag('Ritual'),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                ],
+
                 // Informações básicas
                 _buildSpellInfoRow('Tempo de Conjuração', spell.castingTime),
                 _buildSpellInfoRow('Alcance', spell.range),
@@ -2857,49 +2807,32 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
                   _buildSpellInfoRow('Material', spell.material!),
                 _buildSpellInfoRow('Duração', spell.duration),
 
-                const SizedBox(height: 12),
+                const SizedBox(height: 16),
 
                 // Descrição
-                if (spell.description.isNotEmpty)
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Descrição:',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        spell.description,
-                        style: const TextStyle(fontSize: 13),
-                      ),
-                    ],
+                if (spell.description.isNotEmpty) ...[
+                  const Text(
+                    'Descrição:',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                   ),
+                  const SizedBox(height: 8),
+                  Text(spell.description, style: const TextStyle(fontSize: 13)),
+                ],
 
                 // Níveis superiores
                 if (spell.higherLevels != null &&
-                    spell.higherLevels!.isNotEmpty)
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 12),
-                      const Text(
-                        'Níveis Superiores:',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        spell.higherLevels!,
-                        style: const TextStyle(fontSize: 13),
-                      ),
-                    ],
+                    spell.higherLevels!.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Níveis Superiores:',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                   ),
+                  const SizedBox(height: 8),
+                  Text(
+                    spell.higherLevels!,
+                    style: const TextStyle(fontSize: 13),
+                  ),
+                ],
               ],
             ),
           ),
@@ -3136,12 +3069,15 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
                     children: [
                       Icon(Icons.shield_outlined, color: Colors.blue, size: 12),
                       const SizedBox(width: 4),
-                      Text(
-                        'Defesa sem Armadura',
-                        style: TextStyle(
-                          fontSize: 9,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.blue.shade700,
+                      Flexible(
+                        child: Text(
+                          'Defesa sem Armadura',
+                          style: TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.blue.shade700,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
@@ -3526,22 +3462,10 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
     showDialog(
       context: context,
       builder:
-          (context) => AlertDialog(
-            title: Text('Teste de $abilityName'),
-            content: Text(
-              'Modificador: ${modifier >= 0 ? '+' : ''}$modifier\n\n'
-              'A funcionalidade de rolagem será implementada em breve!',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Cancelar'),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Rolar d20'),
-              ),
-            ],
+          (context) => _DiceRollDialog(
+            title: 'Teste de $abilityName',
+            modifier: modifier,
+            modifierLabel: 'Modificador',
           ),
     );
   }
@@ -3550,22 +3474,10 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
     showDialog(
       context: context,
       builder:
-          (context) => AlertDialog(
-            title: Text('Teste de Resistência - $saveName'),
-            content: Text(
-              'Modificador: ${modifier >= 0 ? '+' : ''}$modifier\n\n'
-              'A funcionalidade de rolagem será implementada em breve!',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Cancelar'),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Rolar d20'),
-              ),
-            ],
+          (context) => _DiceRollDialog(
+            title: 'Teste de Resistência - $saveName',
+            modifier: modifier,
+            modifierLabel: 'Modificador',
           ),
     );
   }
@@ -3574,22 +3486,10 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
     showDialog(
       context: context,
       builder:
-          (context) => AlertDialog(
-            title: Text('Teste de $skillName'),
-            content: Text(
-              'Modificador: ${modifier >= 0 ? '+' : ''}$modifier\n\n'
-              'A funcionalidade de rolagem será implementada em breve!',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Cancelar'),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Rolar d20'),
-              ),
-            ],
+          (context) => _DiceRollDialog(
+            title: 'Teste de $skillName',
+            modifier: modifier,
+            modifierLabel: 'Modificador',
           ),
     );
   }
@@ -3867,16 +3767,18 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
       child: Column(
         children: [
           TabBar(
-            isScrollable: false,
             labelColor: Theme.of(context).primaryColor,
             unselectedLabelColor: Colors.grey,
             indicatorColor: Theme.of(context).primaryColor,
-            tabAlignment: TabAlignment.center,
+            labelStyle: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+            ),
             tabs: const [
-              Tab(icon: Icon(Icons.pets), text: 'Raça'),
-              Tab(icon: Icon(Icons.class_), text: 'Classe'),
-              Tab(icon: Icon(Icons.history), text: 'Origem'),
-              Tab(icon: Icon(Icons.star), text: 'Talentos'),
+              Tab(text: 'Raça'),
+              Tab(text: 'Classe'),
+              Tab(text: 'Origem'),
+              Tab(text: 'Talentos'),
             ],
           ),
           Expanded(
@@ -3897,84 +3799,126 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
   Widget _buildRaceAbilitiesTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
-      child: FutureBuilder<Map<String, dynamic>?>(
-        future: _loadRaceFromDatabase(_character.race),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
+      child: Column(
+        children: [
+          // Habilidades da raça principal
+          FutureBuilder<Map<String, dynamic>?>(
+            future: _loadRaceFromDatabase(_character.race),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-          if (snapshot.hasError) {
-            return _buildErrorCard(
-              'Erro ao carregar habilidades da raça',
-              snapshot.error.toString(),
-            );
-          }
+              if (snapshot.hasError) {
+                return _buildErrorCard(
+                  'Erro ao carregar habilidades da raça',
+                  snapshot.error.toString(),
+                );
+              }
 
-          final raceData = snapshot.data;
-          if (raceData == null) {
-            return _buildWarningCard('Raça não encontrada: ${_character.race}');
-          }
+              final raceData = snapshot.data;
+              if (raceData == null) {
+                return _buildWarningCard(
+                  'Raça não encontrada: ${_character.race}',
+                );
+              }
 
-          // Carregar traços da raça - usar traits_text se traits for null
-          final traitsRaw = raceData['traits'];
-          final traitsTextRaw = raceData['traits_text'];
-          List<dynamic> traits = [];
+              return _buildRaceAbilities(raceData);
+            },
+          ),
 
-          // Se traits é null, usar traits_text
-          if (traitsRaw == null && traitsTextRaw != null) {
-            // Converter traits_text (String) em lista de objetos
-            final traitsText = traitsTextRaw as String;
-            final lines =
-                traitsText
-                    .split('\n')
-                    .where((line) => line.trim().isNotEmpty)
-                    .toList();
+          // Habilidades da subraça (se existir)
+          if (_character.subrace != null) ...[
+            const SizedBox(height: 24),
+            FutureBuilder<Map<String, dynamic>?>(
+              future: _loadSubraceFromDatabase(
+                _character.race,
+                _character.subrace!,
+              ),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-            traits =
-                lines.map((line) {
-                  final parts = line.split(':');
-                  if (parts.length >= 2) {
-                    return {
-                      'name': parts[0].trim(),
-                      'description': parts.sublist(1).join(':').trim(),
-                    };
-                  } else {
-                    return {'name': 'Traço', 'description': line.trim()};
-                  }
-                }).toList();
-          } else if (traitsRaw is String) {
-            try {
-              traits = jsonDecode(traitsRaw) as List<dynamic>;
-            } catch (e) {
-              traits = [];
-            }
-          } else if (traitsRaw is List<dynamic>) {
-            traits = traitsRaw;
-          }
+                if (snapshot.hasError) {
+                  return _buildErrorCard(
+                    'Erro ao carregar habilidades da subraça',
+                    snapshot.error.toString(),
+                  );
+                }
 
-          if (traits.isEmpty) {
-            return _buildInfoCard('Nenhuma habilidade de raça disponível');
-          }
+                final subraceData = snapshot.data;
+                if (subraceData == null) {
+                  return _buildWarningCard(
+                    'Subraça não encontrada: ${_character.subrace}',
+                  );
+                }
 
-          return Column(
-            children:
-                traits
-                    .map(
-                      (trait) => _buildAbilityCard(
-                        trait['name'] ?? 'Traço',
-                        trait['description'] ?? 'Descrição não disponível',
-                        Colors.green,
-                        Icons.pets,
-                        meta: '${raceData['name']} • Raça',
-                        abilityData:
-                            trait, // Passar dados para cálculo automático
-                      ),
-                    )
-                    .toList(),
-          );
-        },
+                return _buildSubraceAbilities(subraceData);
+              },
+            ),
+          ],
+        ],
       ),
+    );
+  }
+
+  Widget _buildRaceAbilities(Map<String, dynamic> raceData) {
+    // Carregar traços da raça - usar traits_text se traits for null
+    final traitsRaw = raceData['traits'];
+    final traitsTextRaw = raceData['traits_text'];
+    List<dynamic> traits = [];
+
+    // Se traits é null, usar traits_text
+    if (traitsRaw == null && traitsTextRaw != null) {
+      // Converter traits_text (String) em lista de objetos
+      final traitsText = traitsTextRaw as String;
+      final lines =
+          traitsText
+              .split('\n')
+              .where((line) => line.trim().isNotEmpty)
+              .toList();
+
+      traits =
+          lines.map((line) {
+            final parts = line.split(':');
+            if (parts.length >= 2) {
+              return {
+                'name': parts[0].trim(),
+                'description': parts.sublist(1).join(':').trim(),
+              };
+            } else {
+              return {'name': 'Traço', 'description': line.trim()};
+            }
+          }).toList();
+    } else if (traitsRaw is String) {
+      try {
+        traits = jsonDecode(traitsRaw) as List<dynamic>;
+      } catch (e) {
+        traits = [];
+      }
+    } else if (traitsRaw is List<dynamic>) {
+      traits = traitsRaw;
+    }
+
+    if (traits.isEmpty) {
+      return _buildInfoCard('Nenhuma habilidade de raça disponível');
+    }
+
+    return Column(
+      children:
+          traits
+              .map(
+                (trait) => _buildAbilityCard(
+                  trait['name'] ?? 'Traço',
+                  trait['description'] ?? 'Descrição não disponível',
+                  Colors.green,
+                  Icons.pets,
+                  meta: '${raceData['name']} • Raça',
+                  abilityData: trait, // Passar dados para cálculo automático
+                ),
+              )
+              .toList(),
     );
   }
 
@@ -4215,6 +4159,133 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
     } catch (e) {
       rethrow;
     }
+  }
+
+  Future<Map<String, dynamic>?> _loadSubraceFromDatabase(
+    String raceName,
+    String subraceName,
+  ) async {
+    try {
+      final supabase = SupabaseService.client;
+      final response =
+          await supabase.from('races').select().eq('name', raceName).single();
+
+      if (response['subraces'] is List) {
+        final subraces = response['subraces'] as List;
+        for (final subrace in subraces) {
+          if (subrace is Map<String, dynamic> &&
+              subrace['name'] == subraceName) {
+            return subrace;
+          }
+        }
+      }
+
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Widget _buildSubraceAbilities(Map<String, dynamic> subraceData) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Título da subraça
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.purple[50],
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.purple[200]!),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.category, color: Colors.purple[700]),
+              const SizedBox(width: 8),
+              Text(
+                'Habilidades da Subraça: ${subraceData['name']}',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.purple[700],
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+
+        // Descrição da subraça
+        if (subraceData['description'] != null &&
+            subraceData['description'].toString().isNotEmpty) ...[
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.grey[50],
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey[300]!),
+            ),
+            child: Text(
+              subraceData['description'],
+              style: TextStyle(color: Colors.grey[700], height: 1.4),
+            ),
+          ),
+          const SizedBox(height: 16),
+        ],
+
+        // Traços específicos da subraça
+        if (subraceData['traits'] != null &&
+            subraceData['traits'].toString().isNotEmpty) ...[
+          Text(
+            'Traços Específicos',
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.purple[50],
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.purple[200]!),
+            ),
+            child: Text(
+              subraceData['traits'],
+              style: TextStyle(color: Colors.purple[700], height: 1.4),
+            ),
+          ),
+          const SizedBox(height: 16),
+        ],
+
+        // Magias específicas da subraça
+        if (subraceData['spells'] != null &&
+            subraceData['spells'].toString().isNotEmpty) ...[
+          Text(
+            'Magias Específicas',
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.indigo[50],
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.indigo[200]!),
+            ),
+            child: Text(
+              subraceData['spells'],
+              style: TextStyle(color: Colors.indigo[700], height: 1.4),
+            ),
+          ),
+        ],
+      ],
+    );
   }
 
   // método de teste removido
@@ -4670,8 +4741,8 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
         final isNarrow = constraints.maxWidth < 480;
         final titleText = Text(
           name,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
+          maxLines: 2,
+          overflow: TextOverflow.visible,
           style: const TextStyle(fontWeight: FontWeight.bold),
         );
 
@@ -4707,17 +4778,22 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
                 ],
               ),
               const SizedBox(height: 6),
-              Align(alignment: Alignment.centerLeft, child: buildCounter!),
+              Align(alignment: Alignment.centerRight, child: buildCounter!),
             ],
           );
         }
 
-        return Row(
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(child: titleText),
-            if (metaText != null) metaText,
-            const SizedBox(width: 8),
-            buildCounter!,
+            Row(
+              children: [
+                Expanded(child: titleText),
+                if (metaText != null) metaText,
+              ],
+            ),
+            const SizedBox(height: 6),
+            Align(alignment: Alignment.centerRight, child: buildCounter!),
           ],
         );
       },
@@ -6057,7 +6133,9 @@ class _AddSpellDialogState extends State<_AddSpellDialog> {
                 spell.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
                 spell.description.toLowerCase().contains(
                   _searchQuery.toLowerCase(),
-                );
+                ) ||
+                (spell.level == 0 &&
+                    'truque'.contains(_searchQuery.toLowerCase()));
             final matchesLevel =
                 _selectedLevel == null || spell.level == _selectedLevel;
             final notAlreadyKnown =
@@ -6130,6 +6208,7 @@ class _AddSpellDialogState extends State<_AddSpellDialog> {
                         value: null,
                         child: Text('Todos os níveis'),
                       ),
+                      const DropdownMenuItem(value: 0, child: Text('Truque')),
                       ...List.generate(9, (i) => i + 1).map(
                         (level) => DropdownMenuItem(
                           value: level,
@@ -6177,7 +6256,7 @@ class _AddSpellDialogState extends State<_AddSpellDialog> {
                             leading: CircleAvatar(
                               backgroundColor: Colors.indigo.withAlpha(32),
                               child: Text(
-                                '${spell.level}',
+                                spell.level == 0 ? 'T' : '${spell.level}',
                                 style: const TextStyle(
                                   color: Colors.indigo,
                                   fontWeight: FontWeight.bold,
@@ -6186,9 +6265,9 @@ class _AddSpellDialogState extends State<_AddSpellDialog> {
                             ),
                             title: Text(
                               spell.name,
-                              maxLines: 1,
-                              softWrap: false,
-                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+                              softWrap: true,
+                              overflow: TextOverflow.visible,
                               style: const TextStyle(
                                 fontWeight: FontWeight.w600,
                               ),
@@ -6197,9 +6276,11 @@ class _AddSpellDialogState extends State<_AddSpellDialog> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Nível ${spell.level} • ${spell.school}',
+                                  spell.level == 0
+                                      ? 'Truque • ${spell.school}'
+                                      : 'Nível ${spell.level} • ${spell.school}',
                                   maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
+                                  overflow: TextOverflow.visible,
                                 ),
                                 if (spell.description.isNotEmpty)
                                   Text(
@@ -6258,7 +6339,11 @@ class _AddSpellDialogState extends State<_AddSpellDialog> {
                     spacing: 8,
                     runSpacing: 8,
                     children: [
-                      Chip(label: Text('Nível ${spell.level}')),
+                      Chip(
+                        label: Text(
+                          spell.level == 0 ? 'Truque' : 'Nível ${spell.level}',
+                        ),
+                      ),
                       Chip(label: Text(spell.school)),
                       if (spell.ritual) const Chip(label: Text('Ritual')),
                       if (spell.concentration)
@@ -6677,6 +6762,155 @@ class _AbilityUsageCounterState extends State<_AbilityUsageCounter> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _DiceRollDialog extends StatefulWidget {
+  final String title;
+  final int modifier;
+  final String modifierLabel;
+
+  const _DiceRollDialog({
+    required this.title,
+    required this.modifier,
+    required this.modifierLabel,
+  });
+
+  @override
+  State<_DiceRollDialog> createState() => _DiceRollDialogState();
+}
+
+class _DiceRollDialogState extends State<_DiceRollDialog>
+    with TickerProviderStateMixin {
+  String _lastResult = "Role um dado!";
+  int _lastRoll = 0;
+  int _lastDiceType = 0;
+  final _random = Random();
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
+  bool _isRolling = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.2).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.elasticOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  void _rollWithModifier() async {
+    if (_isRolling) return;
+
+    setState(() {
+      _isRolling = true;
+      _lastResult = "Rolando...";
+    });
+
+    _animationController.forward();
+    await Future.delayed(const Duration(milliseconds: 600));
+
+    int baseRoll = 1 + _random.nextInt(20);
+    int total = baseRoll + widget.modifier;
+    String modifierText =
+        widget.modifier >= 0 ? '+${widget.modifier}' : '${widget.modifier}';
+
+    setState(() {
+      _lastRoll = total;
+      _lastDiceType = 20;
+      _lastResult = "d20$modifierText: $baseRoll$modifierText = $total";
+      _isRolling = false;
+    });
+
+    _animationController.reverse();
+  }
+
+  Color _getResultColor() {
+    if (_lastRoll == 0 || _lastDiceType == 0) return Colors.grey;
+
+    // Crítico (20 natural)
+    if (_lastRoll - widget.modifier == 20) return Colors.green;
+
+    // Falha crítica (1 natural)
+    if (_lastRoll - widget.modifier == 1) return Colors.red;
+
+    // Alto
+    if (_lastRoll > 15) return Colors.blue;
+
+    // Baixo
+    if (_lastRoll <= 5) return Colors.orange;
+
+    return Colors.grey.shade700;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(widget.title),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            '${widget.modifierLabel}: ${widget.modifier >= 0 ? '+' : ''}${widget.modifier}',
+            style: const TextStyle(fontSize: 16),
+          ),
+          const SizedBox(height: 16),
+
+          // Resultado
+          AnimatedBuilder(
+            animation: _scaleAnimation,
+            builder: (context, child) {
+              return Transform.scale(
+                scale: _scaleAnimation.value,
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: _getResultColor().withAlpha(30),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: _getResultColor(), width: 2),
+                  ),
+                  child: Text(
+                    _lastResult,
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: _getResultColor(),
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Fechar'),
+        ),
+        ElevatedButton(
+          onPressed: _isRolling ? null : _rollWithModifier,
+          child:
+              _isRolling
+                  ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                  : const Text('Rolar d20'),
+        ),
+      ],
     );
   }
 }

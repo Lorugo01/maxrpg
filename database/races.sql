@@ -10,7 +10,7 @@ create table public.races (
   updated_at timestamp with time zone null default now(),
   source character varying null,
   ability_score_increase character varying null,
-  subraces character varying null,
+  subraces jsonb null,
   description text null,
   traits_text text null,
   racial_spells text null,

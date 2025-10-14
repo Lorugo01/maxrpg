@@ -174,6 +174,9 @@ class CharacterService {
                 .eq('user_id', userId)
                 .maybeSingle();
         exists = existing != null;
+      } else {
+        // Se ID está vazio, sempre inserir como novo
+        exists = false;
       }
 
       if (!exists) {

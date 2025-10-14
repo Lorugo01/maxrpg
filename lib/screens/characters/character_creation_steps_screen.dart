@@ -23,6 +23,7 @@ class _CharacterCreationStepsScreenState
   String _characterName = '';
   Map<String, dynamic>? _selectedClass;
   Map<String, dynamic>? _selectedRace;
+  Map<String, dynamic>? _selectedSubrace;
   Map<String, dynamic>? _selectedBackground;
   Map<String, int> _abilityScores = {
     'Força': 10,
@@ -466,6 +467,7 @@ class _CharacterCreationStepsScreenState
         name: _characterName,
         className: _selectedClass!['name'],
         race: _selectedRace!['name'],
+        subrace: _selectedSubrace?['name'],
         background: _selectedBackground!['name'],
         level: 1,
         abilityScores: finalAbilityScores,
@@ -525,17 +527,12 @@ class _CharacterCreationStepsScreenState
         await Future.delayed(const Duration(milliseconds: 500));
 
         // Navegar para a tela do personagem criado
-        final result = await Navigator.pushReplacement(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => CharacterSheetScreen(character: character),
           ),
         );
-
-        // Se retornou da tela, recarregar os personagens para garantir sincronização
-        if (result != null) {
-          ref.read(charactersProvider.notifier).loadCharacters();
-        }
       }
     } catch (e) {
       if (mounted) {
@@ -776,12 +773,77 @@ class _CharacterCreationStepsScreenState
                   onTap: () {
                     setState(() {
                       _selectedRace = race;
+                      _selectedSubrace = null; // Reset subraça ao mudar raça
                       _updateOriginBonusDistribution();
                     });
                   },
                 ),
               );
             }),
+
+            // Seleção de subraça (se disponível)
+            if (_selectedRace != null && _hasSubraces(_selectedRace!)) ...[
+              const SizedBox(height: 24),
+              Text(
+                'Escolha uma Subraça',
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 12),
+              ..._getSubraces(_selectedRace!).map((subrace) {
+                final isSelected = _selectedSubrace?['name'] == subrace['name'];
+
+                return Card(
+                  margin: const EdgeInsets.only(bottom: 8),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: isSelected ? Colors.purple : Colors.grey,
+                      child: Text(
+                        subrace['name'].substring(0, 1).toUpperCase(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    title: Text(
+                      subrace['name'],
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: isSelected ? Colors.purple[700] : null,
+                      ),
+                    ),
+                    subtitle:
+                        subrace['description'] != null
+                            ? Text(
+                              subrace['description'],
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            )
+                            : null,
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.info_outline),
+                          onPressed: () => _showSubraceDetails(subrace),
+                          tooltip: 'Ver detalhes',
+                        ),
+                        if (isSelected)
+                          const Icon(Icons.check_circle, color: Colors.purple),
+                      ],
+                    ),
+                    onTap: () {
+                      setState(() {
+                        _selectedSubrace = subrace;
+                        _updateOriginBonusDistribution();
+                      });
+                    },
+                  ),
+                );
+              }),
+            ],
 
             // Fim da etapa 2 (somente raça)
           ],
@@ -1401,6 +1463,8 @@ class _CharacterCreationStepsScreenState
                       'Raça',
                       _selectedRace?['name'] ?? 'Não selecionada',
                     ),
+                    if (_selectedSubrace != null)
+                      _buildSummaryItem('Subraça', _selectedSubrace!['name']),
                     _buildSummaryItem(
                       'Antecedente',
                       _selectedBackground?['name'] ?? 'Não selecionado',
@@ -2427,6 +2491,140 @@ class _CharacterCreationStepsScreenState
       default:
         return '';
     }
+  }
+
+  bool _hasSubraces(Map<String, dynamic> race) {
+    final subraces = race['subraces'];
+    return subraces is List && subraces.isNotEmpty;
+  }
+
+  List<Map<String, dynamic>> _getSubraces(Map<String, dynamic> race) {
+    final subraces = race['subraces'];
+    if (subraces is List) {
+      return subraces.cast<Map<String, dynamic>>();
+    }
+    return [];
+  }
+
+  void _showSubraceDetails(Map<String, dynamic> subrace) {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: Row(
+              children: [
+                CircleAvatar(
+                  backgroundColor: Colors.purple,
+                  child: Text(
+                    subrace['name'].substring(0, 1).toUpperCase(),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    subrace['name'],
+                    style: const TextStyle(fontSize: 20),
+                  ),
+                ),
+              ],
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Descrição
+                  if (subrace['description'] != null) ...[
+                    Text(
+                      'Descrição',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      subrace['description'],
+                      style: TextStyle(color: Colors.grey[700], height: 1.4),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+
+                  // Traços específicos
+                  if (subrace['traits'] != null &&
+                      subrace['traits'].toString().isNotEmpty) ...[
+                    Text(
+                      'Traços Específicos',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.purple[50],
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.purple[200]!),
+                      ),
+                      child: Text(
+                        subrace['traits'],
+                        style: TextStyle(color: Colors.purple[700]),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+
+                  // Magias específicas
+                  if (subrace['spells'] != null &&
+                      subrace['spells'].toString().isNotEmpty) ...[
+                    Text(
+                      'Magias Específicas',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.indigo[50],
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.indigo[200]!),
+                      ),
+                      child: Text(
+                        subrace['spells'],
+                        style: TextStyle(color: Colors.indigo[700]),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Fechar'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _selectedSubrace = subrace;
+                    _updateOriginBonusDistribution();
+                  });
+                  Navigator.pop(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.purple,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Selecionar'),
+              ),
+            ],
+          ),
+    );
   }
 
   void _showRaceDetails(Map<String, dynamic> race) {

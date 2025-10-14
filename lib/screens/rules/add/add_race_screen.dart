@@ -91,6 +91,9 @@ class _AddRaceScreenState extends ConsumerState<AddRaceScreen> {
   final _traitsController = TextEditingController();
   final _subracesController = TextEditingController();
 
+  // Controle de subraças
+  final List<Map<String, dynamic>> _subraces = [];
+
   String? _selectedSource;
   final List<String> _sourceOptions = [
     'PHB 2014',
@@ -655,6 +658,115 @@ class _AddRaceScreenState extends ConsumerState<AddRaceScreen> {
     }
   }
 
+  Widget _buildSubraceCard(int index) {
+    final subrace = _subraces[index];
+
+    // Criar controllers para esta subraça se não existirem
+    if (subrace['nameController'] == null) {
+      subrace['nameController'] = TextEditingController(
+        text: subrace['name'] ?? '',
+      );
+    }
+    if (subrace['descriptionController'] == null) {
+      subrace['descriptionController'] = TextEditingController(
+        text: subrace['description'] ?? '',
+      );
+    }
+    if (subrace['traitsController'] == null) {
+      subrace['traitsController'] = TextEditingController(
+        text: subrace['traits'] ?? '',
+      );
+    }
+    if (subrace['spellsController'] == null) {
+      subrace['spellsController'] = TextEditingController(
+        text: subrace['spells'] ?? '',
+      );
+    }
+
+    return Card(
+      elevation: 1,
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: subrace['nameController'],
+                    decoration: const InputDecoration(
+                      labelText: 'Nome da Subraça *',
+                      hintText: 'Ex: Abissal',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) {
+                      _subraces[index]['name'] = value;
+                    },
+                  ),
+                ),
+                const SizedBox(width: 8),
+                IconButton(
+                  tooltip: 'Remover',
+                  onPressed: () {
+                    // Dispose dos controllers antes de remover
+                    subrace['nameController']?.dispose();
+                    subrace['descriptionController']?.dispose();
+                    subrace['traitsController']?.dispose();
+                    subrace['spellsController']?.dispose();
+                    setState(() => _subraces.removeAt(index));
+                  },
+                  icon: const Icon(Icons.delete, color: Colors.red),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: subrace['descriptionController'],
+              decoration: const InputDecoration(
+                labelText: 'Descrição da Subraça',
+                hintText: 'Descrição das habilidades específicas...',
+                border: OutlineInputBorder(),
+              ),
+              maxLines: 3,
+              onChanged: (value) {
+                _subraces[index]['description'] = value;
+              },
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: subrace['traitsController'],
+              decoration: const InputDecoration(
+                labelText: 'Traços Específicos',
+                hintText:
+                    'Ex: Resistência a dano de Veneno, conhece truque Spray de Veneno',
+                border: OutlineInputBorder(),
+              ),
+              maxLines: 2,
+              onChanged: (value) {
+                _subraces[index]['traits'] = value;
+              },
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: subrace['spellsController'],
+              decoration: const InputDecoration(
+                labelText: 'Magias Específicas',
+                hintText:
+                    'Ex: Raio da Doença (nível 3), Segurar Pessoa (nível 5)',
+                border: OutlineInputBorder(),
+              ),
+              maxLines: 2,
+              onChanged: (value) {
+                _subraces[index]['spells'] = value;
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -670,6 +782,13 @@ class _AddRaceScreenState extends ConsumerState<AddRaceScreen> {
     }
     for (final s in _spellEntries) {
       s.dispose();
+    }
+    // Dispose dos controllers das subraças
+    for (final subrace in _subraces) {
+      subrace['nameController']?.dispose();
+      subrace['descriptionController']?.dispose();
+      subrace['traitsController']?.dispose();
+      subrace['spellsController']?.dispose();
     }
     super.dispose();
   }
@@ -1040,11 +1159,39 @@ class _AddRaceScreenState extends ConsumerState<AddRaceScreen> {
                 Icons.category,
                 Colors.purple,
                 [
-                  _buildTextField(
-                    controller: _subracesController,
-                    label: 'Subraças',
-                    hint: 'Ex: Alto Elfo, Elfo da Floresta...',
-                    maxLines: 2,
+                  Text(
+                    'Subraças com habilidades específicas',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Column(
+                    children: [
+                      ..._subraces.asMap().entries.map((entry) {
+                        final index = entry.key;
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12.0),
+                          child: _buildSubraceCard(index),
+                        );
+                      }),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: TextButton.icon(
+                          onPressed:
+                              () => setState(() {
+                                _subraces.add({
+                                  'name': '',
+                                  'description': '',
+                                  'traits': '',
+                                  'spells': '',
+                                });
+                              }),
+                          icon: const Icon(Icons.add),
+                          label: const Text('Adicionar Subraça'),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -1185,7 +1332,10 @@ class _AddRaceScreenState extends ConsumerState<AddRaceScreen> {
                 ? {}
                 : {'description': _abilityScoreIncreaseController.text.trim()},
         'languages': _languagesController.text.trim(),
-        'subraces': _subracesController.text.trim(),
+        'subraces':
+            _subraces
+                .where((s) => s['name']?.toString().trim().isNotEmpty == true)
+                .toList(),
         'created_at': DateTime.now().toIso8601String(),
       };
 

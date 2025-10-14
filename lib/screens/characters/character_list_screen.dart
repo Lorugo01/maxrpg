@@ -249,6 +249,7 @@ class CharacterListScreen extends ConsumerWidget {
   ) async {
     try {
       final duplicate = Character(
+        id: '', // ID vazio para gerar novo ID único
         name: '${original.name} (Cópia)',
         race: original.race,
         className: original.className,
@@ -278,7 +279,7 @@ class CharacterListScreen extends ConsumerWidget {
             original.inventory
                 .map(
                   (item) => Item(
-                    id: item.id,
+                    id: '', // ID vazio para gerar novo ID único
                     name: item.name,
                     description: item.description,
                     quantity: item.quantity,

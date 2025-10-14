@@ -1,0 +1,1 @@
+ C:\\Users\\J.Informatica\\Desktop\\app\\Rpg\\maxrpg\\.dart_tool\\flutter_build\\d551b55182e4672b26dd354ffc0dbc46\\native_assets.json: 
