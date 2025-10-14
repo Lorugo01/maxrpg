@@ -68,6 +68,40 @@ class _RaceListScreenState extends ConsumerState<RaceListScreen> {
     }).toList();
   }
 
+  Future<void> _toggleEnabled(Map<String, dynamic> race) async {
+    final currentStatus = race['enabled'] ?? true;
+    final newStatus = !currentStatus;
+
+    try {
+      await SupabaseService.client
+          .from('races')
+          .update({'enabled': newStatus})
+          .eq('id', race['id']);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Raça ${newStatus ? 'habilitada' : 'desabilitada'} com sucesso!',
+            ),
+            backgroundColor: newStatus ? Colors.green : Colors.orange,
+          ),
+        );
+      }
+
+      await _loadRaces();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao alterar status da raça: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   Future<void> _deleteRace(Map<String, dynamic> race) async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -223,9 +257,55 @@ class _RaceListScreenState extends ConsumerState<RaceListScreen> {
           backgroundColor: Colors.purple.withAlpha(32),
           child: const Icon(Icons.people, color: Colors.purple),
         ),
-        title: Text(
-          race['name'] ?? 'Sem nome',
-          style: const TextStyle(fontWeight: FontWeight.bold),
+        title: Row(
+          children: [
+            Expanded(
+              child: Text(
+                race['name'] ?? 'Sem nome',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            // Indicador de status
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color:
+                    (race['enabled'] ?? true)
+                        ? Colors.green.withAlpha(32)
+                        : Colors.red.withAlpha(32),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color:
+                      (race['enabled'] ?? true)
+                          ? Colors.green.withAlpha(100)
+                          : Colors.red.withAlpha(100),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    (race['enabled'] ?? true)
+                        ? Icons.check_circle
+                        : Icons.cancel,
+                    size: 12,
+                    color:
+                        (race['enabled'] ?? true) ? Colors.green : Colors.red,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    (race['enabled'] ?? true) ? 'Habilitado' : 'Desabilitado',
+                    style: TextStyle(
+                      fontSize: 10,
+                      color:
+                          (race['enabled'] ?? true) ? Colors.green : Colors.red,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -257,43 +337,62 @@ class _RaceListScreenState extends ConsumerState<RaceListScreen> {
               ),
           ],
         ),
-        trailing: PopupMenuButton<String>(
-          onSelected: (value) async {
-            switch (value) {
-              case 'edit':
-                final changed = await Navigator.of(context).push<bool>(
-                  MaterialPageRoute(builder: (_) => EditRaceScreen(race: race)),
-                );
-                if (changed == true) await _loadRaces();
-                break;
-              case 'delete':
-                await _deleteRace(race);
-                break;
-            }
-          },
-          itemBuilder:
-              (context) => [
-                const PopupMenuItem(
-                  value: 'edit',
-                  child: Row(
-                    children: [
-                      Icon(Icons.edit, color: Colors.blue),
-                      SizedBox(width: 8),
-                      Text('Editar'),
-                    ],
-                  ),
-                ),
-                const PopupMenuItem(
-                  value: 'delete',
-                  child: Row(
-                    children: [
-                      Icon(Icons.delete, color: Colors.red),
-                      SizedBox(width: 8),
-                      Text('Excluir'),
-                    ],
-                  ),
-                ),
-              ],
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Botão de habilitar/desabilitar
+            IconButton(
+              onPressed: () => _toggleEnabled(race),
+              icon: Icon(
+                (race['enabled'] ?? true)
+                    ? Icons.visibility_off
+                    : Icons.visibility,
+                color: (race['enabled'] ?? true) ? Colors.orange : Colors.green,
+              ),
+              tooltip: (race['enabled'] ?? true) ? 'Desabilitar' : 'Habilitar',
+            ),
+            // Menu de 3 pontos para outras ações
+            PopupMenuButton<String>(
+              onSelected: (value) async {
+                switch (value) {
+                  case 'edit':
+                    final changed = await Navigator.of(context).push<bool>(
+                      MaterialPageRoute(
+                        builder: (_) => EditRaceScreen(race: race),
+                      ),
+                    );
+                    if (changed == true) await _loadRaces();
+                    break;
+                  case 'delete':
+                    await _deleteRace(race);
+                    break;
+                }
+              },
+              itemBuilder:
+                  (context) => [
+                    const PopupMenuItem(
+                      value: 'edit',
+                      child: Row(
+                        children: [
+                          Icon(Icons.edit, color: Colors.blue),
+                          SizedBox(width: 8),
+                          Text('Editar'),
+                        ],
+                      ),
+                    ),
+                    const PopupMenuItem(
+                      value: 'delete',
+                      child: Row(
+                        children: [
+                          Icon(Icons.delete, color: Colors.red),
+                          SizedBox(width: 8),
+                          Text('Excluir'),
+                        ],
+                      ),
+                    ),
+                  ],
+            ),
+          ],
         ),
         onTap: () async {
           final changed = await Navigator.of(context).push<bool>(

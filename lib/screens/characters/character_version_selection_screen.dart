@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'character_creation_steps_screen.dart';
-import 'character_creation_screen.dart';
 
 class CharacterVersionSelectionScreen extends StatelessWidget {
   const CharacterVersionSelectionScreen({super.key});
@@ -44,20 +43,14 @@ class CharacterVersionSelectionScreen extends StatelessWidget {
 
             const SizedBox(height: 24),
 
-            // PHB 2014
+            // PHB 2014 - Em Desenvolvimento
             Card(
               elevation: 3,
-              child: InkWell(
-                onTap:
-                    () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder:
-                            (context) => const CharacterCreationScreen(
-                              version: 'PHB 2014',
-                            ),
-                      ),
-                    ),
-                borderRadius: BorderRadius.circular(8),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: Colors.grey.withAlpha(20),
+                ),
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: Column(
@@ -68,12 +61,12 @@ class CharacterVersionSelectionScreen extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: Colors.blue.withAlpha(30),
+                              color: Colors.grey.withAlpha(30),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Icon(
                               Icons.book,
-                              color: Colors.blue,
+                              color: Colors.grey,
                               size: 32,
                             ),
                           ),
@@ -88,30 +81,46 @@ class CharacterVersionSelectionScreen extends StatelessWidget {
                                     context,
                                   ).textTheme.titleLarge?.copyWith(
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.blue,
+                                    color: Colors.grey,
                                   ),
                                 ),
                                 Text(
                                   'Livro do Jogador 2014',
                                   style: TextStyle(
-                                    color: Colors.grey[600],
+                                    color: Colors.grey[500],
                                     fontSize: 14,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            color: Colors.grey[400],
-                            size: 20,
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.orange.withAlpha(30),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: Colors.orange.withAlpha(100),
+                              ),
+                            ),
+                            child: Text(
+                              'Em desenvolvimento',
+                              style: TextStyle(
+                                color: Colors.orange.shade700,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 16),
                       Text(
                         'Sistema clássico do D&D 5e com regras tradicionais:',
-                        style: TextStyle(color: Colors.grey[700], fontSize: 14),
+                        style: TextStyle(color: Colors.grey[500], fontSize: 14),
                       ),
                       const SizedBox(height: 8),
                       _buildFeatureList([
@@ -119,7 +128,39 @@ class CharacterVersionSelectionScreen extends StatelessWidget {
                         'Antecedentes com traços de personalidade',
                         'Sistema de proficiências tradicional',
                         'Magias e habilidades clássicas',
-                      ]),
+                      ], isDisabled: true),
+                      const SizedBox(height: 12),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.orange.withAlpha(20),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: Colors.orange.withAlpha(50),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.construction,
+                              color: Colors.orange.shade700,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'Esta versão está em desenvolvimento e será disponibilizada em breve.',
+                                style: TextStyle(
+                                  color: Colors.orange.shade700,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -238,7 +279,7 @@ class CharacterVersionSelectionScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildFeatureList(List<String> features) {
+  Widget _buildFeatureList(List<String> features, {bool isDisabled = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children:
@@ -254,7 +295,8 @@ class CharacterVersionSelectionScreen extends StatelessWidget {
                         width: 4,
                         height: 4,
                         decoration: BoxDecoration(
-                          color: Colors.grey[600],
+                          color:
+                              isDisabled ? Colors.grey[400] : Colors.grey[600],
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -262,7 +304,10 @@ class CharacterVersionSelectionScreen extends StatelessWidget {
                         child: Text(
                           feature,
                           style: TextStyle(
-                            color: Colors.grey[600],
+                            color:
+                                isDisabled
+                                    ? Colors.grey[400]
+                                    : Colors.grey[600],
                             fontSize: 13,
                           ),
                         ),

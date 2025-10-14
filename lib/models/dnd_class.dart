@@ -338,6 +338,8 @@ class DndClass {
 
   List<Map<String, dynamic>>? levelFeatures;
 
+  bool enabled;
+
   DndClass({
     required this.name,
     required this.description,
@@ -353,6 +355,7 @@ class DndClass {
     required this.flavorText,
     this.progressionTable,
     this.levelFeatures,
+    this.enabled = true,
   });
 
   // Calcular pontos de vida por nível
@@ -474,6 +477,7 @@ class DndClass {
               ?.where((e) => e != null)
               .map((e) => e as Map<String, dynamic>)
               .toList(),
+      enabled: json['enabled'] as bool? ?? true,
     );
   }
 
@@ -494,6 +498,7 @@ class DndClass {
       'flavorText': flavorText,
       'progressionTable': progressionTable?.toJson(),
       'levelFeatures': levelFeatures,
+      'enabled': enabled,
     };
   }
 }

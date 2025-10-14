@@ -68,6 +68,40 @@ class _ClassListScreenState extends ConsumerState<ClassListScreen> {
     }).toList();
   }
 
+  Future<void> _toggleEnabled(Map<String, dynamic> clazz) async {
+    final currentStatus = clazz['enabled'] ?? true;
+    final newStatus = !currentStatus;
+
+    try {
+      await SupabaseService.client
+          .from('classes')
+          .update({'enabled': newStatus})
+          .eq('id', clazz['id']);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Classe ${newStatus ? 'habilitada' : 'desabilitada'} com sucesso!',
+            ),
+            backgroundColor: newStatus ? Colors.green : Colors.orange,
+          ),
+        );
+      }
+
+      await _loadClasses();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao alterar status da classe: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   Future<void> _deleteClass(Map<String, dynamic> clazz) async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -223,9 +257,57 @@ class _ClassListScreenState extends ConsumerState<ClassListScreen> {
           backgroundColor: Colors.purple.withAlpha(32),
           child: const Icon(Icons.class_, color: Colors.purple),
         ),
-        title: Text(
-          clazz['name'] ?? 'Sem nome',
-          style: const TextStyle(fontWeight: FontWeight.bold),
+        title: Row(
+          children: [
+            Expanded(
+              child: Text(
+                clazz['name'] ?? 'Sem nome',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            // Indicador de status
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color:
+                    (clazz['enabled'] ?? true)
+                        ? Colors.green.withAlpha(32)
+                        : Colors.red.withAlpha(32),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color:
+                      (clazz['enabled'] ?? true)
+                          ? Colors.green.withAlpha(100)
+                          : Colors.red.withAlpha(100),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    (clazz['enabled'] ?? true)
+                        ? Icons.check_circle
+                        : Icons.cancel,
+                    size: 12,
+                    color:
+                        (clazz['enabled'] ?? true) ? Colors.green : Colors.red,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    (clazz['enabled'] ?? true) ? 'Habilitado' : 'Desabilitado',
+                    style: TextStyle(
+                      fontSize: 10,
+                      color:
+                          (clazz['enabled'] ?? true)
+                              ? Colors.green
+                              : Colors.red,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -306,45 +388,63 @@ class _ClassListScreenState extends ConsumerState<ClassListScreen> {
             ),
           ],
         ),
-        trailing: PopupMenuButton<String>(
-          onSelected: (value) async {
-            switch (value) {
-              case 'edit':
-                final changed = await Navigator.of(context).push<bool>(
-                  MaterialPageRoute(
-                    builder: (_) => EditClassScreen(classData: clazz),
-                  ),
-                );
-                if (changed == true) await _loadClasses();
-                break;
-              case 'delete':
-                await _deleteClass(clazz);
-                break;
-            }
-          },
-          itemBuilder:
-              (context) => [
-                const PopupMenuItem(
-                  value: 'edit',
-                  child: Row(
-                    children: [
-                      Icon(Icons.edit, color: Colors.blue),
-                      SizedBox(width: 8),
-                      Text('Editar'),
-                    ],
-                  ),
-                ),
-                const PopupMenuItem(
-                  value: 'delete',
-                  child: Row(
-                    children: [
-                      Icon(Icons.delete, color: Colors.red),
-                      SizedBox(width: 8),
-                      Text('Excluir'),
-                    ],
-                  ),
-                ),
-              ],
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Botão de habilitar/desabilitar
+            IconButton(
+              onPressed: () => _toggleEnabled(clazz),
+              icon: Icon(
+                (clazz['enabled'] ?? true)
+                    ? Icons.visibility_off
+                    : Icons.visibility,
+                color:
+                    (clazz['enabled'] ?? true) ? Colors.orange : Colors.green,
+              ),
+              tooltip: (clazz['enabled'] ?? true) ? 'Desabilitar' : 'Habilitar',
+            ),
+            // Menu de 3 pontos para outras ações
+            PopupMenuButton<String>(
+              onSelected: (value) async {
+                switch (value) {
+                  case 'edit':
+                    final changed = await Navigator.of(context).push<bool>(
+                      MaterialPageRoute(
+                        builder: (_) => EditClassScreen(classData: clazz),
+                      ),
+                    );
+                    if (changed == true) await _loadClasses();
+                    break;
+                  case 'delete':
+                    await _deleteClass(clazz);
+                    break;
+                }
+              },
+              itemBuilder:
+                  (context) => [
+                    const PopupMenuItem(
+                      value: 'edit',
+                      child: Row(
+                        children: [
+                          Icon(Icons.edit, color: Colors.blue),
+                          SizedBox(width: 8),
+                          Text('Editar'),
+                        ],
+                      ),
+                    ),
+                    const PopupMenuItem(
+                      value: 'delete',
+                      child: Row(
+                        children: [
+                          Icon(Icons.delete, color: Colors.red),
+                          SizedBox(width: 8),
+                          Text('Excluir'),
+                        ],
+                      ),
+                    ),
+                  ],
+            ),
+          ],
         ),
         onTap: () async {
           final changed = await Navigator.of(context).push<bool>(

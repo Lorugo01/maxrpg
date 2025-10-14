@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '/providers/auth_provider.dart';
 import '/services/supabase_service.dart';
+import '/utils/list_screen_helper.dart';
 import '../edit/edit_feat_screen.dart';
 
 class FeatListScreen extends ConsumerStatefulWidget {
@@ -66,6 +67,16 @@ class _FeatListScreenState extends ConsumerState<FeatListScreen> {
           description.contains(_searchQuery.toLowerCase()) ||
           source.contains(_searchQuery.toLowerCase());
     }).toList();
+  }
+
+  Future<void> _toggleEnabled(Map<String, dynamic> feat) async {
+    await ListScreenHelper.toggleEnabled(
+      context,
+      'feats',
+      feat,
+      'Feat',
+      _loadFeats,
+    );
   }
 
   Future<void> _deleteFeat(Map<String, dynamic> feat) async {
@@ -223,9 +234,16 @@ class _FeatListScreenState extends ConsumerState<FeatListScreen> {
           backgroundColor: Colors.orange.withAlpha(32),
           child: const Icon(Icons.star, color: Colors.orange),
         ),
-        title: Text(
-          feat['name'] ?? 'Sem nome',
-          style: const TextStyle(fontWeight: FontWeight.bold),
+        title: Row(
+          children: [
+            Expanded(
+              child: Text(
+                feat['name'] ?? 'Sem nome',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            ListScreenHelper.buildStatusIndicator(feat['enabled'] ?? true),
+          ],
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -257,43 +275,62 @@ class _FeatListScreenState extends ConsumerState<FeatListScreen> {
               ),
           ],
         ),
-        trailing: PopupMenuButton<String>(
-          onSelected: (value) async {
-            switch (value) {
-              case 'edit':
-                final changed = await Navigator.of(context).push<bool>(
-                  MaterialPageRoute(builder: (_) => EditFeatScreen(feat: feat)),
-                );
-                if (changed == true) await _loadFeats();
-                break;
-              case 'delete':
-                await _deleteFeat(feat);
-                break;
-            }
-          },
-          itemBuilder:
-              (context) => [
-                const PopupMenuItem(
-                  value: 'edit',
-                  child: Row(
-                    children: [
-                      Icon(Icons.edit, color: Colors.blue),
-                      SizedBox(width: 8),
-                      Text('Editar'),
-                    ],
-                  ),
-                ),
-                const PopupMenuItem(
-                  value: 'delete',
-                  child: Row(
-                    children: [
-                      Icon(Icons.delete, color: Colors.red),
-                      SizedBox(width: 8),
-                      Text('Excluir'),
-                    ],
-                  ),
-                ),
-              ],
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Botão de habilitar/desabilitar
+            IconButton(
+              onPressed: () => _toggleEnabled(feat),
+              icon: Icon(
+                (feat['enabled'] ?? true)
+                    ? Icons.visibility_off
+                    : Icons.visibility,
+                color: (feat['enabled'] ?? true) ? Colors.orange : Colors.green,
+              ),
+              tooltip: (feat['enabled'] ?? true) ? 'Desabilitar' : 'Habilitar',
+            ),
+            // Menu de 3 pontos para outras ações
+            PopupMenuButton<String>(
+              onSelected: (value) async {
+                switch (value) {
+                  case 'edit':
+                    final changed = await Navigator.of(context).push<bool>(
+                      MaterialPageRoute(
+                        builder: (_) => EditFeatScreen(feat: feat),
+                      ),
+                    );
+                    if (changed == true) await _loadFeats();
+                    break;
+                  case 'delete':
+                    await _deleteFeat(feat);
+                    break;
+                }
+              },
+              itemBuilder:
+                  (context) => [
+                    const PopupMenuItem(
+                      value: 'edit',
+                      child: Row(
+                        children: [
+                          Icon(Icons.edit, color: Colors.blue),
+                          SizedBox(width: 8),
+                          Text('Editar'),
+                        ],
+                      ),
+                    ),
+                    const PopupMenuItem(
+                      value: 'delete',
+                      child: Row(
+                        children: [
+                          Icon(Icons.delete, color: Colors.red),
+                          SizedBox(width: 8),
+                          Text('Excluir'),
+                        ],
+                      ),
+                    ),
+                  ],
+            ),
+          ],
         ),
         onTap: () async {
           final changed = await Navigator.of(context).push<bool>(

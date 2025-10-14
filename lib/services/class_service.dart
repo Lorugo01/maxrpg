@@ -52,7 +52,7 @@ class ClassService {
     }
   }
 
-  /// Carrega todas as classes do Supabase
+  /// Carrega todas as classes do Supabase (incluindo desabilitadas)
   static Future<List<DndClass>> loadAll() async {
     if (_classes != null) {
       return _classes!;
@@ -220,6 +220,7 @@ class ClassService {
                   ? row['progression_table']
                   : null,
           'levelFeatures': parseJsonList(row['level_features']),
+          'enabled': row['enabled'] as bool? ?? true,
         };
       }
 
@@ -239,6 +240,12 @@ class ClassService {
       debugPrint('Erro ao carregar classes do Supabase: $e');
       return [];
     }
+  }
+
+  /// Carrega apenas classes habilitadas para criação de personagens
+  static Future<List<DndClass>> loadEnabled() async {
+    final allClasses = await loadAll();
+    return allClasses.where((cls) => cls.enabled).toList();
   }
 
   /// Busca uma classe pelo nome

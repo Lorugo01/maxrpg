@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '/services/supabase_service.dart';
 import '/providers/auth_provider.dart';
+import '/utils/list_screen_helper.dart';
 import '../edit/edit_equipment_screen.dart';
 
 class EquipmentListScreen extends ConsumerStatefulWidget {
@@ -70,6 +71,16 @@ class _EquipmentListScreenState extends ConsumerState<EquipmentListScreen> {
           source.contains(_searchQuery.toLowerCase()) ||
           type.contains(_searchQuery.toLowerCase());
     }).toList();
+  }
+
+  Future<void> _toggleEnabled(Map<String, dynamic> equipment) async {
+    await ListScreenHelper.toggleEnabled(
+      context,
+      'equipment',
+      equipment,
+      'Equipamento',
+      _loadEquipment,
+    );
   }
 
   Future<void> _deleteEquipment(Map<String, dynamic> equipment) async {
@@ -227,9 +238,16 @@ class _EquipmentListScreenState extends ConsumerState<EquipmentListScreen> {
           backgroundColor: Colors.brown.withAlpha(32),
           child: const Icon(Icons.shield, color: Colors.brown),
         ),
-        title: Text(
-          equipment['name'] ?? 'Sem nome',
-          style: const TextStyle(fontWeight: FontWeight.bold),
+        title: Row(
+          children: [
+            Expanded(
+              child: Text(
+                equipment['name'] ?? 'Sem nome',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            ListScreenHelper.buildStatusIndicator(equipment['enabled'] ?? true),
+          ],
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -261,45 +279,67 @@ class _EquipmentListScreenState extends ConsumerState<EquipmentListScreen> {
               ),
           ],
         ),
-        trailing: PopupMenuButton<String>(
-          onSelected: (value) async {
-            switch (value) {
-              case 'edit':
-                final changed = await Navigator.of(context).push<bool>(
-                  MaterialPageRoute(
-                    builder: (_) => EditEquipmentScreen(equipment: equipment),
-                  ),
-                );
-                if (changed == true) await _loadEquipment();
-                break;
-              case 'delete':
-                await _deleteEquipment(equipment);
-                break;
-            }
-          },
-          itemBuilder:
-              (context) => [
-                const PopupMenuItem(
-                  value: 'edit',
-                  child: Row(
-                    children: [
-                      Icon(Icons.edit, color: Colors.blue),
-                      SizedBox(width: 8),
-                      Text('Editar'),
-                    ],
-                  ),
-                ),
-                const PopupMenuItem(
-                  value: 'delete',
-                  child: Row(
-                    children: [
-                      Icon(Icons.delete, color: Colors.red),
-                      SizedBox(width: 8),
-                      Text('Excluir'),
-                    ],
-                  ),
-                ),
-              ],
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Botão de habilitar/desabilitar
+            IconButton(
+              onPressed: () => _toggleEnabled(equipment),
+              icon: Icon(
+                (equipment['enabled'] ?? true)
+                    ? Icons.visibility_off
+                    : Icons.visibility,
+                color:
+                    (equipment['enabled'] ?? true)
+                        ? Colors.orange
+                        : Colors.green,
+              ),
+              tooltip:
+                  (equipment['enabled'] ?? true) ? 'Desabilitar' : 'Habilitar',
+            ),
+            // Menu de 3 pontos para outras ações
+            PopupMenuButton<String>(
+              onSelected: (value) async {
+                switch (value) {
+                  case 'edit':
+                    final changed = await Navigator.of(context).push<bool>(
+                      MaterialPageRoute(
+                        builder:
+                            (_) => EditEquipmentScreen(equipment: equipment),
+                      ),
+                    );
+                    if (changed == true) await _loadEquipment();
+                    break;
+                  case 'delete':
+                    await _deleteEquipment(equipment);
+                    break;
+                }
+              },
+              itemBuilder:
+                  (context) => [
+                    const PopupMenuItem(
+                      value: 'edit',
+                      child: Row(
+                        children: [
+                          Icon(Icons.edit, color: Colors.blue),
+                          SizedBox(width: 8),
+                          Text('Editar'),
+                        ],
+                      ),
+                    ),
+                    const PopupMenuItem(
+                      value: 'delete',
+                      child: Row(
+                        children: [
+                          Icon(Icons.delete, color: Colors.red),
+                          SizedBox(width: 8),
+                          Text('Excluir'),
+                        ],
+                      ),
+                    ),
+                  ],
+            ),
+          ],
         ),
         onTap: () async {
           final changed = await Navigator.of(context).push<bool>(

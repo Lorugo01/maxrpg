@@ -115,23 +115,26 @@ class _CharacterCreationStepsScreenState
     setState(() => _isLoading = true);
 
     try {
-      // Carregar apenas dados PHB 2024
+      // Carregar apenas dados PHB 2024 habilitados
       final classesResponse = await SupabaseService.client
           .from('classes')
           .select()
           .eq('source', 'PHB 2024')
+          .eq('enabled', true)
           .order('name', ascending: true);
 
       final racesResponse = await SupabaseService.client
           .from('races')
           .select()
           .eq('source', 'PHB 2024')
+          .eq('enabled', true)
           .order('name', ascending: true);
 
       final backgroundsResponse = await SupabaseService.client
           .from('backgrounds')
           .select()
           .eq('source', 'PHB 2024')
+          .eq('enabled', true)
           .order('name', ascending: true);
 
       setState(() {
@@ -2145,7 +2148,11 @@ class _CharacterCreationStepsScreenState
     );
   }
 
-  Widget _buildDetailRow(String label, dynamic value) {
+  Widget _buildDetailRow(
+    String label,
+    dynamic value, {
+    bool isDisabled = false,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
@@ -2161,7 +2168,10 @@ class _CharacterCreationStepsScreenState
           Expanded(
             child: Text(
               value.toString(),
-              style: TextStyle(color: Colors.grey[700]),
+              style: TextStyle(
+                color: isDisabled ? Colors.orange : Colors.grey[700],
+                fontWeight: isDisabled ? FontWeight.bold : FontWeight.normal,
+              ),
             ),
           ),
         ],
@@ -3094,38 +3104,45 @@ class _CharacterCreationStepsScreenState
                       ),
                     ],
 
-                    // PHB 2014 - Proficiências em Perícias
+                    // PHB 2014 - Proficiências em Perícias (Em desenvolvimento)
                     if (background['skill_proficiencies_2014'] != null &&
                         background['skill_proficiencies_2014']
                             .toString()
                             .isNotEmpty) ...[
                       _buildDetailRow(
                         'Proficiências em Perícias (PHB 2014)',
-                        background['skill_proficiencies_2014'],
+                        'Em desenvolvimento',
+                        isDisabled: true,
                       ),
                     ],
 
-                    // PHB 2014 - Idiomas
+                    // PHB 2014 - Idiomas (Em desenvolvimento)
                     if (background['languages'] != null &&
                         background['languages'].toString().isNotEmpty) ...[
-                      _buildDetailRow('Idiomas', background['languages']),
+                      _buildDetailRow(
+                        'Idiomas (PHB 2014)',
+                        'Em desenvolvimento',
+                        isDisabled: true,
+                      ),
                     ],
 
-                    // PHB 2014 - Equipamento
+                    // PHB 2014 - Equipamento (Em desenvolvimento)
                     if (background['equipment_2014'] != null &&
                         background['equipment_2014'].toString().isNotEmpty) ...[
                       _buildDetailRow(
                         'Equipamento (PHB 2014)',
-                        background['equipment_2014'],
+                        'Em desenvolvimento',
+                        isDisabled: true,
                       ),
                     ],
 
-                    // PHB 2014 - Características
+                    // PHB 2014 - Características (Em desenvolvimento)
                     if (background['features_2014'] != null &&
                         background['features_2014'].toString().isNotEmpty) ...[
                       _buildDetailRow(
                         'Características (PHB 2014)',
-                        background['features_2014'],
+                        'Em desenvolvimento',
+                        isDisabled: true,
                       ),
                     ],
                   ],
@@ -3765,17 +3782,31 @@ class _CharacterCreationStepsScreenState
     String? selectedOption,
     Function(String?) onSelectionChanged,
   ) {
+    final bool isPHB2014 = option['source'] == '2014';
+
     return RadioListTile<String>(
       title: Text(option['name'] ?? 'Opção sem nome'),
-      subtitle: Text(
-        'PO: ${option['po'] ?? 0} | '
-        'Itens: ${(option['items'] as List).length}',
-      ),
+      subtitle:
+          isPHB2014
+              ? const Text(
+                'Em desenvolvimento',
+                style: TextStyle(
+                  color: Colors.orange,
+                  fontWeight: FontWeight.bold,
+                ),
+              )
+              : Text(
+                'PO: ${option['po'] ?? 0} | '
+                'Itens: ${(option['items'] as List).length}',
+              ),
       value: option['source'],
       groupValue: selectedOption,
-      onChanged: (value) {
-        onSelectionChanged(value);
-      },
+      onChanged:
+          isPHB2014
+              ? null
+              : (value) {
+                onSelectionChanged(value);
+              },
     );
   }
 

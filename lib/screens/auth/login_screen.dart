@@ -29,6 +29,30 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     setState(() => _isLoading = true);
 
+    // Mostrar feedback inicial
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Row(
+            children: [
+              SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              ),
+              SizedBox(width: 12),
+              Text('Fazendo login...'),
+            ],
+          ),
+          backgroundColor: Colors.blue,
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
+
     try {
       await ref
           .read(authNotifierProvider.notifier)
@@ -37,14 +61,50 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             password: _passwordController.text,
           );
 
+      // Verificar se houve erro no estado do AuthNotifier
+      final authState = ref.read(authNotifierProvider);
+      if (authState.hasError) {
+        throw authState.error!;
+      }
+
+      // Feedback de sucesso
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.check_circle, color: Colors.white),
+                SizedBox(width: 8),
+                Text('Login realizado com sucesso!'),
+              ],
+            ),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+
       // Não precisa navegar manualmente - o AuthWrapper gerencia isso automaticamente
       // O estado de autenticação será atualizado e a UI mudará automaticamente
     } catch (e) {
       if (mounted) {
+        String errorMessage = _getErrorMessage(e.toString());
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erro ao fazer login: ${e.toString()}'),
+            content: Row(
+              children: [
+                const Icon(Icons.error, color: Colors.white),
+                const SizedBox(width: 8),
+                Expanded(child: Text(errorMessage)),
+              ],
+            ),
             backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
+            action: SnackBarAction(
+              label: 'Tentar novamente',
+              textColor: Colors.white,
+              onPressed: () => _signIn(),
+            ),
           ),
         );
       }
@@ -52,6 +112,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (mounted) {
         setState(() => _isLoading = false);
       }
+    }
+  }
+
+  String _getErrorMessage(String error) {
+    if (error.contains('Invalid login credentials') ||
+        error.contains('invalid_credentials')) {
+      return 'Email ou senha incorretos. Verifique suas credenciais.';
+    } else if (error.contains('Email not confirmed')) {
+      return 'Email não confirmado. Verifique sua caixa de entrada.';
+    } else if (error.contains('Too many requests')) {
+      return 'Muitas tentativas. Aguarde alguns minutos antes de tentar novamente.';
+    } else if (error.contains('Network error')) {
+      return 'Erro de conexão. Verifique sua internet e tente novamente.';
+    } else if (error.contains('User not found')) {
+      return 'Usuário não encontrado. Verifique se o email está correto.';
+    } else if (error.contains('Invalid email')) {
+      return 'Formato de email inválido. Verifique o email digitado.';
+    } else if (error.contains('AuthApiException')) {
+      return 'Erro de autenticação. Verifique suas credenciais e tente novamente.';
+    } else {
+      return 'Erro ao fazer login. Tente novamente em alguns instantes.';
     }
   }
 
@@ -128,11 +209,34 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 TextFormField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
+                  textInputAction: TextInputAction.next,
+                  decoration: InputDecoration(
                     labelText: 'Email',
-                    prefixIcon: Icon(Icons.email),
-                    border: OutlineInputBorder(),
+                    hintText: 'Digite seu email',
+                    prefixIcon: const Icon(Icons.email),
+                    border: const OutlineInputBorder(),
+                    filled: true,
+                    fillColor: Colors.grey.shade50,
+                    suffixIcon:
+                        _emailController.text.isNotEmpty
+                            ? Icon(
+                              RegExp(
+                                    r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                                  ).hasMatch(_emailController.text)
+                                  ? Icons.check_circle
+                                  : Icons.error,
+                              color:
+                                  RegExp(
+                                        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                                      ).hasMatch(_emailController.text)
+                                      ? Colors.green
+                                      : Colors.red,
+                            )
+                            : null,
                   ),
+                  onChanged: (value) {
+                    setState(() {}); // Atualiza o ícone de validação
+                  },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Digite seu email';
@@ -140,7 +244,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     if (!RegExp(
                       r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
                     ).hasMatch(value)) {
-                      return 'Digite um email válido';
+                      return 'Digite um email válido (ex: usuario@email.com)';
                     }
                     return null;
                   },
@@ -151,21 +255,46 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 TextFormField(
                   controller: _passwordController,
                   obscureText: _obscurePassword,
+                  textInputAction: TextInputAction.done,
+                  onFieldSubmitted: (_) => _signIn(),
                   decoration: InputDecoration(
                     labelText: 'Senha',
+                    hintText: 'Digite sua senha',
                     prefixIcon: const Icon(Icons.lock),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword
-                            ? Icons.visibility
-                            : Icons.visibility_off,
-                      ),
-                      onPressed: () {
-                        setState(() => _obscurePassword = !_obscurePassword);
-                      },
-                    ),
                     border: const OutlineInputBorder(),
+                    filled: true,
+                    fillColor: Colors.grey.shade50,
+                    suffixIcon: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (_passwordController.text.isNotEmpty)
+                          Icon(
+                            _passwordController.text.length >= 6
+                                ? Icons.check_circle
+                                : Icons.error,
+                            color:
+                                _passwordController.text.length >= 6
+                                    ? Colors.green
+                                    : Colors.red,
+                          ),
+                        IconButton(
+                          icon: Icon(
+                            _obscurePassword
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            setState(
+                              () => _obscurePassword = !_obscurePassword,
+                            );
+                          },
+                        ),
+                      ],
+                    ),
                   ),
+                  onChanged: (value) {
+                    setState(() {}); // Atualiza o ícone de validação
+                  },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Digite sua senha';
@@ -189,25 +318,56 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 const SizedBox(height: 24),
 
                 // Botão de Login
-                ElevatedButton(
-                  onPressed: _isLoading ? null : _signIn,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: _isLoading ? null : _signIn,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _isLoading ? Colors.grey : Colors.blue,
+                      foregroundColor: Colors.white,
+                      elevation: _isLoading ? 0 : 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
+                    child:
+                        _isLoading
+                            ? const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 12),
+                                Text(
+                                  'Fazendo login...',
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                              ],
+                            )
+                            : const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.login, size: 20),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Entrar',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
                   ),
-                  child:
-                      _isLoading
-                          ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                          : const Text(
-                            'Entrar',
-                            style: TextStyle(fontSize: 16),
-                          ),
                 ),
                 const SizedBox(height: 24),
 

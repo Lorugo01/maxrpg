@@ -33,6 +33,30 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
     setState(() => _isLoading = true);
 
+    // Mostrar feedback inicial
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Row(
+            children: [
+              SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              ),
+              SizedBox(width: 12),
+              Text('Criando sua conta e fazendo login...'),
+            ],
+          ),
+          backgroundColor: Colors.blue,
+          duration: Duration(seconds: 3),
+        ),
+      );
+    }
+
     try {
       await ref
           .read(authNotifierProvider.notifier)
@@ -42,21 +66,79 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             displayName: _nameController.text.trim(),
           );
 
+      // Verificar se houve erro no estado do AuthNotifier
+      final authState = ref.read(authNotifierProvider);
+      if (authState.hasError) {
+        throw authState.error!;
+      }
+
       if (mounted) {
+        // Verificar se o usuário foi logado automaticamente
+        final currentUser = ref.read(currentUserProvider);
+        final isLoggedIn = currentUser != null;
+
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Conta criada! Verifique seu email para confirmar.'),
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.check_circle, color: Colors.white),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    isLoggedIn
+                        ? 'Conta criada e login realizado com sucesso! Bem-vindo!'
+                        : 'Conta criada com sucesso! Verifique seu email para confirmar.',
+                  ),
+                ),
+              ],
+            ),
             backgroundColor: Colors.green,
+            duration: const Duration(seconds: 5),
+            action: SnackBarAction(
+              label: 'OK',
+              textColor: Colors.white,
+              onPressed: () {
+                if (isLoggedIn) {
+                  // Se logado automaticamente, não precisa voltar para login
+                  Navigator.of(context).pop();
+                } else {
+                  // Se não logado, voltar para tela de login
+                  Navigator.of(context).pop();
+                }
+              },
+            ),
           ),
         );
-        Navigator.of(context).pop();
+      }
+
+      // Se não foi logado automaticamente, voltar para a tela de login após um delay
+      final currentUser = ref.read(currentUserProvider);
+      if (currentUser == null) {
+        Future.delayed(const Duration(seconds: 2), () {
+          if (mounted) {
+            Navigator.of(context).pop();
+          }
+        });
       }
     } catch (e) {
       if (mounted) {
+        String errorMessage = _getErrorMessage(e.toString());
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erro ao criar conta: ${e.toString()}'),
+            content: Row(
+              children: [
+                const Icon(Icons.error, color: Colors.white),
+                const SizedBox(width: 8),
+                Expanded(child: Text(errorMessage)),
+              ],
+            ),
             backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
+            action: SnackBarAction(
+              label: 'Tentar novamente',
+              textColor: Colors.white,
+              onPressed: () => _signUp(),
+            ),
           ),
         );
       }
@@ -67,12 +149,32 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     }
   }
 
+  String _getErrorMessage(String error) {
+    if (error.contains('User already registered')) {
+      return 'Este email já está cadastrado. Tente fazer login ou use outro email.';
+    } else if (error.contains('Password should be at least 6 characters')) {
+      return 'A senha deve ter pelo menos 6 caracteres.';
+    } else if (error.contains('Invalid email')) {
+      return 'Formato de email inválido. Verifique o email digitado.';
+    } else if (error.contains('Email rate limit exceeded')) {
+      return 'Muitas tentativas de cadastro. Aguarde alguns minutos.';
+    } else if (error.contains('Network error')) {
+      return 'Erro de conexão. Verifique sua internet e tente novamente.';
+    } else if (error.contains('Weak password')) {
+      return 'Senha muito fraca. Use uma senha mais segura.';
+    } else if (error.contains('Email already exists')) {
+      return 'Este email já está em uso. Tente fazer login.';
+    } else {
+      return 'Erro ao criar conta. Verifique os dados e tente novamente.';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Criar Conta'),
-        backgroundColor: Colors.transparent,
+        backgroundColor: const Color.fromARGB(255, 0, 183, 255),
         elevation: 0,
       ),
       body: SafeArea(
@@ -126,11 +228,34 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   TextFormField(
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
+                    textInputAction: TextInputAction.next,
+                    decoration: InputDecoration(
                       labelText: 'Email',
-                      prefixIcon: Icon(Icons.email),
-                      border: OutlineInputBorder(),
+                      hintText: 'Digite seu email',
+                      prefixIcon: const Icon(Icons.email),
+                      border: const OutlineInputBorder(),
+                      filled: true,
+                      fillColor: Colors.grey.shade50,
+                      suffixIcon:
+                          _emailController.text.isNotEmpty
+                              ? Icon(
+                                RegExp(
+                                      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                                    ).hasMatch(_emailController.text)
+                                    ? Icons.check_circle
+                                    : Icons.error,
+                                color:
+                                    RegExp(
+                                          r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                                        ).hasMatch(_emailController.text)
+                                        ? Colors.green
+                                        : Colors.red,
+                              )
+                              : null,
                     ),
+                    onChanged: (value) {
+                      setState(() {}); // Atualiza o ícone de validação
+                    },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Digite seu email';
@@ -138,7 +263,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       if (!RegExp(
                         r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
                       ).hasMatch(value)) {
-                        return 'Digite um email válido';
+                        return 'Digite um email válido (ex: usuario@email.com)';
                       }
                       return null;
                     },
@@ -149,21 +274,45 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   TextFormField(
                     controller: _passwordController,
                     obscureText: _obscurePassword,
+                    textInputAction: TextInputAction.next,
                     decoration: InputDecoration(
                       labelText: 'Senha',
+                      hintText: 'Digite sua senha',
                       prefixIcon: const Icon(Icons.lock),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscurePassword
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                        ),
-                        onPressed: () {
-                          setState(() => _obscurePassword = !_obscurePassword);
-                        },
-                      ),
                       border: const OutlineInputBorder(),
+                      filled: true,
+                      fillColor: Colors.grey.shade50,
+                      suffixIcon: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (_passwordController.text.isNotEmpty)
+                            Icon(
+                              _passwordController.text.length >= 6
+                                  ? Icons.check_circle
+                                  : Icons.error,
+                              color:
+                                  _passwordController.text.length >= 6
+                                      ? Colors.green
+                                      : Colors.red,
+                            ),
+                          IconButton(
+                            icon: Icon(
+                              _obscurePassword
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                            ),
+                            onPressed: () {
+                              setState(
+                                () => _obscurePassword = !_obscurePassword,
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     ),
+                    onChanged: (value) {
+                      setState(() {}); // Atualiza o ícone de validação
+                    },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Digite uma senha';
@@ -180,25 +329,50 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   TextFormField(
                     controller: _confirmPasswordController,
                     obscureText: _obscureConfirmPassword,
+                    textInputAction: TextInputAction.done,
+                    onFieldSubmitted: (_) => _signUp(),
                     decoration: InputDecoration(
                       labelText: 'Confirmar senha',
+                      hintText: 'Digite a senha novamente',
                       prefixIcon: const Icon(Icons.lock_outline),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscureConfirmPassword
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                        ),
-                        onPressed: () {
-                          setState(
-                            () =>
-                                _obscureConfirmPassword =
-                                    !_obscureConfirmPassword,
-                          );
-                        },
-                      ),
                       border: const OutlineInputBorder(),
+                      filled: true,
+                      fillColor: Colors.grey.shade50,
+                      suffixIcon: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (_confirmPasswordController.text.isNotEmpty)
+                            Icon(
+                              _confirmPasswordController.text ==
+                                      _passwordController.text
+                                  ? Icons.check_circle
+                                  : Icons.error,
+                              color:
+                                  _confirmPasswordController.text ==
+                                          _passwordController.text
+                                      ? Colors.green
+                                      : Colors.red,
+                            ),
+                          IconButton(
+                            icon: Icon(
+                              _obscureConfirmPassword
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                            ),
+                            onPressed: () {
+                              setState(
+                                () =>
+                                    _obscureConfirmPassword =
+                                        !_obscureConfirmPassword,
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     ),
+                    onChanged: (value) {
+                      setState(() {}); // Atualiza o ícone de validação
+                    },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Confirme sua senha';
@@ -211,51 +385,58 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Informação sobre tipo de usuário
-                  Card(
-                    color: Colors.blue.withAlpha(50),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Row(
-                        children: [
-                          Icon(Icons.info, color: Colors.blue),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              'Todos os usuários são criados como "Usuário Simples". '
-                              'Administradores podem alterar tipos de usuário posteriormente.',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.blue[700],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-
                   // Botão de Registrar
-                  ElevatedButton(
-                    onPressed: _isLoading ? null : _signUp,
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: _isLoading ? null : _signUp,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            _isLoading ? Colors.grey : Colors.green,
+                        foregroundColor: Colors.white,
+                        elevation: _isLoading ? 0 : 2,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
+                      child:
+                          _isLoading
+                              ? const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 12),
+                                  Text(
+                                    'Criando conta e fazendo login...',
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                ],
+                              )
+                              : const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.person_add, size: 20),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    'Criar Conta',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
                     ),
-                    child:
-                        _isLoading
-                            ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                            : const Text(
-                              'Criar Conta',
-                              style: TextStyle(fontSize: 16),
-                            ),
                   ),
                   const SizedBox(height: 16),
 

@@ -34,6 +34,12 @@ class RaceService {
     }
   }
 
+  /// Carrega apenas raças habilitadas para criação de personagens
+  static Future<List<Race>> loadEnabled() async {
+    final allRaces = await loadAll();
+    return allRaces.where((race) => race.enabled).toList();
+  }
+
   /// Carrega uma raça específica pelo nome
   static Future<Race?> loadByName(String name) async {
     final races = await loadAll();

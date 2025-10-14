@@ -91,12 +91,41 @@ class AuthNotifier extends StateNotifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
 
     try {
-      await AuthService.signUpWithType(
+      final signUpResponse = await AuthService.signUpWithType(
         email: email,
         password: password,
         displayName: displayName,
       );
-      state = const AsyncValue.data(null);
+
+      // Se o cadastro foi bem-sucedido, fazer login automático
+      if (signUpResponse.user != null) {
+        // Pequeno delay para garantir que o usuário seja criado
+        await Future.delayed(const Duration(milliseconds: 500));
+
+        // Tentar fazer login automaticamente
+        try {
+          final signInResponse = await AuthService.signIn(
+            email: email,
+            password: password,
+          );
+
+          if (signInResponse.user != null) {
+            state = const AsyncValue.data(null);
+          } else {
+            // Se o login automático falhou, ainda consideramos o cadastro como sucesso
+            state = const AsyncValue.data(null);
+          }
+        } catch (loginError) {
+          // Se o login automático falhou, ainda consideramos o cadastro como sucesso
+          // O usuário pode fazer login manualmente depois
+          state = const AsyncValue.data(null);
+        }
+      } else {
+        state = AsyncValue.error(
+          Exception('Falha no cadastro: usuário não foi criado'),
+          StackTrace.current,
+        );
+      }
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
     }
@@ -107,8 +136,20 @@ class AuthNotifier extends StateNotifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
 
     try {
-      await AuthService.signIn(email: email, password: password);
-      state = const AsyncValue.data(null);
+      final response = await AuthService.signIn(
+        email: email,
+        password: password,
+      );
+
+      // Verificar se o login foi realmente bem-sucedido
+      if (response.user != null) {
+        state = const AsyncValue.data(null);
+      } else {
+        state = AsyncValue.error(
+          Exception('Falha na autenticação: usuário não encontrado'),
+          StackTrace.current,
+        );
+      }
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
     }

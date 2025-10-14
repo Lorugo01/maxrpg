@@ -127,6 +127,8 @@ class Race {
 
   final List<String>? surnames;
 
+  final bool enabled;
+
   Race({
     required this.name,
     required this.description,
@@ -145,6 +147,7 @@ class Race {
     this.maleNames,
     this.femaleNames,
     this.surnames,
+    this.enabled = true,
   });
 
   /// Converte JSON para Race
@@ -286,6 +289,7 @@ class Race {
       femaleNames:
           json['femaleNames'] != null ? splitToList(json['femaleNames']) : null,
       surnames: json['surnames'] != null ? splitToList(json['surnames']) : null,
+      enabled: json['enabled'] as bool? ?? true,
     );
   }
 
@@ -310,6 +314,7 @@ class Race {
       if (maleNames != null) 'maleNames': maleNames,
       if (femaleNames != null) 'femaleNames': femaleNames,
       if (surnames != null) 'surnames': surnames,
+      'enabled': enabled,
     };
   }
 }

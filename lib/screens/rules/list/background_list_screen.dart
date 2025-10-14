@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '/providers/auth_provider.dart';
 import '/services/supabase_service.dart';
+import '/utils/list_screen_helper.dart';
 import '../edit/edit_background_screen.dart';
 
 class BackgroundListScreen extends ConsumerStatefulWidget {
@@ -68,6 +69,16 @@ class _BackgroundListScreenState extends ConsumerState<BackgroundListScreen> {
           description.contains(_searchQuery.toLowerCase()) ||
           source.contains(_searchQuery.toLowerCase());
     }).toList();
+  }
+
+  Future<void> _toggleEnabled(Map<String, dynamic> background) async {
+    await ListScreenHelper.toggleEnabled(
+      context,
+      'backgrounds',
+      background,
+      'Antecedente',
+      _loadBackgrounds,
+    );
   }
 
   Future<void> _deleteBackground(Map<String, dynamic> background) async {
@@ -231,9 +242,18 @@ class _BackgroundListScreenState extends ConsumerState<BackgroundListScreen> {
           backgroundColor: Colors.orange.withAlpha(32),
           child: const Icon(Icons.history_edu, color: Colors.orange),
         ),
-        title: Text(
-          background['name'] ?? 'Sem nome',
-          style: const TextStyle(fontWeight: FontWeight.bold),
+        title: Row(
+          children: [
+            Expanded(
+              child: Text(
+                background['name'] ?? 'Sem nome',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            ListScreenHelper.buildStatusIndicator(
+              background['enabled'] ?? true,
+            ),
+          ],
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -265,46 +285,67 @@ class _BackgroundListScreenState extends ConsumerState<BackgroundListScreen> {
               ),
           ],
         ),
-        trailing: PopupMenuButton<String>(
-          onSelected: (value) async {
-            switch (value) {
-              case 'edit':
-                final changed = await Navigator.of(context).push<bool>(
-                  MaterialPageRoute(
-                    builder:
-                        (_) => EditBackgroundScreen(background: background),
-                  ),
-                );
-                if (changed == true) await _loadBackgrounds();
-                break;
-              case 'delete':
-                await _deleteBackground(background);
-                break;
-            }
-          },
-          itemBuilder:
-              (context) => [
-                const PopupMenuItem(
-                  value: 'edit',
-                  child: Row(
-                    children: [
-                      Icon(Icons.edit, color: Colors.blue),
-                      SizedBox(width: 8),
-                      Text('Editar'),
-                    ],
-                  ),
-                ),
-                const PopupMenuItem(
-                  value: 'delete',
-                  child: Row(
-                    children: [
-                      Icon(Icons.delete, color: Colors.red),
-                      SizedBox(width: 8),
-                      Text('Excluir'),
-                    ],
-                  ),
-                ),
-              ],
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Botão de habilitar/desabilitar
+            IconButton(
+              onPressed: () => _toggleEnabled(background),
+              icon: Icon(
+                (background['enabled'] ?? true)
+                    ? Icons.visibility_off
+                    : Icons.visibility,
+                color:
+                    (background['enabled'] ?? true)
+                        ? Colors.orange
+                        : Colors.green,
+              ),
+              tooltip:
+                  (background['enabled'] ?? true) ? 'Desabilitar' : 'Habilitar',
+            ),
+            // Menu de 3 pontos para outras ações
+            PopupMenuButton<String>(
+              onSelected: (value) async {
+                switch (value) {
+                  case 'edit':
+                    final changed = await Navigator.of(context).push<bool>(
+                      MaterialPageRoute(
+                        builder:
+                            (_) => EditBackgroundScreen(background: background),
+                      ),
+                    );
+                    if (changed == true) await _loadBackgrounds();
+                    break;
+                  case 'delete':
+                    await _deleteBackground(background);
+                    break;
+                }
+              },
+              itemBuilder:
+                  (context) => [
+                    const PopupMenuItem(
+                      value: 'edit',
+                      child: Row(
+                        children: [
+                          Icon(Icons.edit, color: Colors.blue),
+                          SizedBox(width: 8),
+                          Text('Editar'),
+                        ],
+                      ),
+                    ),
+                    const PopupMenuItem(
+                      value: 'delete',
+                      child: Row(
+                        children: [
+                          Icon(Icons.delete, color: Colors.red),
+                          SizedBox(width: 8),
+                          Text('Excluir'),
+                        ],
+                      ),
+                    ),
+                  ],
+            ),
+          ],
         ),
         onTap: () async {
           final changed = await Navigator.of(context).push<bool>(

@@ -43,6 +43,7 @@ class _EditClassScreenState extends ConsumerState<EditClassScreen> {
   final _spellcastingController = TextEditingController();
   final _subclassesController = TextEditingController();
   String? _selectedSource;
+  bool _enabled = true;
 
   // Estado da edição
   bool _hasChanges = false;

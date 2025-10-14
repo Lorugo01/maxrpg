@@ -582,6 +582,10 @@ class Character {
       hitDiceUsed: json['hit_dice_used'] as int? ?? 0,
       isSpellcaster: json['is_spellcaster'] as bool?,
       customSpellcastingAbility: json['custom_spellcasting_ability'] as String?,
+      customAbilities:
+          (json['custom_abilities'] as List<dynamic>?)
+              ?.map((e) => e as Map<String, dynamic>)
+              .toList(),
     );
   }
 
@@ -631,6 +635,7 @@ class Character {
       'hit_dice_used': hitDiceUsed ?? 0,
       'is_spellcaster': isSpellcaster,
       'custom_spellcasting_ability': customSpellcastingAbility,
+      'custom_abilities': customAbilities,
     };
   }
 }

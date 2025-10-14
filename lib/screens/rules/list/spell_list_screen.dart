@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '/providers/auth_provider.dart';
 import '/services/supabase_service.dart';
+import '/utils/list_screen_helper.dart';
 import '../edit/edit_spell_screen.dart';
 
 class SpellListScreen extends ConsumerStatefulWidget {
@@ -68,6 +69,16 @@ class _SpellListScreenState extends ConsumerState<SpellListScreen> {
           source.contains(_searchQuery.toLowerCase()) ||
           school.contains(_searchQuery.toLowerCase());
     }).toList();
+  }
+
+  Future<void> _toggleEnabled(Map<String, dynamic> spell) async {
+    await ListScreenHelper.toggleEnabled(
+      context,
+      'spells',
+      spell,
+      'Magia',
+      _loadSpells,
+    );
   }
 
   Future<void> _deleteSpell(Map<String, dynamic> spell) async {
@@ -278,9 +289,16 @@ class _SpellListScreenState extends ConsumerState<SpellListScreen> {
           backgroundColor: schoolColor.withAlpha(32),
           child: Text(schoolIcon, style: const TextStyle(fontSize: 20)),
         ),
-        title: Text(
-          spell['name'] ?? 'Sem nome',
-          style: const TextStyle(fontWeight: FontWeight.bold),
+        title: Row(
+          children: [
+            Expanded(
+              child: Text(
+                spell['name'] ?? 'Sem nome',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            ListScreenHelper.buildStatusIndicator(spell['enabled'] ?? true),
+          ],
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -312,45 +330,63 @@ class _SpellListScreenState extends ConsumerState<SpellListScreen> {
               ),
           ],
         ),
-        trailing: PopupMenuButton<String>(
-          onSelected: (value) async {
-            switch (value) {
-              case 'edit':
-                final changed = await Navigator.of(context).push<bool>(
-                  MaterialPageRoute(
-                    builder: (_) => EditSpellScreen(spell: spell),
-                  ),
-                );
-                if (changed == true) await _loadSpells();
-                break;
-              case 'delete':
-                await _deleteSpell(spell);
-                break;
-            }
-          },
-          itemBuilder:
-              (context) => [
-                const PopupMenuItem(
-                  value: 'edit',
-                  child: Row(
-                    children: [
-                      Icon(Icons.edit, color: Colors.blue),
-                      SizedBox(width: 8),
-                      Text('Editar'),
-                    ],
-                  ),
-                ),
-                const PopupMenuItem(
-                  value: 'delete',
-                  child: Row(
-                    children: [
-                      Icon(Icons.delete, color: Colors.red),
-                      SizedBox(width: 8),
-                      Text('Excluir'),
-                    ],
-                  ),
-                ),
-              ],
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Botão de habilitar/desabilitar
+            IconButton(
+              onPressed: () => _toggleEnabled(spell),
+              icon: Icon(
+                (spell['enabled'] ?? true)
+                    ? Icons.visibility_off
+                    : Icons.visibility,
+                color:
+                    (spell['enabled'] ?? true) ? Colors.orange : Colors.green,
+              ),
+              tooltip: (spell['enabled'] ?? true) ? 'Desabilitar' : 'Habilitar',
+            ),
+            // Menu de 3 pontos para outras ações
+            PopupMenuButton<String>(
+              onSelected: (value) async {
+                switch (value) {
+                  case 'edit':
+                    final changed = await Navigator.of(context).push<bool>(
+                      MaterialPageRoute(
+                        builder: (_) => EditSpellScreen(spell: spell),
+                      ),
+                    );
+                    if (changed == true) await _loadSpells();
+                    break;
+                  case 'delete':
+                    await _deleteSpell(spell);
+                    break;
+                }
+              },
+              itemBuilder:
+                  (context) => [
+                    const PopupMenuItem(
+                      value: 'edit',
+                      child: Row(
+                        children: [
+                          Icon(Icons.edit, color: Colors.blue),
+                          SizedBox(width: 8),
+                          Text('Editar'),
+                        ],
+                      ),
+                    ),
+                    const PopupMenuItem(
+                      value: 'delete',
+                      child: Row(
+                        children: [
+                          Icon(Icons.delete, color: Colors.red),
+                          SizedBox(width: 8),
+                          Text('Excluir'),
+                        ],
+                      ),
+                    ),
+                  ],
+            ),
+          ],
         ),
         onTap: () async {
           final changed = await Navigator.of(context).push<bool>(

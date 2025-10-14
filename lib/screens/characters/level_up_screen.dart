@@ -335,27 +335,26 @@ class _LevelUpScreenState extends ConsumerState<LevelUpScreen> {
               ).textTheme.bodyLarge?.copyWith(color: Colors.grey.shade700),
             ),
             const SizedBox(height: 12),
-            Row(
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
               children: [
                 _buildStatChip(
                   'Bônus de Proficiência',
                   '+${levelUp!.proficiencyBonus}',
                   Colors.blue,
                 ),
-                const SizedBox(width: 8),
                 _buildStatChip(
                   'PV Ganhos',
                   _getTotalHitPointsGained(),
                   Colors.green,
                 ),
-                if (_getRacialHitPointIncrease() > 0) ...[
-                  const SizedBox(width: 8),
+                if (_getRacialHitPointIncrease() > 0)
                   _buildStatChip(
                     'PV Racial',
                     '+${_getRacialHitPointIncrease()}',
                     Colors.red,
                   ),
-                ],
               ],
             ),
           ],
@@ -418,14 +417,16 @@ class _LevelUpScreenState extends ConsumerState<LevelUpScreen> {
               ],
             ),
             const SizedBox(height: 16),
-            Row(
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 Text(
                   'Dado de Vida: d${dndClass!.hitDie}',
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
-                if (_getRacialHitPointIncrease() > 0) ...[
-                  const SizedBox(width: 16),
+                if (_getRacialHitPointIncrease() > 0)
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 8,
@@ -452,45 +453,40 @@ class _LevelUpScreenState extends ConsumerState<LevelUpScreen> {
                       ],
                     ),
                   ),
-                ],
               ],
             ),
             const SizedBox(height: 12),
-            Row(
+            Column(
               children: [
-                Expanded(
-                  child: RadioListTile<bool>(
-                    title: const Text('Usar Média'),
-                    subtitle: Text(
-                      '${levelUp!.hitPointsGained + _getRacialHitPointIncrease()} PV',
-                    ),
-                    value: true,
-                    groupValue: useAverage && !useManual,
-                    onChanged: (value) {
-                      setState(() {
-                        useAverage = value!;
-                        useManual = false;
-                      });
-                    },
+                RadioListTile<bool>(
+                  title: const Text('Usar Média'),
+                  subtitle: Text(
+                    '${levelUp!.hitPointsGained + _getRacialHitPointIncrease()} PV',
                   ),
+                  value: true,
+                  groupValue: useAverage && !useManual,
+                  onChanged: (value) {
+                    setState(() {
+                      useAverage = value!;
+                      useManual = false;
+                    });
+                  },
                 ),
-                Expanded(
-                  child: RadioListTile<bool>(
-                    title: const Text('Rolar Dado'),
-                    subtitle: Text(
-                      hitPointsRoll > 0
-                          ? '${hitPointsRoll + _getRacialHitPointIncrease()} PV'
-                          : 'Toque para rolar',
-                    ),
-                    value: false,
-                    groupValue: useAverage && !useManual,
-                    onChanged: (value) {
-                      setState(() {
-                        useAverage = value!;
-                        useManual = false;
-                      });
-                    },
+                RadioListTile<bool>(
+                  title: const Text('Rolar Dado'),
+                  subtitle: Text(
+                    hitPointsRoll > 0
+                        ? '${hitPointsRoll + _getRacialHitPointIncrease()} PV'
+                        : 'Toque para rolar',
                   ),
+                  value: false,
+                  groupValue: useAverage && !useManual,
+                  onChanged: (value) {
+                    setState(() {
+                      useAverage = value!;
+                      useManual = false;
+                    });
+                  },
                 ),
               ],
             ),
@@ -618,70 +614,103 @@ class _LevelUpScreenState extends ConsumerState<LevelUpScreen> {
               ...widget.character.abilityScores.keys.map((ability) {
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 8),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 2,
-                        child: Text(
-                          ability,
-                          style: const TextStyle(fontWeight: FontWeight.w500),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: Text(
-                          '${widget.character.abilityScores[ability]}',
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Row(
-                          children: [
-                            IconButton(
-                              onPressed:
-                                  abilityScoreChanges[ability]! > 0
-                                      ? () => _changeAbilityScore(ability, -1)
-                                      : null,
-                              icon: const Icon(Icons.remove),
-                              iconSize: 20,
-                            ),
-                            Container(
-                              width: 40,
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                              decoration: BoxDecoration(
-                                color:
-                                    abilityScoreChanges[ability]! > 0
-                                        ? Colors.green.withAlpha(20)
-                                        : Colors.grey.withAlpha(20),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                abilityScoreChanges[ability]! > 0
-                                    ? '+${abilityScoreChanges[ability]}'
-                                    : '0',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color:
-                                      abilityScoreChanges[ability]! > 0
-                                          ? Colors.green
-                                          : Colors.grey,
+                  child: Card(
+                    elevation: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                ability,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 16,
                                 ),
                               ),
-                            ),
-                            IconButton(
-                              onPressed:
-                                  abilityScoreChanges[ability]! < 2
-                                      ? () => _changeAbilityScore(ability, 1)
-                                      : null,
-                              icon: const Icon(Icons.add),
-                              iconSize: 20,
-                            ),
-                          ],
-                        ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.blue.withAlpha(20),
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color: Colors.blue.withAlpha(50),
+                                  ),
+                                ),
+                                child: Text(
+                                  '${widget.character.abilityScores[ability]}',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.blue.shade700,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              IconButton(
+                                onPressed:
+                                    abilityScoreChanges[ability]! > 0
+                                        ? () => _changeAbilityScore(ability, -1)
+                                        : null,
+                                icon: const Icon(Icons.remove),
+                                iconSize: 24,
+                              ),
+                              Container(
+                                width: 60,
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ),
+                                decoration: BoxDecoration(
+                                  color:
+                                      abilityScoreChanges[ability]! > 0
+                                          ? Colors.green.withAlpha(20)
+                                          : Colors.grey.withAlpha(20),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color:
+                                        abilityScoreChanges[ability]! > 0
+                                            ? Colors.green.withAlpha(50)
+                                            : Colors.grey.withAlpha(50),
+                                  ),
+                                ),
+                                child: Text(
+                                  abilityScoreChanges[ability]! > 0
+                                      ? '+${abilityScoreChanges[ability]}'
+                                      : '0',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color:
+                                        abilityScoreChanges[ability]! > 0
+                                            ? Colors.green.shade700
+                                            : Colors.grey.shade700,
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                onPressed:
+                                    abilityScoreChanges[ability]! < 2
+                                        ? () => _changeAbilityScore(ability, 1)
+                                        : null,
+                                icon: const Icon(Icons.add),
+                                iconSize: 24,
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 );
               }),
@@ -822,7 +851,7 @@ class _LevelUpScreenState extends ConsumerState<LevelUpScreen> {
                         ),
                         subtitle: const Text('Nova característica de classe'),
                         leading: Icon(Icons.star_outline, color: Colors.purple),
-                        trailing: Row(
+                        trailing: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             // Botão para seleção de perícias se for Especialização
@@ -846,13 +875,18 @@ class _LevelUpScreenState extends ConsumerState<LevelUpScreen> {
                                 tooltip:
                                     'Selecionar perícias para Especialização',
                               ),
-                            Icon(Icons.check_circle, color: Colors.green),
-                            const SizedBox(width: 8),
-                            Icon(
-                              isExpanded
-                                  ? Icons.expand_less
-                                  : Icons.expand_more,
-                              color: Colors.purple,
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.check_circle, color: Colors.green),
+                                const SizedBox(width: 8),
+                                Icon(
+                                  isExpanded
+                                      ? Icons.expand_less
+                                      : Icons.expand_more,
+                                  color: Colors.purple,
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -915,20 +949,28 @@ class _LevelUpScreenState extends ConsumerState<LevelUpScreen> {
                                       ),
                                       const SizedBox(height: 4),
                                       Wrap(
-                                        spacing: 8,
-                                        runSpacing: 4,
+                                        spacing: 6,
+                                        runSpacing: 6,
                                         children:
                                             selectedProficiencySkills.map((
                                               skill,
                                             ) {
                                               return Chip(
-                                                label: Text(skill),
+                                                label: Text(
+                                                  skill,
+                                                  style: const TextStyle(
+                                                    fontSize: 11,
+                                                  ),
+                                                ),
                                                 backgroundColor: Colors.green
                                                     .withAlpha(30),
                                                 labelStyle: TextStyle(
                                                   color: Colors.green.shade700,
-                                                  fontSize: 12,
+                                                  fontSize: 11,
                                                 ),
+                                                materialTapTargetSize:
+                                                    MaterialTapTargetSize
+                                                        .shrinkWrap,
                                               );
                                             }).toList(),
                                       ),
