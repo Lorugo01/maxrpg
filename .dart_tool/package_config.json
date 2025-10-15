@@ -26,6 +26,12 @@
       "languageVersion": "3.2"
     },
     {
+      "name": "args",
+      "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/args-2.7.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
       "name": "async",
       "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/async-2.12.0",
       "packageUri": "lib/",
@@ -44,6 +50,12 @@
       "languageVersion": "3.4"
     },
     {
+      "name": "charcode",
+      "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/charcode-1.4.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "clock",
       "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/clock-1.1.2",
       "packageUri": "lib/",
@@ -56,16 +68,40 @@
       "languageVersion": "3.4"
     },
     {
+      "name": "cross_file",
+      "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/cross_file-0.3.4+2",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
       "name": "crypto",
       "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/crypto-3.0.6",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
     {
+      "name": "csslib",
+      "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/csslib-1.0.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.1"
+    },
+    {
       "name": "cupertino_icons",
       "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/cupertino_icons-1.0.8",
       "packageUri": "lib/",
       "languageVersion": "3.1"
+    },
+    {
+      "name": "dart_quill_delta",
+      "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/dart_quill_delta-10.8.3",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "diff_match_patch",
+      "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/diff_match_patch-0.4.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
     },
     {
       "name": "fake_async",
@@ -86,6 +122,18 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "file_selector_platform_interface",
+      "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/file_selector_platform_interface-2.6.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "file_selector_windows",
+      "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/file_selector_windows-0.9.3+4",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
       "name": "fixnum",
       "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/fixnum-1.1.1",
       "packageUri": "lib/",
@@ -98,8 +146,44 @@
       "languageVersion": "3.7"
     },
     {
+      "name": "flutter_colorpicker",
+      "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_colorpicker-1.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.14"
+    },
+    {
       "name": "flutter_dotenv",
       "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_dotenv-5.2.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "flutter_keyboard_visibility_linux",
+      "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_keyboard_visibility_linux-1.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "flutter_keyboard_visibility_macos",
+      "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_keyboard_visibility_macos-1.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "flutter_keyboard_visibility_platform_interface",
+      "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_keyboard_visibility_platform_interface-2.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "flutter_keyboard_visibility_temp_fork",
+      "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_keyboard_visibility_temp_fork-0.1.5",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "flutter_keyboard_visibility_windows",
+      "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_keyboard_visibility_windows-1.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -108,6 +192,24 @@
       "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_lints-5.0.0",
       "packageUri": "lib/",
       "languageVersion": "3.5"
+    },
+    {
+      "name": "flutter_localizations",
+      "rootUri": "file:///C:/src/flutter/packages/flutter_localizations",
+      "packageUri": "lib/",
+      "languageVersion": "3.7"
+    },
+    {
+      "name": "flutter_quill",
+      "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_quill-11.4.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "flutter_quill_delta_from_html",
+      "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_quill_delta_from_html-1.5.3",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
     },
     {
       "name": "flutter_riverpod",
@@ -146,6 +248,12 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "html",
+      "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/html-0.15.6",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
       "name": "http",
       "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/http-1.5.0",
       "packageUri": "lib/",
@@ -156,6 +264,12 @@
       "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/http_parser-4.1.2",
       "packageUri": "lib/",
       "languageVersion": "3.4"
+    },
+    {
+      "name": "intl",
+      "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/intl-0.19.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
     },
     {
       "name": "json_annotation",
@@ -198,6 +312,12 @@
       "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/logging-1.3.0",
       "packageUri": "lib/",
       "languageVersion": "3.4"
+    },
+    {
+      "name": "markdown",
+      "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/markdown-7.3.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
     },
     {
       "name": "matcher",
@@ -282,6 +402,54 @@
       "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/postgrest-2.4.2",
       "packageUri": "lib/",
       "languageVersion": "3.0"
+    },
+    {
+      "name": "quill_native_bridge",
+      "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/quill_native_bridge-11.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "quill_native_bridge_android",
+      "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/quill_native_bridge_android-0.0.1+2",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "quill_native_bridge_ios",
+      "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/quill_native_bridge_ios-0.0.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "quill_native_bridge_macos",
+      "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/quill_native_bridge_macos-0.0.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "quill_native_bridge_platform_interface",
+      "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/quill_native_bridge_platform_interface-0.0.2+1",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "quill_native_bridge_web",
+      "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/quill_native_bridge_web-0.0.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "quill_native_bridge_windows",
+      "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/quill_native_bridge_windows-0.0.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "quiver",
+      "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/quiver-3.2.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
     },
     {
       "name": "realtime_client",
@@ -542,6 +710,12 @@
       "languageVersion": "3.3"
     },
     {
+      "name": "win32",
+      "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/win32-5.13.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.7"
+    },
+    {
       "name": "window_manager",
       "rootUri": "file:///C:/Users/J.Informatica/AppData/Local/Pub/Cache/hosted/pub.dev/window_manager-0.5.1",
       "packageUri": "lib/",
@@ -566,7 +740,7 @@
       "languageVersion": "3.7"
     }
   ],
-  "generated": "2025-10-15T14:16:37.206863Z",
+  "generated": "2025-10-15T15:16:46.513947Z",
   "generator": "pub",
   "generatorVersion": "3.7.2",
   "flutterRoot": "file:///C:/src/flutter",

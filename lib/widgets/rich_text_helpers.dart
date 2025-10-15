@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/flutter_quill.dart' as fq;
+import 'dart:convert';
 
 /// Constrói um InlineSpan a partir de marcações simples: [b] [/b], [i] [/i], [u] [/u].
 /// - Negrito é renderizado em vermelho.
@@ -134,7 +136,6 @@ class FormattedTextEditor extends StatefulWidget {
   final String? hint;
   final FormFieldValidator<String>? validator;
   final ValueChanged<String>? onChanged;
-  final bool showPreview;
 
   const FormattedTextEditor({
     super.key,
@@ -143,7 +144,6 @@ class FormattedTextEditor extends StatefulWidget {
     this.hint,
     this.validator,
     this.onChanged,
-    this.showPreview = true,
   });
 
   @override
@@ -151,130 +151,142 @@ class FormattedTextEditor extends StatefulWidget {
 }
 
 class _FormattedTextEditorState extends State<FormattedTextEditor> {
-  late String _previewText;
+  late fq.QuillController _quillController;
+  String _plainTextCache = '';
 
-  void _wrapSelection(TextEditingController c, String open, String close) {
-    final sel = c.selection;
-    final text = c.text;
-    final start = sel.start >= 0 ? sel.start : text.length;
-    final end = sel.end >= 0 ? sel.end : text.length;
-    final before = text.substring(0, start);
-    final selected = text.substring(start, end);
-    final after = text.substring(end);
-
-    // 1) Caso seleção já esteja totalmente envolvida: [tag]seleção[/tag] -> remove tags
-    if (selected.startsWith(open) && selected.endsWith(close)) {
-      final inner = selected.substring(
-        open.length,
-        selected.length - close.length,
-      );
-      c.text = '$before$inner$after';
-      final newCaretEnd = start + inner.length;
-      c.selection = TextSelection(baseOffset: start, extentOffset: newCaretEnd);
-      setState(() => _previewText = c.text);
-      return;
+  @override
+  void initState() {
+    super.initState();
+    _plainTextCache = widget.controller.text;
+    // Se já houver Delta JSON no controller, carrega; senão usa texto puro
+    fq.Document doc;
+    try {
+      final raw = widget.controller.text.trim();
+      if (raw.startsWith('[') || raw.startsWith('{')) {
+        final dynamic decoded = jsonDecode(raw);
+        doc = fq.Document.fromJson(decoded as List);
+      } else {
+        doc = fq.Document()..insert(0, _plainTextCache);
+      }
+    } catch (_) {
+      doc = fq.Document()..insert(0, _plainTextCache);
     }
+    _quillController = fq.QuillController(
+      document: doc,
+      selection: const TextSelection.collapsed(offset: 0),
+    );
+    _quillController.addListener(_onQuillChanged);
+  }
 
-    // 2) Caso as tags estejam imediatamente ao redor da seleção: ...[tag]|seleção|[/tag]...
-    final hasOpenBefore =
-        start >= open.length &&
-        text.substring(start - open.length, start) == open;
-    final hasCloseAfter =
-        end + close.length <= text.length &&
-        text.substring(end, end + close.length) == close;
-    if (hasOpenBefore && hasCloseAfter) {
-      final beforeWithout = text.substring(0, start - open.length);
-      final afterWithout = text.substring(end + close.length);
-      c.text = '$beforeWithout$selected$afterWithout';
-      final newStart = start - open.length;
-      final newEnd = newStart + selected.length;
-      c.selection = TextSelection(baseOffset: newStart, extentOffset: newEnd);
-      setState(() => _previewText = c.text);
-      return;
+  @override
+  void didUpdateWidget(covariant FormattedTextEditor oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.controller.text != widget.controller.text &&
+        widget.controller.text != _plainTextCache) {
+      // Atualiza o documento ao receber texto externo
+      _plainTextCache = widget.controller.text;
+      try {
+        final raw = widget.controller.text.trim();
+        if (raw.startsWith('[') || raw.startsWith('{')) {
+          final dynamic decoded = jsonDecode(raw);
+          _quillController.document = fq.Document.fromJson(decoded as List);
+        } else {
+          final len = _quillController.document.length;
+          _quillController.replaceText(
+            0,
+            len,
+            _plainTextCache,
+            const TextSelection.collapsed(offset: 0),
+          );
+        }
+      } catch (_) {
+        final len = _quillController.document.length;
+        _quillController.replaceText(
+          0,
+          len,
+          _plainTextCache,
+          const TextSelection.collapsed(offset: 0),
+        );
+      }
     }
+  }
 
-    // 3) Caso comum: aplica as tags
-    final newText = '$before$open$selected$close$after';
-    c.text = newText;
-    final newStart = start + open.length;
-    final newEnd = newStart + selected.length;
-    c.selection = TextSelection(baseOffset: newStart, extentOffset: newEnd);
-    setState(() => _previewText = c.text);
+  void _onQuillChanged() {
+    final plain = _quillController.document.toPlainText();
+    final deltaJson = jsonEncode(_quillController.document.toDelta().toJson());
+    if (deltaJson == widget.controller.text) return;
+    _plainTextCache = plain;
+    // Salva como Delta JSON no controller para persistir formatação
+    widget.controller.text = deltaJson;
+    widget.onChanged?.call(deltaJson);
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _quillController.removeListener(_onQuillChanged);
+    _quillController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    _previewText = widget.controller.text;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Row(
+    return FormField<String>(
+      initialValue: _plainTextCache,
+      validator: widget.validator,
+      builder: (state) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            IconButton(
-              tooltip: 'Negrito (vermelho)',
-              icon: const Icon(Icons.format_bold),
-              color: Colors.red,
-              onPressed: () => _wrapSelection(widget.controller, '[b]', '[/b]'),
+            // Barra fixa de formatação (custom)
+            Row(
+              children: [
+                IconButton(
+                  tooltip: 'Negrito',
+                  icon: const Icon(Icons.format_bold),
+                  onPressed:
+                      () => _quillController.formatSelection(fq.Attribute.bold),
+                ),
+                IconButton(
+                  tooltip: 'Itálico',
+                  icon: const Icon(Icons.format_italic),
+                  onPressed:
+                      () =>
+                          _quillController.formatSelection(fq.Attribute.italic),
+                ),
+                IconButton(
+                  tooltip: 'Sublinhado',
+                  icon: const Icon(Icons.format_underline),
+                  onPressed:
+                      () => _quillController.formatSelection(
+                        fq.Attribute.underline,
+                      ),
+                ),
+              ],
             ),
-            IconButton(
-              tooltip: 'Itálico',
-              icon: const Icon(Icons.format_italic),
-              onPressed: () => _wrapSelection(widget.controller, '[i]', '[/i]'),
-            ),
-            IconButton(
-              tooltip: 'Sublinhado',
-              icon: const Icon(Icons.format_underline),
-              onPressed: () => _wrapSelection(widget.controller, '[u]', '[/u]'),
-            ),
-          ],
-        ),
-        TextFormField(
-          controller: widget.controller,
-          minLines: 3,
-          maxLines: 24,
-          onChanged: (v) {
-            setState(() => _previewText = v);
-            widget.onChanged?.call(v);
-          },
-          validator: widget.validator,
-          decoration: InputDecoration(
-            labelText: widget.label,
-            hintText: widget.hint,
-            border: const OutlineInputBorder(),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 12,
-            ),
-          ),
-        ),
-        if (widget.showPreview) ...[
-          const SizedBox(height: 8),
-          Text(
-            'Pré-visualização',
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[700],
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.grey.withAlpha(12),
-              borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: Colors.grey.withAlpha(60)),
-            ),
-            child: RichText(
-              text: buildFormattedSpan(
-                _previewText,
-                baseStyle: const TextStyle(fontSize: 14, color: Colors.black87),
-                boldColor: Colors.red,
+            const SizedBox(height: 8),
+            // Editor rolável mantendo a barra no topo
+            Container(
+              constraints: const BoxConstraints(minHeight: 160, maxHeight: 320),
+              decoration: BoxDecoration(
+                border: Border.all(color: Theme.of(context).dividerColor),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                child: fq.QuillEditor.basic(controller: _quillController),
               ),
             ),
-          ),
-        ],
-      ],
+            if (state.hasError) ...[
+              const SizedBox(height: 6),
+              Text(
+                state.errorText ?? '',
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
+            ],
+          ],
+        );
+      },
     );
   }
 }

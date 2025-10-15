@@ -2857,7 +2857,7 @@ class _LevelFeatureDialogState extends State<_LevelFeatureDialog> {
   final _formKey = GlobalKey<FormState>();
   final _levelController = TextEditingController();
   final _nameController = TextEditingController();
-  TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
 
   // Campos para número de usos
   bool _hasUsageLimit = false;
@@ -3082,17 +3082,10 @@ class _LevelFeatureDialogState extends State<_LevelFeatureDialog> {
                       ),
                       const SizedBox(height: 16),
                       FormattedTextEditor(
-                        controller:
-                            _descriptionController
-                                    is MarkupTextEditingController
-                                ? _descriptionController
-                                : (_descriptionController =
-                                    MarkupTextEditingController(
-                                      text: _descriptionController.text,
-                                    )),
+                        controller: _descriptionController,
                         label: 'Descrição *',
                         hint:
-                            'Use [b]negrito[/b], [i]itálico[/i], [u]sublinhado[/u]...',
+                            'Escreva a descrição com formatações (negrito, itálico, sublinhado)...',
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
                             return 'Descrição é obrigatória';
@@ -4353,7 +4346,7 @@ class _SubclassDialog extends StatefulWidget {
 class _SubclassDialogState extends State<_SubclassDialog> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
   final List<Map<String, dynamic>> _features = [];
 
   @override
@@ -4403,15 +4396,9 @@ class _SubclassDialogState extends State<_SubclassDialog> {
               ),
               const SizedBox(height: 16),
               FormattedTextEditor(
-                controller:
-                    _descriptionController is MarkupTextEditingController
-                        ? _descriptionController
-                        : (_descriptionController = MarkupTextEditingController(
-                          text: _descriptionController.text,
-                        )),
+                controller: _descriptionController,
                 label: 'Descrição da Subclasse',
-                hint:
-                    'Use [b]negrito[/b], [i]itálico[/i], [u]sublinhado[/u]...',
+                hint: 'Escreva a descrição com formatações...',
               ),
               const SizedBox(height: 16),
               Row(
@@ -4540,7 +4527,7 @@ class _SubclassFeatureDialogState extends State<_SubclassFeatureDialog> {
   final _formKey = GlobalKey<FormState>();
   final _levelController = TextEditingController();
   final _nameController = TextEditingController();
-  TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
 
   // Campos para condições de uso
   bool _hasUsageLimit = false;
@@ -4722,15 +4709,9 @@ class _SubclassFeatureDialogState extends State<_SubclassFeatureDialog> {
               ),
               const SizedBox(height: 16),
               FormattedTextEditor(
-                controller:
-                    _descriptionController is MarkupTextEditingController
-                        ? _descriptionController
-                        : (_descriptionController = MarkupTextEditingController(
-                          text: _descriptionController.text,
-                        )),
+                controller: _descriptionController,
                 label: 'Descrição *',
-                hint:
-                    'Use [b]negrito[/b], [i]itálico[/i], [u]sublinhado[/u]...',
+                hint: 'Escreva a descrição com formatações...',
                 validator:
                     (v) =>
                         v == null || v.trim().isEmpty

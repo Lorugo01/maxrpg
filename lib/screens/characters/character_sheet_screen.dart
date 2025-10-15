@@ -14,6 +14,7 @@ import '/models/equipment.dart';
 import 'character_edit_screen.dart';
 import 'level_up_screen.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter_quill/flutter_quill.dart' as fq;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CharacterSheetScreen extends ConsumerStatefulWidget {
@@ -2818,7 +2819,7 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                   ),
                   const SizedBox(height: 8),
-                  Text(spell.description, style: const TextStyle(fontSize: 13)),
+                  _buildFormattedDescription(spell.description),
                 ],
 
                 // Níveis superiores
@@ -2830,10 +2831,7 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    spell.higherLevels!,
-                    style: const TextStyle(fontSize: 13),
-                  ),
+                  _buildFormattedDescription(spell.higherLevels!),
                 ],
               ],
             ),
@@ -4228,10 +4226,7 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: Colors.grey[300]!),
             ),
-            child: Text(
-              subraceData['description'],
-              style: TextStyle(color: Colors.grey[700], height: 1.4),
-            ),
+            child: _buildFormattedDescription(subraceData['description']),
           ),
           const SizedBox(height: 16),
         ],
@@ -4254,10 +4249,7 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: Colors.purple[200]!),
             ),
-            child: Text(
-              subraceData['traits'],
-              style: TextStyle(color: Colors.purple[700], height: 1.4),
-            ),
+            child: _buildFormattedDescription(subraceData['traits']),
           ),
           const SizedBox(height: 16),
         ],
@@ -4280,10 +4272,7 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: Colors.indigo[200]!),
             ),
-            child: Text(
-              subraceData['spells'],
-              style: TextStyle(color: Colors.indigo[700], height: 1.4),
-            ),
+            child: _buildFormattedDescription(subraceData['spells']),
           ),
         ],
       ],
@@ -4651,7 +4640,7 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
                     );
                   })
                 else if (description != null && description.isNotEmpty) ...[
-                  Text(description, style: const TextStyle(fontSize: 14)),
+                  _buildFormattedDescription(description),
                 ] else ...[
                   const Text(
                     'Sem detalhes disponíveis',
@@ -4713,7 +4702,7 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(description, style: const TextStyle(fontSize: 14)),
+                _buildFormattedDescription(description),
 
                 // Carrossel de sub-habilidades (se existir)
                 if (abilityData != null)
@@ -4733,6 +4722,31 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildFormattedDescription(String description) {
+    try {
+      final raw = description.trim();
+      if (raw.startsWith('[') || raw.startsWith('{')) {
+        final dynamic decoded = jsonDecode(raw);
+        if (decoded is List) {
+          final doc = fq.Document.fromJson(decoded);
+          final controller = fq.QuillController(
+            document: doc,
+            selection: const TextSelection.collapsed(offset: 0),
+          );
+          return Container(
+            constraints: const BoxConstraints(minHeight: 0, maxHeight: 400),
+            child: fq.QuillEditor.basic(controller: controller),
+          );
+        }
+      }
+    } catch (_) {}
+    return Text(
+      description,
+      style: const TextStyle(fontSize: 14),
+      textAlign: TextAlign.left,
     );
   }
 
@@ -6424,7 +6438,7 @@ class _AddSpellDialogState extends State<_AddSpellDialog> {
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 4),
-                  Text(spell.description),
+                  _buildFormattedDescription(spell.description),
                   if (spell.higherLevels != null &&
                       spell.higherLevels!.isNotEmpty) ...[
                     const SizedBox(height: 8),
@@ -6433,7 +6447,7 @@ class _AddSpellDialogState extends State<_AddSpellDialog> {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 4),
-                    Text(spell.higherLevels!),
+                    _buildFormattedDescription(spell.higherLevels!),
                   ],
                 ],
               ),
@@ -6484,6 +6498,31 @@ class _AddSpellDialogState extends State<_AddSpellDialog> {
           Text(value),
         ],
       ),
+    );
+  }
+
+  Widget _buildFormattedDescription(String description) {
+    try {
+      final raw = description.trim();
+      if (raw.startsWith('[') || raw.startsWith('{')) {
+        final dynamic decoded = jsonDecode(raw);
+        if (decoded is List) {
+          final doc = fq.Document.fromJson(decoded);
+          final controller = fq.QuillController(
+            document: doc,
+            selection: const TextSelection.collapsed(offset: 0),
+          );
+          return Container(
+            constraints: const BoxConstraints(minHeight: 0, maxHeight: 400),
+            child: fq.QuillEditor.basic(controller: controller),
+          );
+        }
+      }
+    } catch (_) {}
+    return Text(
+      description,
+      style: const TextStyle(fontSize: 14),
+      textAlign: TextAlign.left,
     );
   }
 }

@@ -45,6 +45,7 @@ dependencies:
   uuid: ^4.2.1
   window_manager: ^0.5.1
   shared_preferences: ^2.2.3
+  flutter_quill: ^11.4.2
 
 dev_dependencies:
   flutter_test:
