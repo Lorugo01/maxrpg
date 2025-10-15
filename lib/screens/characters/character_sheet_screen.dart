@@ -13,6 +13,8 @@ import '/models/item.dart';
 import '/models/equipment.dart';
 import 'character_edit_screen.dart';
 import 'level_up_screen.dart';
+import 'package:flutter/gestures.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CharacterSheetScreen extends ConsumerStatefulWidget {
   final Character character;
@@ -4712,6 +4714,10 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(description, style: const TextStyle(fontSize: 14)),
+
+                // Carrossel de sub-habilidades (se existir)
+                if (abilityData != null)
+                  ..._maybeBuildSubabilitiesCarousel(abilityData, color),
                 if (hasUsageLimit && totalUses > 0) ...[
                   const SizedBox(height: 12),
                   _buildUsageInfo(calculation!),
@@ -4729,6 +4735,53 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
       ),
     );
   }
+
+  List<Widget> _maybeBuildSubabilitiesCarousel(
+    Map<String, dynamic> abilityData,
+    Color color,
+  ) {
+    // Aceitar múltiplas chaves possíveis: subabilities, sub_abilities, sections
+    dynamic raw =
+        abilityData['subabilities'] ??
+        abilityData['sub_abilities'] ??
+        abilityData['sections'];
+
+    if (raw == null) return const [];
+
+    List<dynamic> subs;
+    if (raw is String) {
+      try {
+        subs = jsonDecode(raw) as List<dynamic>;
+      } catch (_) {
+        return const [];
+      }
+    } else if (raw is List) {
+      subs = raw;
+    } else {
+      return const [];
+    }
+
+    if (subs.isEmpty) return const [];
+
+    final featureName =
+        (abilityData['name'] ?? abilityData['title'] ?? '').toString();
+    final featureLevel = (abilityData['level'] ?? '').toString();
+    final featureKey = 'class_feature:$featureLevel:$featureName';
+
+    return [
+      const SizedBox(height: 12),
+      _SubabilityCarousel(
+        subabilities: subs,
+        color: color,
+        characterId: _character.id,
+        featureKey: featureKey,
+      ),
+    ];
+  }
+
+  // --- Widget de carrossel de sub-habilidades ---
+  // Cada item da lista deve ser Map<String, dynamic> com name/description
+  // (strings). Outros formatos são ignorados.
 
   Widget _buildAbilityTitle({
     required String name,
@@ -6763,6 +6816,573 @@ class _AbilityUsageCounterState extends State<_AbilityUsageCounter> {
         ],
       ),
     );
+  }
+}
+
+// Desktop carousel input support
+
+class _SubabilityCarousel extends StatefulWidget {
+  final List<dynamic> subabilities;
+  final Color color;
+  final String characterId;
+  final String featureKey;
+
+  const _SubabilityCarousel({
+    required this.subabilities,
+    required this.color,
+    required this.characterId,
+    required this.featureKey,
+  });
+
+  @override
+  State<_SubabilityCarousel> createState() => _SubabilityCarouselState();
+}
+
+class _SubabilityCarouselState extends State<_SubabilityCarousel> {
+  late final PageController _pageController;
+  late final PageController _selectedController;
+  int _currentIndex = 0;
+  int _currentSelectedIndex = 0;
+  List<Map<String, dynamic>>? _allItems; // set on first build
+  final List<Map<String, dynamic>> _selected = [];
+  String? _persistKey;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(viewportFraction: 0.95);
+    _selectedController = PageController(viewportFraction: 0.95);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    _selectedController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final items =
+        widget.subabilities
+            .whereType<Map>()
+            .map<Map<String, dynamic>>(
+              (e) => e.map((k, v) => MapEntry(k.toString(), v)),
+            )
+            .toList();
+
+    if (items.isEmpty) return const SizedBox.shrink();
+
+    // Initialize once to keep selection stable across rebuilds
+    _allItems ??= List<Map<String, dynamic>>.from(items);
+    _persistKey ??= _buildPersistKeyFromContext(context);
+    if (_selected.isEmpty) {
+      // Load once after we have key and items
+      _loadSelection();
+    }
+    final available =
+        _allItems!
+            .where(
+              (m) =>
+                  !_selected.any(
+                    (s) => identical(s, m) || s['name'] == m['name'],
+                  ),
+            )
+            .toList();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          height: 140,
+          child: Stack(
+            children: [
+              Listener(
+                onPointerSignal: (signal) {
+                  if (signal is PointerScrollEvent) {
+                    if (signal.scrollDelta.dy > 0 ||
+                        signal.scrollDelta.dx > 0) {
+                      final next = (_currentIndex + 1).clamp(
+                        0,
+                        available.length - 1,
+                      );
+                      if (next != _currentIndex) {
+                        _pageController.animateToPage(
+                          next,
+                          duration: const Duration(milliseconds: 200),
+                          curve: Curves.easeOut,
+                        );
+                      }
+                    } else if (signal.scrollDelta.dy < 0 ||
+                        signal.scrollDelta.dx < 0) {
+                      final prev = (_currentIndex - 1).clamp(
+                        0,
+                        available.length - 1,
+                      );
+                      if (prev != _currentIndex) {
+                        _pageController.animateToPage(
+                          prev,
+                          duration: const Duration(milliseconds: 200),
+                          curve: Curves.easeOut,
+                        );
+                      }
+                    }
+                  }
+                },
+                child: ScrollConfiguration(
+                  behavior: ScrollConfiguration.of(context).copyWith(
+                    dragDevices: {
+                      PointerDeviceKind.touch,
+                      PointerDeviceKind.mouse,
+                      PointerDeviceKind.stylus,
+                      PointerDeviceKind.trackpad,
+                    },
+                  ),
+                  child: PageView.builder(
+                    controller: _pageController,
+                    onPageChanged: (i) => setState(() => _currentIndex = i),
+                    itemCount: available.length,
+                    itemBuilder: (context, index) {
+                      final sub = available[index];
+                      final title =
+                          (sub['name'] ?? sub['title'] ?? 'Seção').toString();
+                      final desc =
+                          (sub['description'] ?? sub['text'] ?? '').toString();
+
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: InkWell(
+                          onTap: () {
+                            setState(() {
+                              _selected.add(sub);
+                              if (_currentIndex >= available.length - 1 &&
+                                  _currentIndex > 0) {
+                                _currentIndex -= 1;
+                              }
+                            });
+                            _saveSelection();
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: widget.color.withAlpha(16),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: widget.color.withAlpha(60),
+                              ),
+                            ),
+                            padding: const EdgeInsets.all(12),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  title,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    color: widget.color,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Expanded(
+                                  child: SingleChildScrollView(
+                                    child: Text(
+                                      desc,
+                                      style: const TextStyle(
+                                        fontSize: 13,
+                                        height: 1.3,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 0,
+                top: 0,
+                bottom: 0,
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: IconButton(
+                    onPressed: () {
+                      final prev = (_currentIndex - 1).clamp(
+                        0,
+                        available.length - 1,
+                      );
+                      if (prev != _currentIndex) {
+                        _pageController.animateToPage(
+                          prev,
+                          duration: const Duration(milliseconds: 200),
+                          curve: Curves.easeOut,
+                        );
+                      }
+                    },
+                    icon: const Icon(Icons.chevron_left),
+                    color: widget.color,
+                    tooltip: 'Anterior',
+                  ),
+                ),
+              ),
+              Positioned(
+                right: 0,
+                top: 0,
+                bottom: 0,
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: IconButton(
+                    onPressed: () {
+                      final next = (_currentIndex + 1).clamp(
+                        0,
+                        available.length - 1,
+                      );
+                      if (next != _currentIndex) {
+                        _pageController.animateToPage(
+                          next,
+                          duration: const Duration(milliseconds: 200),
+                          curve: Curves.easeOut,
+                        );
+                      }
+                    },
+                    icon: const Icon(Icons.chevron_right),
+                    color: widget.color,
+                    tooltip: 'Próximo',
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(
+            available.length,
+            (i) => Container(
+              width: 8,
+              height: 8,
+              margin: const EdgeInsets.symmetric(horizontal: 3),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color:
+                    i == _currentIndex
+                        ? widget.color
+                        : widget.color.withAlpha(80),
+              ),
+            ),
+          ),
+        ),
+
+        if (_selected.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              const Text(
+                'Selecionadas',
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  color: Colors.green,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Tooltip(
+                message:
+                    'Clique em um card para mover entre os carrosséis.\nUse as setas ou a roda do mouse para navegar.',
+                child: IconButton(
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'Dica: Clique em um card para mover entre os carrosséis. Use as setas ou a roda do mouse para navegar.',
+                        ),
+                        duration: Duration(seconds: 4),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.info_outline, color: Colors.green),
+                  tooltip:
+                      'Clique em um card para mover. Use setas/roda do mouse.',
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          SizedBox(
+            height: 140,
+            child: Stack(
+              children: [
+                Listener(
+                  onPointerSignal: (signal) {
+                    if (signal is PointerScrollEvent) {
+                      if (signal.scrollDelta.dy > 0 ||
+                          signal.scrollDelta.dx > 0) {
+                        final next = (_currentSelectedIndex + 1).clamp(
+                          0,
+                          _selected.length - 1,
+                        );
+                        if (next != _currentSelectedIndex) {
+                          _selectedController.animateToPage(
+                            next,
+                            duration: const Duration(milliseconds: 200),
+                            curve: Curves.easeOut,
+                          );
+                        }
+                      } else if (signal.scrollDelta.dy < 0 ||
+                          signal.scrollDelta.dx < 0) {
+                        final prev = (_currentSelectedIndex - 1).clamp(
+                          0,
+                          _selected.length - 1,
+                        );
+                        if (prev != _currentSelectedIndex) {
+                          _selectedController.animateToPage(
+                            prev,
+                            duration: const Duration(milliseconds: 200),
+                            curve: Curves.easeOut,
+                          );
+                        }
+                      }
+                    }
+                  },
+                  child: ScrollConfiguration(
+                    behavior: ScrollConfiguration.of(context).copyWith(
+                      dragDevices: {
+                        PointerDeviceKind.touch,
+                        PointerDeviceKind.mouse,
+                        PointerDeviceKind.stylus,
+                        PointerDeviceKind.trackpad,
+                      },
+                    ),
+                    child: PageView.builder(
+                      controller: _selectedController,
+                      onPageChanged:
+                          (i) => setState(() => _currentSelectedIndex = i),
+                      itemCount: _selected.length,
+                      itemBuilder: (context, index) {
+                        final sub = _selected[index];
+                        final title =
+                            (sub['name'] ?? sub['title'] ?? 'Seção').toString();
+                        final desc =
+                            (sub['description'] ?? sub['text'] ?? '')
+                                .toString();
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                final removed = _selected.removeAt(index);
+                                _allItems!.add(removed);
+                                if (_currentSelectedIndex >= _selected.length &&
+                                    _currentSelectedIndex > 0) {
+                                  _currentSelectedIndex -= 1;
+                                }
+                              });
+                              _saveSelection();
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.green.withAlpha(24),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: Colors.green.withAlpha(80),
+                                ),
+                              ),
+                              padding: const EdgeInsets.all(12),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    title,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.green,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Expanded(
+                                    child: SingleChildScrollView(
+                                      child: Text(
+                                        desc,
+                                        style: const TextStyle(
+                                          fontSize: 13,
+                                          height: 1.3,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                Positioned(
+                  left: 0,
+                  top: 0,
+                  bottom: 0,
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: IconButton(
+                      onPressed: () {
+                        final prev = (_currentSelectedIndex - 1).clamp(
+                          0,
+                          _selected.length - 1,
+                        );
+                        if (prev != _currentSelectedIndex) {
+                          _selectedController.animateToPage(
+                            prev,
+                            duration: const Duration(milliseconds: 200),
+                            curve: Curves.easeOut,
+                          );
+                        }
+                      },
+                      icon: const Icon(Icons.chevron_left),
+                      color: Colors.green,
+                      tooltip: 'Anterior',
+                    ),
+                  ),
+                ),
+                Positioned(
+                  right: 0,
+                  top: 0,
+                  bottom: 0,
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: IconButton(
+                      onPressed: () {
+                        final next = (_currentSelectedIndex + 1).clamp(
+                          0,
+                          _selected.length - 1,
+                        );
+                        if (next != _currentSelectedIndex) {
+                          _selectedController.animateToPage(
+                            next,
+                            duration: const Duration(milliseconds: 200),
+                            curve: Curves.easeOut,
+                          );
+                        }
+                      },
+                      icon: const Icon(Icons.chevron_right),
+                      color: Colors.green,
+                      tooltip: 'Próximo',
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+              _selected.length,
+              (i) => Container(
+                width: 8,
+                height: 8,
+                margin: const EdgeInsets.symmetric(horizontal: 3),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color:
+                      i == _currentSelectedIndex
+                          ? Colors.green
+                          : Colors.green.withAlpha(80),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  // Persistence helpers (remote + local cache)
+  String _buildPersistKeyFromContext(BuildContext context) {
+    return '${widget.characterId}:${widget.featureKey}';
+  }
+
+  Future<void> _loadSelection() async {
+    try {
+      // Remote first
+      final rows =
+          await SupabaseService.client
+              .from('character_selected_subabilities')
+              .select('selected')
+              .eq('character_id', widget.characterId)
+              .eq('feature_key', widget.featureKey)
+              .maybeSingle();
+
+      List<dynamic>? savedRemote;
+      if (rows is Map && (rows as Map)['selected'] != null) {
+        final val = (rows as Map)['selected'];
+        if (val is List) {
+          savedRemote = List<dynamic>.from(val);
+        }
+      }
+
+      if (savedRemote != null && _allItems != null) {
+        final mapByName = {
+          for (final m in _allItems!)
+            (m['name'] ?? m['title'] ?? '').toString(): m,
+        };
+        _selected
+          ..clear()
+          ..addAll(
+            savedRemote
+                .map((n) => mapByName[(n ?? '').toString()])
+                .whereType<Map<String, dynamic>>(),
+          );
+        setState(() {});
+        return;
+      }
+
+      // Local cache fallback
+      final prefs = await SharedPreferences.getInstance();
+      final savedLocal = prefs.getStringList(_persistKey!);
+      if (savedLocal == null || _allItems == null) return;
+      final mapByName = {
+        for (final m in _allItems!)
+          (m['name'] ?? m['title'] ?? '').toString(): m,
+      };
+      _selected
+        ..clear()
+        ..addAll(
+          savedLocal.map((n) => mapByName[n]).whereType<Map<String, dynamic>>(),
+        );
+      setState(() {});
+    } catch (_) {}
+  }
+
+  Future<void> _saveSelection() async {
+    try {
+      final names =
+          _selected
+              .map((m) => (m['name'] ?? m['title'] ?? '').toString())
+              .where((s) => s.isNotEmpty)
+              .toList();
+
+      // Remote upsert
+      await SupabaseService.client
+          .from('character_selected_subabilities')
+          .upsert({
+            'character_id': widget.characterId,
+            'feature_key': widget.featureKey,
+            'selected': names,
+          }, onConflict: 'character_id,feature_key');
+
+      // Local cache
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setStringList(_persistKey!, names);
+    } catch (_) {}
   }
 }
 

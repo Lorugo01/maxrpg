@@ -44,6 +44,7 @@ dependencies:
   # Utilitários
   uuid: ^4.2.1
   window_manager: ^0.5.1
+  shared_preferences: ^2.2.3
 
 dev_dependencies:
   flutter_test:

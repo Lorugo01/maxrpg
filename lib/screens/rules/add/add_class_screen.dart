@@ -1886,6 +1886,8 @@ class _AddClassScreenState extends ConsumerState<AddClassScreen> {
                     'name': feature['name'],
                     'description': feature['description'],
                     'has_usage_limit': feature['has_usage_limit'],
+                    if (feature['subabilities'] != null)
+                      'subabilities': feature['subabilities'],
                     if (feature['has_usage_limit'] == true) ...{
                       'usage_type': feature['usage_type'],
                       'usage_value': feature['usage_value'],
@@ -2838,6 +2840,8 @@ class _LevelFeatureDialogState extends State<_LevelFeatureDialog> {
   final _proficiencySkillCountController = TextEditingController();
 
   // removido UD
+  // Sub-habilidades (para carrossel na ficha)
+  final List<Map<String, dynamic>> _subabilities = [];
 
   // Opções para tipo de uso
   final List<String> _usageTypeOptions = [
@@ -2970,6 +2974,14 @@ class _LevelFeatureDialogState extends State<_LevelFeatureDialog> {
       }
 
       debugPrint('Inicializando diálogo - _hasUsageLimit: $_hasUsageLimit');
+
+      // Carregar sub-habilidades se existirem
+      final rawSubs = widget.initialFeature!["subabilities"];
+      if (rawSubs is List) {
+        _subabilities
+          ..clear()
+          ..addAll(rawSubs.map((e) => Map<String, dynamic>.from(e)).toList());
+      }
     }
   }
 
@@ -3061,6 +3073,11 @@ class _LevelFeatureDialogState extends State<_LevelFeatureDialog> {
 
                       const SizedBox(height: 16),
 
+                      // Seção de Sub-habilidades
+                      _buildSubabilitiesSection(),
+
+                      const SizedBox(height: 16),
+
                       // Seção de dados que aumentam
                       _buildDiceIncreaseSection(),
 
@@ -3129,6 +3146,8 @@ class _LevelFeatureDialogState extends State<_LevelFeatureDialog> {
                               'abilities': List<String>.from(_udAbilities),
                               'allows_shield': _udAllowsShield,
                             },
+                          if (_subabilities.isNotEmpty)
+                            'subabilities': _subabilities,
                         };
                         widget.onSave(feature);
                         Navigator.of(context).pop();
@@ -3144,6 +3163,147 @@ class _LevelFeatureDialogState extends State<_LevelFeatureDialog> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildSubabilitiesSection() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Sub-habilidades (carrossel)',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                IconButton(
+                  onPressed: _addSubability,
+                  icon: const Icon(Icons.add),
+                  tooltip: 'Adicionar sub-habilidade',
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            if (_subabilities.isEmpty)
+              const Text(
+                'Nenhuma sub-habilidade adicionada. Use o + para incluir seções.',
+                style: TextStyle(color: Colors.grey),
+              )
+            else
+              ..._subabilities.asMap().entries.map((entry) {
+                final index = entry.key;
+                final sub = entry.value;
+                final title =
+                    (sub['name'] ?? sub['title'] ?? 'Seção') as String;
+                // descrição não é mais usada na pré-visualização da lista
+                return Card(
+                  margin: const EdgeInsets.only(bottom: 8),
+                  child: ListTile(
+                    title: Text(title),
+                    subtitle: null,
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          onPressed: () => _editSubability(index, sub),
+                          icon: const Icon(Icons.edit, color: Colors.blueGrey),
+                        ),
+                        IconButton(
+                          onPressed:
+                              () =>
+                                  setState(() => _subabilities.removeAt(index)),
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _addSubability() async {
+    final created = await _showEditSubabilityDialog();
+    if (created != null) {
+      setState(() => _subabilities.add(created));
+    }
+  }
+
+  Future<void> _editSubability(int index, Map<String, dynamic> current) async {
+    final edited = await _showEditSubabilityDialog(current: current);
+    if (edited != null) {
+      setState(() => _subabilities[index] = edited);
+    }
+  }
+
+  Future<Map<String, dynamic>?> _showEditSubabilityDialog({
+    Map<String, dynamic>? current,
+  }) {
+    final TextEditingController name = TextEditingController(
+      text: (current?['name'] ?? current?['title'] ?? '')?.toString(),
+    );
+    final TextEditingController description = TextEditingController(
+      text: (current?['description'] ?? current?['text'] ?? '')?.toString(),
+    );
+    return showDialog<Map<String, dynamic>?>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(
+            current == null
+                ? 'Adicionar Sub-habilidade'
+                : 'Editar Sub-habilidade',
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: name,
+                  decoration: const InputDecoration(
+                    labelText: 'Título',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: description,
+                  maxLines: 4,
+                  decoration: const InputDecoration(
+                    labelText: 'Descrição',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final map = {
+                  'name': name.text.trim(),
+                  'description': description.text.trim(),
+                };
+                Navigator.pop(context, map);
+              },
+              child: const Text('Salvar'),
+            ),
+          ],
+        );
+      },
     );
   }
 

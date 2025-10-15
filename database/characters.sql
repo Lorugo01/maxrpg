@@ -44,6 +44,8 @@ create table public.characters (
   subclass_name character varying(50) null,
   subclass_level integer null default 3,
   subclass_features jsonb null default '[]'::jsonb,
+  subrace character varying(50) null,
+  custom_abilities jsonb null default '[]'::jsonb,
   constraint characters_pkey primary key (id),
   constraint characters_user_id_fkey foreign KEY (user_id) references auth.users (id) on delete CASCADE
 ) TABLESPACE pg_default;
