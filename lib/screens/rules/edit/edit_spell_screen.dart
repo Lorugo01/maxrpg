@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../services/supabase_service.dart';
 import '../../data/data_management_screen.dart';
+import '../../../widgets/rich_text_helpers.dart';
 
 class EditSpellScreen extends ConsumerStatefulWidget {
   final Map<String, dynamic> spell;
@@ -399,11 +400,10 @@ class _EditSpellScreenState extends ConsumerState<EditSpellScreen> {
                 Icons.description,
                 Colors.green,
                 [
-                  _buildTextField(
+                  FormattedTextEditor(
                     controller: _descriptionController,
                     label: 'Descrição',
                     hint: 'Descrição detalhada da magia...',
-                    maxLines: 4,
                   ),
                 ],
               ),

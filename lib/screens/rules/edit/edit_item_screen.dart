@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '/providers/auth_provider.dart';
 import '/services/supabase_service.dart';
+import '/widgets/rich_text_helpers.dart';
 
 class EditItemScreen extends ConsumerStatefulWidget {
   const EditItemScreen({super.key, required this.item});
@@ -88,7 +89,11 @@ class _EditItemScreenState extends ConsumerState<EditItemScreen> {
                     (v) => (v == null || v.isEmpty) ? 'Obrigatório' : null,
               ),
               const SizedBox(height: 12),
-              _field(_description, 'Descrição', maxLines: 3),
+              FormattedTextEditor(
+                controller: _description,
+                label: 'Descrição',
+                hint: 'Descrição do item...',
+              ),
               const SizedBox(height: 12),
               Row(
                 children: [

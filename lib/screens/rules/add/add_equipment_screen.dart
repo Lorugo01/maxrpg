@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../services/supabase_service.dart';
+import '../../../widgets/rich_text_helpers.dart';
 
 class AddEquipmentScreen extends ConsumerStatefulWidget {
   const AddEquipmentScreen({super.key});
@@ -523,11 +524,10 @@ class _AddEquipmentScreenState extends ConsumerState<AddEquipmentScreen> {
                 Icons.description,
                 Colors.blue,
                 [
-                  _buildTextField(
+                  FormattedTextEditor(
                     controller: _descriptionController,
                     label: 'Descrição (Opcional)',
                     hint: 'Descrição detalhada do equipamento...',
-                    maxLines: 3,
                   ),
                 ],
               ),

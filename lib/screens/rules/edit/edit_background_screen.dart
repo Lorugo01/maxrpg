@@ -4,6 +4,7 @@ import '/providers/auth_provider.dart';
 import '/services/supabase_service.dart';
 import '../../../services/equipment_service.dart';
 import '../../../models/equipment.dart';
+import '../../../widgets/rich_text_helpers.dart';
 
 class EditBackgroundScreen extends ConsumerStatefulWidget {
   const EditBackgroundScreen({super.key, required this.background});
@@ -473,11 +474,10 @@ class _EditBackgroundScreenState extends ConsumerState<EditBackgroundScreen> {
                     },
                   ),
                   const SizedBox(height: 16),
-                  _buildTextField(
+                  FormattedTextEditor(
                     controller: _descriptionController,
                     label: 'Descrição',
                     hint: 'Descrição do antecedente...',
-                    maxLines: 3,
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
@@ -1346,13 +1346,10 @@ class _EditEquipmentChoiceDialogState
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextFormField(
+              FormattedTextEditor(
                 controller: _descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Descrição da Escolha *',
-                  hintText: 'Ex: 1 instrumento musical à sua escolha',
-                  border: OutlineInputBorder(),
-                ),
+                label: 'Descrição da Escolha *',
+                hint: 'Ex: 1 instrumento musical à sua escolha',
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'Descrição é obrigatória';

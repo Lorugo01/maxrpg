@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '/providers/auth_provider.dart';
 import '/services/supabase_service.dart';
+import '/widgets/rich_text_helpers.dart';
 
 // Entrada de traço racial (nome + descrição + limites de uso)
 class _TraitEntry {
@@ -519,14 +520,10 @@ class _EditRaceScreenState extends ConsumerState<EditRaceScreen> {
               ],
             ),
             const SizedBox(height: 12),
-            TextFormField(
+            FormattedTextEditor(
               controller: subrace['descriptionController'],
-              decoration: const InputDecoration(
-                labelText: 'Descrição da Subraça',
-                hintText: 'Descrição das habilidades específicas...',
-                border: OutlineInputBorder(),
-              ),
-              maxLines: 3,
+              label: 'Descrição da Subraça',
+              hint: 'Descrição das habilidades específicas...',
               onChanged: (value) {
                 _subraces[index]['description'] = value;
               },
@@ -614,10 +611,10 @@ class _EditRaceScreenState extends ConsumerState<EditRaceScreen> {
                         (v) => (v == null || v.isEmpty) ? 'Obrigatório' : null,
                   ),
                   const SizedBox(height: 16),
-                  _buildTextField(
+                  FormattedTextEditor(
                     controller: _descriptionController,
                     label: 'Descrição',
-                    maxLines: 3,
+                    hint: 'Descrição da raça...',
                   ),
                   const SizedBox(height: 16),
                   Row(
@@ -772,11 +769,10 @@ class _EditRaceScreenState extends ConsumerState<EditRaceScreen> {
                                     ],
                                   ),
                                   const SizedBox(height: 8),
-                                  _buildTextField(
+                                  FormattedTextEditor(
                                     controller: trait.description,
                                     label: 'Descrição do Traço',
                                     hint: 'Detalhe o efeito do traço...',
-                                    maxLines: 3,
                                   ),
 
                                   // Seção de limite de usos

@@ -5,6 +5,7 @@ import '../../../../services/supabase_service.dart';
 import '../../../services/equipment_service.dart';
 import '../../../models/equipment.dart';
 import '../../data/data_management_screen.dart';
+import '../../../widgets/rich_text_helpers.dart';
 
 class AddClassScreen extends ConsumerStatefulWidget {
   const AddClassScreen({super.key});
@@ -3051,14 +3052,10 @@ class _LevelFeatureDialogState extends State<_LevelFeatureDialog> {
                         },
                       ),
                       const SizedBox(height: 16),
-                      TextFormField(
+                      FormattedTextEditor(
                         controller: _descriptionController,
-                        decoration: const InputDecoration(
-                          labelText: 'Descrição *',
-                          hintText: 'Descrição detalhada da característica...',
-                          border: OutlineInputBorder(),
-                        ),
-                        maxLines: 3,
+                        label: 'Descrição *',
+                        hint: 'Descrição detalhada da característica...',
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
                             return 'Descrição é obrigatória';
@@ -4370,14 +4367,10 @@ class _SubclassDialogState extends State<_SubclassDialog> {
                 },
               ),
               const SizedBox(height: 16),
-              TextFormField(
+              FormattedTextEditor(
                 controller: _descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Descrição da Subclasse',
-                  hintText: 'Descrição geral da subclasse...',
-                  border: OutlineInputBorder(),
-                ),
-                maxLines: 3,
+                label: 'Descrição da Subclasse',
+                hint: 'Descrição geral da subclasse...',
               ),
               const SizedBox(height: 16),
               Row(
@@ -4563,13 +4556,10 @@ class _SubclassFeatureDialogState extends State<_SubclassFeatureDialog> {
                           : null,
             ),
             const SizedBox(height: 16),
-            TextFormField(
+            FormattedTextEditor(
               controller: _descriptionController,
-              maxLines: 3,
-              decoration: const InputDecoration(
-                labelText: 'Descrição *',
-                border: OutlineInputBorder(),
-              ),
+              label: 'Descrição *',
+              hint: 'Escreva a descrição com formatações...',
               validator:
                   (v) =>
                       v == null || v.trim().isEmpty

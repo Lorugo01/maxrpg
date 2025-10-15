@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../services/supabase_service.dart';
 import '../../data/data_management_screen.dart';
+import '../../../widgets/rich_text_helpers.dart';
 
 // Entrada de traço racial (nome + descrição + limites de uso)
 class _TraitEntry {
@@ -721,14 +722,10 @@ class _AddRaceScreenState extends ConsumerState<AddRaceScreen> {
               ],
             ),
             const SizedBox(height: 12),
-            TextFormField(
+            FormattedTextEditor(
               controller: subrace['descriptionController'],
-              decoration: const InputDecoration(
-                labelText: 'Descrição da Subraça',
-                hintText: 'Descrição das habilidades específicas...',
-                border: OutlineInputBorder(),
-              ),
-              maxLines: 3,
+              label: 'Descrição da Subraça',
+              hint: 'Descrição das habilidades específicas...',
               onChanged: (value) {
                 _subraces[index]['description'] = value;
               },
@@ -848,11 +845,10 @@ class _AddRaceScreenState extends ConsumerState<AddRaceScreen> {
                     },
                   ),
                   const SizedBox(height: 16),
-                  _buildTextField(
+                  FormattedTextEditor(
                     controller: _descriptionController,
                     label: 'Descrição',
                     hint: 'Descrição da raça...',
-                    maxLines: 3,
                   ),
                   const SizedBox(height: 16),
                   Row(
@@ -1018,11 +1014,10 @@ class _AddRaceScreenState extends ConsumerState<AddRaceScreen> {
                                     ],
                                   ),
                                   const SizedBox(height: 8),
-                                  _buildTextField(
+                                  FormattedTextEditor(
                                     controller: trait.description,
                                     label: 'Descrição do Traço',
                                     hint: 'Detalhe o efeito do traço...',
-                                    maxLines: 3,
                                   ),
 
                                   // Seção de limite de usos
@@ -1481,14 +1476,10 @@ class _AddRaceScreenState extends ConsumerState<AddRaceScreen> {
             ),
           ),
           const SizedBox(height: 12),
-          TextFormField(
+          FormattedTextEditor(
             controller: trait.additionalFeatureDescription,
-            decoration: const InputDecoration(
-              labelText: 'Descrição da Funcionalidade',
-              hintText: 'Descreva o que esta funcionalidade faz...',
-              border: OutlineInputBorder(),
-            ),
-            maxLines: 3,
+            label: 'Descrição da Funcionalidade',
+            hint: 'Descreva o que esta funcionalidade faz...',
           ),
         ],
       ],

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../services/supabase_service.dart';
 import '../../data/data_management_screen.dart';
+import '../../../widgets/rich_text_helpers.dart';
 
 class AddFeatScreen extends ConsumerStatefulWidget {
   const AddFeatScreen({super.key});
@@ -242,12 +243,11 @@ class _AddFeatScreenState extends ConsumerState<AddFeatScreen> {
                                     ],
                                   ),
                                   const SizedBox(height: 8),
-                                  _buildTextField(
+                                  FormattedTextEditor(
                                     controller: b['description']!,
                                     label: 'Descrição do Benefício',
                                     hint:
                                         'Detalhe o que o benefício concede...',
-                                    maxLines: 3,
                                   ),
                                 ],
                               ),
@@ -548,13 +548,10 @@ class _AbilityDialogState extends State<_AbilityDialog> {
                             : null,
               ),
               const SizedBox(height: 16),
-              TextFormField(
+              FormattedTextEditor(
                 controller: _descriptionController,
-                maxLines: 3,
-                decoration: const InputDecoration(
-                  labelText: 'Descrição *',
-                  border: OutlineInputBorder(),
-                ),
+                label: 'Descrição *',
+                hint: 'Descrição do talento...',
                 validator:
                     (value) =>
                         value == null || value.trim().isEmpty

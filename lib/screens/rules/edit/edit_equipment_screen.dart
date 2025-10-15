@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '/providers/auth_provider.dart';
 import '/services/supabase_service.dart';
+import '/widgets/rich_text_helpers.dart';
 
 class EditEquipmentScreen extends ConsumerStatefulWidget {
   const EditEquipmentScreen({super.key, required this.equipment});
@@ -509,7 +510,11 @@ class _EditEquipmentScreenState extends ConsumerState<EditEquipmentScreen> {
                 _buildStealthDisadvantageCheckbox(),
               ],
               const SizedBox(height: 12),
-              _field(_descriptionController, 'Descrição', maxLines: 3),
+              FormattedTextEditor(
+                controller: _descriptionController,
+                label: 'Descrição',
+                hint: 'Descrição do equipamento...',
+              ),
               const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,

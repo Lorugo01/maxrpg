@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../services/supabase_service.dart';
+import '../../../widgets/rich_text_helpers.dart';
 
 class AddSpellScreen extends ConsumerStatefulWidget {
   const AddSpellScreen({super.key});
@@ -472,11 +473,10 @@ class _AddSpellScreenState extends ConsumerState<AddSpellScreen> {
                 Icons.description,
                 Colors.green,
                 [
-                  _buildTextField(
+                  FormattedTextEditor(
                     controller: _descriptionController,
                     label: 'Descrição',
                     hint: 'Descrição detalhada da magia...',
-                    maxLines: 4,
                   ),
                 ],
               ),

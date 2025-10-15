@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '/providers/auth_provider.dart';
 import '/services/supabase_service.dart';
+import '/widgets/rich_text_helpers.dart';
 
 class EditFeatScreen extends ConsumerStatefulWidget {
   final Map<String, dynamic> feat;
@@ -269,12 +270,11 @@ class _EditFeatScreenState extends ConsumerState<EditFeatScreen> {
                                     ],
                                   ),
                                   const SizedBox(height: 8),
-                                  _buildTextField(
+                                  FormattedTextEditor(
                                     controller: b['description']!,
                                     label: 'Descrição do Benefício',
                                     hint:
                                         'Detalhe o que o benefício concede...',
-                                    maxLines: 3,
                                   ),
                                 ],
                               ),
