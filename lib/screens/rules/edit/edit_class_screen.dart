@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:maxrpg/widgets/text_helpers.dart';
+import 'package:maxrpg/widgets/rich_text_helpers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../providers/auth_provider.dart';
 import '../../../../services/supabase_service.dart';
@@ -17,7 +19,7 @@ class EditClassScreen extends ConsumerStatefulWidget {
 class _EditClassScreenState extends ConsumerState<EditClassScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  final _descriptionController = TextEditingController();
+  TextEditingController _descriptionController = TextEditingController();
   final _hitDieController = TextEditingController(text: '8');
   List<String> _selectedPrimaryAbilities = [];
   List<String> _selectedSavingThrows = [];
@@ -43,7 +45,6 @@ class _EditClassScreenState extends ConsumerState<EditClassScreen> {
   final _spellcastingController = TextEditingController();
   final _subclassesController = TextEditingController();
   String? _selectedSource;
-  bool _enabled = true;
 
   // Estado da edição
   bool _hasChanges = false;
@@ -485,11 +486,10 @@ class _EditClassScreenState extends ConsumerState<EditClassScreen> {
                       onChanged: (_) => _markAsChanged(),
                     ),
                     const SizedBox(height: 16),
-                    _buildTextField(
+                    AutoGrowTextFormField(
                       controller: _descriptionController,
                       label: 'Descrição',
                       hint: 'Descrição da classe...',
-                      maxLines: 3,
                       onChanged: (_) => _markAsChanged(),
                     ),
                     const SizedBox(height: 16),
@@ -1031,10 +1031,12 @@ class _EditClassScreenState extends ConsumerState<EditClassScreen> {
               style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 4),
-            Text(
-              feature['description'] ?? '',
-              style: const TextStyle(fontSize: 12, color: Colors.grey),
-            ),
+            if ((feature['description'] ?? '').toString().isNotEmpty)
+              CollapsibleRichText(
+                feature['description'] ?? '',
+                initialMaxLines: 6,
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
+              ),
             // Indicador de Defesa sem Armadura
             if (feature['unarmored_defense'] != null) ...[
               const SizedBox(height: 8),
@@ -1894,8 +1896,9 @@ class _EditClassScreenState extends ConsumerState<EditClassScreen> {
             ),
             if (description.isNotEmpty) ...[
               const SizedBox(height: 8),
-              Text(
+              CollapsibleText(
                 description,
+                initialMaxLines: 8,
                 style: const TextStyle(
                   fontSize: 14,
                   color: Colors.grey,
@@ -1921,13 +1924,15 @@ class _EditClassScreenState extends ConsumerState<EditClassScreen> {
                         style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
                       const SizedBox(height: 2),
-                      Text(
-                        f['description'] ?? '',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
+                      if ((f['description'] ?? '').toString().isNotEmpty)
+                        CollapsibleText(
+                          f['description'] ?? '',
+                          initialMaxLines: 6,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey,
+                          ),
                         ),
-                      ),
                       if (f['has_usage_limit'] == true) ...[
                         const SizedBox(height: 4),
                         _buildSubclassUsageInfo(f),
@@ -2850,7 +2855,7 @@ class _LevelFeatureDialogState extends State<_LevelFeatureDialog> {
   final _formKey = GlobalKey<FormState>();
   final _levelController = TextEditingController();
   final _nameController = TextEditingController();
-  final _descriptionController = TextEditingController();
+  TextEditingController _descriptionController = TextEditingController();
 
   // Campos para número de usos
   bool _hasUsageLimit = false;
@@ -3064,14 +3069,18 @@ class _LevelFeatureDialogState extends State<_LevelFeatureDialog> {
                         },
                       ),
                       const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _descriptionController,
-                        decoration: const InputDecoration(
-                          labelText: 'Descrição *',
-                          hintText: 'Descrição detalhada da característica...',
-                          border: OutlineInputBorder(),
-                        ),
-                        maxLines: 3,
+                      FormattedTextEditor(
+                        controller:
+                            _descriptionController
+                                    is MarkupTextEditingController
+                                ? _descriptionController
+                                : (_descriptionController =
+                                    MarkupTextEditingController(
+                                      text: _descriptionController.text,
+                                    )),
+                        label: 'Descrição *',
+                        hint:
+                            'Use [b]negrito[/b], [i]itálico[/i], [u]sublinhado[/u]...',
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
                             return 'Descrição é obrigatória';
@@ -4184,7 +4193,7 @@ class _SubclassDialog extends StatefulWidget {
 class _SubclassDialogState extends State<_SubclassDialog> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  final _descriptionController = TextEditingController();
+  TextEditingController _descriptionController = TextEditingController();
   final List<Map<String, dynamic>> _features = [];
 
   @override
@@ -4233,14 +4242,16 @@ class _SubclassDialogState extends State<_SubclassDialog> {
                 },
               ),
               const SizedBox(height: 16),
-              TextFormField(
-                controller: _descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Descrição da Subclasse',
-                  hintText: 'Descrição geral da subclasse...',
-                  border: OutlineInputBorder(),
-                ),
-                maxLines: 3,
+              FormattedTextEditor(
+                controller:
+                    _descriptionController is MarkupTextEditingController
+                        ? _descriptionController
+                        : (_descriptionController = MarkupTextEditingController(
+                          text: _descriptionController.text,
+                        )),
+                label: 'Descrição da Subclasse',
+                hint:
+                    'Use [b]negrito[/b], [i]itálico[/i], [u]sublinhado[/u]...',
               ),
               const SizedBox(height: 16),
               Row(
@@ -4271,7 +4282,17 @@ class _SubclassDialogState extends State<_SubclassDialog> {
                     margin: const EdgeInsets.only(bottom: 8),
                     child: ListTile(
                       title: Text('Nível ${f['level']}: ${f['name']}'),
-                      subtitle: Text(f['description'] ?? ''),
+                      subtitle:
+                          (f['description'] ?? '').toString().isEmpty
+                              ? null
+                              : CollapsibleRichText(
+                                f['description'] ?? '',
+                                initialMaxLines: 4,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                ),
+                              ),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -4359,7 +4380,7 @@ class _SubclassFeatureDialogState extends State<_SubclassFeatureDialog> {
   final _formKey = GlobalKey<FormState>();
   final _levelController = TextEditingController();
   final _nameController = TextEditingController();
-  final _descriptionController = TextEditingController();
+  TextEditingController _descriptionController = TextEditingController();
 
   // Campos para condições de uso
   bool _hasUsageLimit = false;
@@ -4540,13 +4561,16 @@ class _SubclassFeatureDialogState extends State<_SubclassFeatureDialog> {
                             : null,
               ),
               const SizedBox(height: 16),
-              TextFormField(
-                controller: _descriptionController,
-                maxLines: 3,
-                decoration: const InputDecoration(
-                  labelText: 'Descrição *',
-                  border: OutlineInputBorder(),
-                ),
+              FormattedTextEditor(
+                controller:
+                    _descriptionController is MarkupTextEditingController
+                        ? _descriptionController
+                        : (_descriptionController = MarkupTextEditingController(
+                          text: _descriptionController.text,
+                        )),
+                label: 'Descrição *',
+                hint:
+                    'Use [b]negrito[/b], [i]itálico[/i], [u]sublinhado[/u]...',
                 validator:
                     (v) =>
                         v == null || v.trim().isEmpty
@@ -5106,7 +5130,7 @@ class _EditEquipmentChoiceDialog extends StatefulWidget {
 class _EditEquipmentChoiceDialogState
     extends State<_EditEquipmentChoiceDialog> {
   final _formKey = GlobalKey<FormState>();
-  final _descriptionController = TextEditingController();
+  TextEditingController _descriptionController = TextEditingController();
   final List<Map<String, dynamic>> _options = [];
 
   @override
