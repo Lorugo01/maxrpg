@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '/services/supabase_service.dart';
+import '../../widgets/rich_text_helpers.dart';
 import '/providers/auth_provider.dart';
 import 'edit/edit_item_screen.dart';
 
@@ -196,7 +197,14 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
                           final item = _filtered[index];
                           return ListTile(
                             title: Text(item['name'] ?? 'Sem nome'),
-                            subtitle: Text(item['description'] ?? ''),
+                            subtitle:
+                                (item['description'] ?? '').toString().isEmpty
+                                    ? null
+                                    : CollapsibleRichText(
+                                      item['description'] ?? '',
+                                      initialMaxLines: 2,
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [

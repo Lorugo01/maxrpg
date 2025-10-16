@@ -985,11 +985,10 @@ class _EditBackgroundScreenState extends ConsumerState<EditBackgroundScreen> {
           if (selectedFeat['description'] != null &&
               selectedFeat['description'].toString().isNotEmpty) ...[
             const SizedBox(height: 6),
-            Text(
+            CollapsibleRichText(
               selectedFeat['description'],
+              initialMaxLines: 3,
               style: const TextStyle(fontSize: 12),
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
             ),
           ],
           if (selectedFeat['prerequisite'] != null &&
@@ -1244,7 +1243,11 @@ class _EditBackgroundScreenState extends ConsumerState<EditBackgroundScreen> {
             return Card(
               margin: const EdgeInsets.only(bottom: 8),
               child: ListTile(
-                title: Text(choice['description'] ?? 'Escolha'),
+                title: CollapsibleRichText(
+                  choice['description'] ?? 'Escolha',
+                  initialMaxLines: 2,
+                  style: const TextStyle(fontWeight: FontWeight.w500),
+                ),
                 subtitle:
                     (choice['options'] is List &&
                             (choice['options'] as List).isNotEmpty)
@@ -1264,10 +1267,20 @@ class _EditBackgroundScreenState extends ConsumerState<EditBackgroundScreen> {
                       icon: const Icon(Icons.edit, color: Colors.blueGrey),
                     ),
                     IconButton(
-                      onPressed:
-                          () => setState(() {
+                      onPressed: () async {
+                        final confirmed = await showDeleteConfirmationDialog(
+                          context,
+                          title: 'Excluir Escolha de Equipamento',
+                          itemName: 'Escolha de equipamento',
+                          customMessage:
+                              'Deseja excluir esta escolha de equipamento?',
+                        );
+                        if (confirmed) {
+                          setState(() {
                             _equipmentChoices.removeAt(index);
-                          }),
+                          });
+                        }
+                      },
                       icon: const Icon(Icons.delete, color: Colors.red),
                     ),
                   ],
@@ -1386,7 +1399,11 @@ class _EditEquipmentChoiceDialogState
                     margin: const EdgeInsets.only(bottom: 8),
                     child: ListTile(
                       title: Text(option['name'] ?? 'Opção sem nome'),
-                      subtitle: Text(option['description'] ?? ''),
+                      subtitle: CollapsibleRichText(
+                        option['description'] ?? '',
+                        initialMaxLines: 2,
+                        style: const TextStyle(fontSize: 12),
+                      ),
                       trailing: IconButton(
                         onPressed: () => _editOption(index, option),
                         icon: const Icon(Icons.edit, color: Colors.blueGrey),

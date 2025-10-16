@@ -141,6 +141,8 @@ class CharacterService {
       if (characterJson['experiencePoints'] != null) {
         characterJson['experience_points'] = characterJson['experiencePoints'];
       }
+      // Persistir inspiração
+      characterJson['inspiration'] = character.inspiration;
 
       // Converter outras listas para JSON
       characterJson['languages'] = characterJson['languages'] ?? [];
@@ -242,6 +244,7 @@ class CharacterService {
       response['maxHitPoints'] = response['max_hit_points'] ?? 0;
       response['temporaryHitPoints'] = response['temporary_hit_points'] ?? 0;
       response['experiencePoints'] = response['experience_points'] ?? 0;
+      response['inspiration'] = response['inspiration'] ?? false;
 
       // Converter listas JSON de volta
       response['languages'] = response['languages'] ?? [];

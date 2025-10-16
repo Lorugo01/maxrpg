@@ -1019,7 +1019,16 @@ class _EditClassScreenState extends ConsumerState<EditClassScreen> {
                   iconSize: 20,
                 ),
                 IconButton(
-                  onPressed: () => _removeLevelFeature(index),
+                  onPressed: () async {
+                    final confirmed = await showDeleteConfirmationDialog(
+                      context,
+                      title: 'Excluir Característica',
+                      itemName: feature['name'] ?? 'Característica',
+                      customMessage:
+                          'Deseja excluir a característica "${feature['name'] ?? 'Sem nome'}"?',
+                    );
+                    if (confirmed) _removeLevelFeature(index);
+                  },
                   icon: const Icon(Icons.delete, color: Colors.red),
                   iconSize: 20,
                 ),
@@ -1520,7 +1529,16 @@ class _EditClassScreenState extends ConsumerState<EditClassScreen> {
                   iconSize: 20,
                 ),
                 IconButton(
-                  onPressed: () => _removeSpellLevel(index),
+                  onPressed: () async {
+                    final confirmed = await showDeleteConfirmationDialog(
+                      context,
+                      title: 'Excluir Nível de Magia',
+                      itemName: 'Nível ${spellLevel['level']}',
+                      customMessage:
+                          'Deseja excluir o nível ${spellLevel['level']} de magias?',
+                    );
+                    if (confirmed) _removeSpellLevel(index);
+                  },
                   icon: const Icon(Icons.delete, color: Colors.red),
                   iconSize: 20,
                 ),
@@ -1562,7 +1580,16 @@ class _EditClassScreenState extends ConsumerState<EditClassScreen> {
                   iconSize: 20,
                 ),
                 IconButton(
-                  onPressed: () => _removeSpellSlotsLevel(index),
+                  onPressed: () async {
+                    final confirmed = await showDeleteConfirmationDialog(
+                      context,
+                      title: 'Excluir Nível de Slots',
+                      itemName: 'Nível ${slotsLevel['level']}',
+                      customMessage:
+                          'Deseja excluir os slots de magia do nível ${slotsLevel['level']}?',
+                    );
+                    if (confirmed) _removeSpellSlotsLevel(index);
+                  },
                   icon: const Icon(Icons.delete, color: Colors.red),
                   iconSize: 20,
                 ),
@@ -1799,7 +1826,11 @@ class _EditClassScreenState extends ConsumerState<EditClassScreen> {
             return Card(
               margin: const EdgeInsets.only(bottom: 8),
               child: ListTile(
-                title: Text(choice['description'] ?? 'Escolha'),
+                title: CollapsibleRichText(
+                  choice['description'] ?? 'Escolha',
+                  initialMaxLines: 2,
+                  style: const TextStyle(fontWeight: FontWeight.w500),
+                ),
                 subtitle:
                     (choice['options'] is List &&
                             (choice['options'] as List).isNotEmpty)
@@ -1818,10 +1849,20 @@ class _EditClassScreenState extends ConsumerState<EditClassScreen> {
                       icon: const Icon(Icons.edit, color: Colors.blueGrey),
                     ),
                     IconButton(
-                      onPressed:
-                          () => setState(() {
+                      onPressed: () async {
+                        final confirmed = await showDeleteConfirmationDialog(
+                          context,
+                          title: 'Excluir Escolha de Equipamento',
+                          itemName: 'Escolha de equipamento',
+                          customMessage:
+                              'Deseja excluir esta escolha de equipamento?',
+                        );
+                        if (confirmed) {
+                          setState(() {
                             _equipmentChoices.removeAt(index);
-                          }),
+                          });
+                        }
+                      },
                       icon: const Icon(Icons.delete, color: Colors.red),
                     ),
                   ],
@@ -1888,7 +1929,16 @@ class _EditClassScreenState extends ConsumerState<EditClassScreen> {
                   iconSize: 20,
                 ),
                 IconButton(
-                  onPressed: () => _removeSubclass(index),
+                  onPressed: () async {
+                    final confirmed = await showDeleteConfirmationDialog(
+                      context,
+                      title: 'Excluir Subclasse',
+                      itemName: subclass['name'] ?? 'Subclasse',
+                      customMessage:
+                          'Deseja excluir a subclasse "${subclass['name'] ?? 'Sem nome'}"?',
+                    );
+                    if (confirmed) _removeSubclass(index);
+                  },
                   icon: const Icon(Icons.delete, color: Colors.red),
                   iconSize: 20,
                 ),
@@ -1896,7 +1946,7 @@ class _EditClassScreenState extends ConsumerState<EditClassScreen> {
             ),
             if (description.isNotEmpty) ...[
               const SizedBox(height: 8),
-              CollapsibleText(
+              CollapsibleRichText(
                 description,
                 initialMaxLines: 8,
                 style: const TextStyle(
@@ -1925,7 +1975,7 @@ class _EditClassScreenState extends ConsumerState<EditClassScreen> {
                       ),
                       const SizedBox(height: 2),
                       if ((f['description'] ?? '').toString().isNotEmpty)
-                        CollapsibleText(
+                        CollapsibleRichText(
                           f['description'] ?? '',
                           initialMaxLines: 6,
                           style: const TextStyle(
@@ -2007,14 +2057,37 @@ class _EditClassScreenState extends ConsumerState<EditClassScreen> {
         usageText = 'Usos: ${usageValue ?? 1} por nível da classe';
         break;
       case 'Por Modificador de Atributo':
-        usageText = 'Usos: Modificador de $usageAttribute (mín. 1)';
+        final multiplier = usageValue != null ? ' x $usageValue' : '';
+        usageText = 'Usos: Modificador de $usageAttribute$multiplier';
         break;
-      case 'Manual por Nível':
-        usageText = 'Usos: ${usageValue ?? 1} por nível da classe';
+      case 'Por Proficiência':
+        final multiplier = usageValue != null ? ' x $usageValue' : '';
+        usageText = 'Usos: Bônus de Proficiência$multiplier';
         break;
       case 'Fixo':
-        usageText = 'Usos: ${usageValue ?? 1}';
+        usageText = 'Usos: ${usageValue ?? 1} por dia';
         break;
+      case 'Por Longo Descanso':
+        usageText = 'Usos: ${usageValue ?? 1} por longo descanso';
+        break;
+      case 'Por Curto Descanso':
+        usageText = 'Usos: ${usageValue ?? 1} por curto descanso';
+        break;
+      case 'Manual por Nível':
+        final increases =
+            (feature['manual_level_increases'] as List<dynamic>?)
+                ?.map((e) => Map<String, dynamic>.from(e))
+                .toList() ??
+            [];
+        if (increases.isNotEmpty) {
+          final levels = increases.map((e) => 'Nível ${e['level']}').join(', ');
+          usageText = 'Usos: ${usageValue ?? 1} inicial, aumenta em $levels';
+        } else {
+          usageText = 'Usos: ${usageValue ?? 1} inicial';
+        }
+        break;
+      default:
+        usageText = 'Usos limitados';
     }
 
     return Container(
@@ -3242,9 +3315,18 @@ class _LevelFeatureDialogState extends State<_LevelFeatureDialog> {
                           icon: const Icon(Icons.edit, color: Colors.blueGrey),
                         ),
                         IconButton(
-                          onPressed:
-                              () =>
-                                  setState(() => _subabilities.removeAt(index)),
+                          onPressed: () async {
+                            final confirmed = await showDeleteConfirmationDialog(
+                              context,
+                              title: 'Excluir Sub-habilidade',
+                              itemName: sub['name'] ?? 'Sub-habilidade',
+                              customMessage:
+                                  'Deseja excluir a sub-habilidade "${sub['name'] ?? 'Sem nome'}"?',
+                            );
+                            if (confirmed) {
+                              setState(() => _subabilities.removeAt(index));
+                            }
+                          },
                           icon: const Icon(Icons.delete, color: Colors.red),
                         ),
                       ],
@@ -3721,7 +3803,15 @@ class _LevelFeatureDialogState extends State<_LevelFeatureDialog> {
             ),
             const SizedBox(width: 12),
             IconButton(
-              onPressed: () => _removeManualLevelIncrease(index),
+              onPressed: () async {
+                final confirmed = await showDeleteConfirmationDialog(
+                  context,
+                  title: 'Excluir Aumento Manual',
+                  itemName: 'Aumento de nível',
+                  customMessage: 'Deseja excluir este aumento manual de nível?',
+                );
+                if (confirmed) _removeManualLevelIncrease(index);
+              },
               icon: const Icon(Icons.delete, color: Colors.red),
               tooltip: 'Remover',
             ),
@@ -3914,7 +4004,15 @@ class _LevelFeatureDialogState extends State<_LevelFeatureDialog> {
             ),
             const SizedBox(width: 12),
             IconButton(
-              onPressed: () => _removeDiceIncrease(index),
+              onPressed: () async {
+                final confirmed = await showDeleteConfirmationDialog(
+                  context,
+                  title: 'Excluir Aumento de Dado',
+                  itemName: 'Aumento de dado',
+                  customMessage: 'Deseja excluir este aumento de dado?',
+                );
+                if (confirmed) _removeDiceIncrease(index);
+              },
               icon: const Icon(Icons.delete, color: Colors.red),
               tooltip: 'Remover',
             ),
@@ -4451,8 +4549,18 @@ class _SubclassDialogState extends State<_SubclassDialog> {
                             ),
                           ),
                           IconButton(
-                            onPressed:
-                                () => setState(() => _features.removeAt(index)),
+                            onPressed: () async {
+                              final confirmed = await showDeleteConfirmationDialog(
+                                context,
+                                title: 'Excluir Característica',
+                                itemName: f['name'] ?? 'Característica',
+                                customMessage:
+                                    'Deseja excluir a característica "${f['name'] ?? 'Sem nome'}"?',
+                              );
+                              if (confirmed) {
+                                setState(() => _features.removeAt(index));
+                              }
+                            },
                             icon: const Icon(Icons.delete, color: Colors.red),
                           ),
                         ],
@@ -4550,6 +4658,9 @@ class _SubclassFeatureDialogState extends State<_SubclassFeatureDialog> {
   bool _hasHitPointIncrease = false;
   final _hitPointIncreaseController = TextEditingController();
 
+  // Para aumentos manuais por nível
+  final List<Map<String, dynamic>> _subclassManualLevelIncreases = [];
+
   // UD state (por diálogo)
   bool _udEnabled = false;
   final TextEditingController _udBaseController = TextEditingController(
@@ -4560,9 +4671,12 @@ class _SubclassFeatureDialogState extends State<_SubclassFeatureDialog> {
 
   final List<String> _usageTypeOptions = [
     'Por Nível',
-    'Por Modificador de Atributo',
     'Manual por Nível',
+    'Por Modificador de Atributo',
+    'Por Proficiência',
     'Fixo',
+    'Por Longo Descanso',
+    'Por Curto Descanso',
   ];
 
   final List<String> _usageRecoveryOptions = [
@@ -4604,6 +4718,17 @@ class _SubclassFeatureDialogState extends State<_SubclassFeatureDialog> {
     _usageValueController.text = feature['usage_value']?.toString() ?? '';
     _usageRecovery = feature['usage_recovery'];
     _usageAttribute = feature['usage_attribute'];
+
+    // Carregar aumentos manuais se existirem
+    if (feature['manual_level_increases'] != null) {
+      _subclassManualLevelIncreases.clear();
+      final rawIncreases = feature['manual_level_increases'] as List<dynamic>?;
+      if (rawIncreases != null) {
+        _subclassManualLevelIncreases.addAll(
+          rawIncreases.map((e) => Map<String, dynamic>.from(e)).toList(),
+        );
+      }
+    }
 
     // Carregar aumento de dados
     _hasDiceIncrease = feature['has_dice_increase'] ?? false;
@@ -4762,6 +4887,9 @@ class _SubclassFeatureDialogState extends State<_SubclassFeatureDialog> {
                         : null,
                 'usage_recovery': _usageRecovery,
                 'usage_attribute': _usageAttribute,
+                if (_usageType == 'Manual por Nível') ...{
+                  'manual_level_increases': _subclassManualLevelIncreases,
+                },
                 'has_dice_increase': _hasDiceIncrease,
                 'initial_dice':
                     _initialDiceController.text.isNotEmpty
@@ -4843,53 +4971,9 @@ class _SubclassFeatureDialogState extends State<_SubclassFeatureDialog> {
                 },
               ),
               const SizedBox(height: 8),
-              if (_usageType == 'Por Modificador de Atributo') ...[
-                DropdownButtonFormField<String>(
-                  value: _usageAttribute,
-                  decoration: const InputDecoration(
-                    labelText: 'Atributo *',
-                    border: OutlineInputBorder(),
-                  ),
-                  items:
-                      _attributeOptions.map((attr) {
-                        return DropdownMenuItem(value: attr, child: Text(attr));
-                      }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _usageAttribute = value;
-                    });
-                  },
-                  validator: (value) {
-                    if (_hasUsageLimit &&
-                        _usageType == 'Por Modificador de Atributo' &&
-                        (value == null || value.isEmpty)) {
-                      return 'Atributo é obrigatório';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 8),
-              ],
-              if (_usageType != 'Por Modificador de Atributo') ...[
-                TextFormField(
-                  controller: _usageValueController,
-                  decoration: const InputDecoration(
-                    labelText: 'Valor Base *',
-                    hintText: 'Ex: 2',
-                    border: OutlineInputBorder(),
-                  ),
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (_hasUsageLimit &&
-                        _usageType != 'Por Modificador de Atributo' &&
-                        (value == null || value.trim().isEmpty)) {
-                      return 'Valor base é obrigatório';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 8),
-              ],
+              // Campo de valor baseado no tipo selecionado
+              _buildSubclassUsageValueField(),
+              const SizedBox(height: 8),
               DropdownButtonFormField<String>(
                 value: _usageRecovery,
                 decoration: const InputDecoration(
@@ -5076,10 +5160,18 @@ class _SubclassFeatureDialogState extends State<_SubclassFeatureDialog> {
             ),
             const SizedBox(width: 8),
             IconButton(
-              onPressed: () {
-                setState(() {
-                  _diceIncreases.removeAt(index);
-                });
+              onPressed: () async {
+                final confirmed = await showDeleteConfirmationDialog(
+                  context,
+                  title: 'Excluir Aumento de Dado',
+                  itemName: 'Aumento de dado',
+                  customMessage: 'Deseja excluir este aumento de dado?',
+                );
+                if (confirmed) {
+                  setState(() {
+                    _diceIncreases.removeAt(index);
+                  });
+                }
               },
               icon: const Icon(Icons.delete, color: Colors.red),
             ),
@@ -5181,6 +5273,340 @@ class _SubclassFeatureDialogState extends State<_SubclassFeatureDialog> {
         ),
       ),
     );
+  }
+
+  Widget _buildSubclassUsageValueField() {
+    if (_usageType == null) return const SizedBox.shrink();
+
+    switch (_usageType) {
+      case 'Por Nível':
+        return TextFormField(
+          controller: _usageValueController,
+          decoration: const InputDecoration(
+            labelText: 'Usos por Nível *',
+            hintText: 'Ex: 1 (1 uso por nível da classe)',
+            border: OutlineInputBorder(),
+          ),
+          keyboardType: TextInputType.number,
+          validator: (value) {
+            if (_hasUsageLimit && (value == null || value.trim().isEmpty)) {
+              return 'Valor é obrigatório';
+            }
+            final parsed = int.tryParse(value ?? '');
+            if (value != null &&
+                value.isNotEmpty &&
+                (parsed == null || parsed < 1)) {
+              return 'Deve ser um número maior que 0';
+            }
+            return null;
+          },
+        );
+
+      case 'Manual por Nível':
+        return Column(
+          children: [
+            TextFormField(
+              controller: _usageValueController,
+              decoration: const InputDecoration(
+                labelText: 'Usos Iniciais *',
+                hintText: 'Ex: 2 (número de usos no nível 1)',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.number,
+              validator: (value) {
+                if (_hasUsageLimit && (value == null || value.trim().isEmpty)) {
+                  return 'Valor inicial é obrigatório';
+                }
+                final parsed = int.tryParse(value ?? '');
+                if (value != null &&
+                    value.isNotEmpty &&
+                    (parsed == null || parsed < 1)) {
+                  return 'Deve ser um número maior que 0';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+            _buildSubclassManualLevelIncreasesSection(),
+          ],
+        );
+
+      case 'Por Modificador de Atributo':
+        return Column(
+          children: [
+            DropdownButtonFormField<String>(
+              value: _usageAttribute,
+              decoration: const InputDecoration(
+                labelText: 'Atributo *',
+                border: OutlineInputBorder(),
+              ),
+              items:
+                  _attributeOptions
+                      .map(
+                        (attr) =>
+                            DropdownMenuItem(value: attr, child: Text(attr)),
+                      )
+                      .toList(),
+              onChanged: (value) {
+                setState(() {
+                  _usageAttribute = value;
+                });
+              },
+              validator: (value) {
+                if (_hasUsageLimit && (value == null || value.isEmpty)) {
+                  return 'Atributo é obrigatório';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: _usageValueController,
+              decoration: const InputDecoration(
+                labelText: 'Multiplicador (opcional)',
+                hintText: 'Ex: 2 (2x o modificador)',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.number,
+              validator: (value) {
+                if (value != null && value.isNotEmpty) {
+                  final parsed = int.tryParse(value);
+                  if (parsed == null || parsed < 1) {
+                    return 'Deve ser um número maior que 0';
+                  }
+                }
+                return null;
+              },
+            ),
+          ],
+        );
+
+      case 'Por Proficiência':
+        return TextFormField(
+          controller: _usageValueController,
+          decoration: const InputDecoration(
+            labelText: 'Multiplicador (opcional)',
+            hintText: 'Ex: 2 (2x o bônus de proficiência)',
+            border: OutlineInputBorder(),
+          ),
+          keyboardType: TextInputType.number,
+          validator: (value) {
+            if (value != null && value.isNotEmpty) {
+              final parsed = int.tryParse(value);
+              if (parsed == null || parsed < 1) {
+                return 'Deve ser um número maior que 0';
+              }
+            }
+            return null;
+          },
+        );
+
+      case 'Fixo':
+        return TextFormField(
+          controller: _usageValueController,
+          decoration: const InputDecoration(
+            labelText: 'Número Fixo de Usos *',
+            hintText: 'Ex: 3',
+            border: OutlineInputBorder(),
+          ),
+          keyboardType: TextInputType.number,
+          validator: (value) {
+            if (_hasUsageLimit && (value == null || value.trim().isEmpty)) {
+              return 'Valor é obrigatório';
+            }
+            final parsed = int.tryParse(value ?? '');
+            if (value != null &&
+                value.isNotEmpty &&
+                (parsed == null || parsed < 1)) {
+              return 'Deve ser um número maior que 0';
+            }
+            return null;
+          },
+        );
+
+      case 'Por Longo Descanso':
+      case 'Por Curto Descanso':
+        return TextFormField(
+          controller: _usageValueController,
+          decoration: const InputDecoration(
+            labelText: 'Número de Usos *',
+            hintText: 'Ex: 2',
+            border: OutlineInputBorder(),
+          ),
+          keyboardType: TextInputType.number,
+          validator: (value) {
+            if (_hasUsageLimit && (value == null || value.trim().isEmpty)) {
+              return 'Valor é obrigatório';
+            }
+            final parsed = int.tryParse(value ?? '');
+            if (value != null &&
+                value.isNotEmpty &&
+                (parsed == null || parsed < 1)) {
+              return 'Deve ser um número maior que 0';
+            }
+            return null;
+          },
+        );
+
+      default:
+        return const SizedBox.shrink();
+    }
+  }
+
+  Widget _buildSubclassManualLevelIncreasesSection() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Aumentos por Nível',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                IconButton(
+                  onPressed: _addSubclassManualLevelIncrease,
+                  icon: const Icon(Icons.add),
+                  tooltip: 'Adicionar aumento',
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Defina em quais níveis o número de usos aumenta (ex: nível 3, 6, 12, 17)',
+              style: TextStyle(color: Colors.grey[600], fontSize: 12),
+            ),
+            const SizedBox(height: 16),
+            if (_subclassManualLevelIncreases.isEmpty)
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Text(
+                  'Nenhum aumento definido. Clique no + para adicionar.',
+                  style: TextStyle(color: Colors.grey),
+                ),
+              )
+            else
+              ..._subclassManualLevelIncreases.asMap().entries.map((entry) {
+                final index = entry.key;
+                final increase = entry.value;
+                return _buildSubclassManualLevelIncreaseCard(index, increase);
+              }),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSubclassManualLevelIncreaseCard(
+    int index,
+    Map<String, dynamic> increase,
+  ) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          children: [
+            Expanded(
+              flex: 2,
+              child: DropdownButtonFormField<int>(
+                value: increase['level'],
+                decoration: const InputDecoration(
+                  labelText: 'Nível',
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                ),
+                items: List.generate(
+                  20,
+                  (i) => DropdownMenuItem(
+                    value: i + 1,
+                    child: Text('Nível ${i + 1}'),
+                  ),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    _subclassManualLevelIncreases[index]['level'] = value;
+                  });
+                },
+                validator: (value) {
+                  if (value == null) return 'Selecione um nível';
+                  return null;
+                },
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              flex: 2,
+              child: TextFormField(
+                initialValue: increase['increase']?.toString() ?? '',
+                decoration: const InputDecoration(
+                  labelText: 'Aumento',
+                  hintText: 'Ex: +1',
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                ),
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  _subclassManualLevelIncreases[index]['increase'] =
+                      int.tryParse(value) ?? 0;
+                },
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Valor obrigatório';
+                  }
+                  final parsed = int.tryParse(value);
+                  if (parsed == null || parsed < 1) {
+                    return 'Deve ser > 0';
+                  }
+                  return null;
+                },
+              ),
+            ),
+            const SizedBox(width: 12),
+            IconButton(
+              onPressed: () async {
+                final confirmed = await showDeleteConfirmationDialog(
+                  context,
+                  title: 'Excluir Aumento Manual',
+                  itemName: 'Aumento de nível',
+                  customMessage: 'Deseja excluir este aumento manual de nível?',
+                );
+                if (confirmed) _removeSubclassManualLevelIncrease(index);
+              },
+              icon: const Icon(Icons.delete, color: Colors.red),
+              tooltip: 'Remover',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _addSubclassManualLevelIncrease() {
+    setState(() {
+      _subclassManualLevelIncreases.add({'level': 2, 'increase': 1});
+    });
+  }
+
+  void _removeSubclassManualLevelIncrease(int index) {
+    setState(() {
+      _subclassManualLevelIncreases.removeAt(index);
+    });
   }
 
   Widget _buildUnarmoredDefenseSection() {
@@ -5344,7 +5770,11 @@ class _EditEquipmentChoiceDialogState
                     margin: const EdgeInsets.only(bottom: 8),
                     child: ListTile(
                       title: Text(option['name'] ?? 'Opção sem nome'),
-                      subtitle: Text(option['description'] ?? ''),
+                      subtitle: CollapsibleRichText(
+                        option['description'] ?? '',
+                        initialMaxLines: 2,
+                        style: const TextStyle(fontSize: 12),
+                      ),
                       trailing: IconButton(
                         onPressed: () => _editOption(index, option),
                         icon: const Icon(Icons.edit, color: Colors.blueGrey),

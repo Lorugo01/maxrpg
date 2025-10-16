@@ -737,10 +737,21 @@ class _EditSpellScreenState extends ConsumerState<EditSpellScreen> {
                         ),
                         const SizedBox(width: 12),
                         IconButton(
-                          onPressed:
-                              () => setState(
+                          onPressed: () async {
+                            final confirmed =
+                                await showDeleteConfirmationDialog(
+                                  context,
+                                  title: 'Excluir Aumento de Dado',
+                                  itemName: 'Aumento de dado',
+                                  customMessage:
+                                      'Deseja excluir este aumento de dado?',
+                                );
+                            if (confirmed) {
+                              setState(
                                 () => _cantripDiceIncreases.removeAt(index),
-                              ),
+                              );
+                            }
+                          },
                           icon: const Icon(Icons.delete, color: Colors.red),
                         ),
                       ],

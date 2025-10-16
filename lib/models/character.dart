@@ -70,6 +70,8 @@ class Character {
   int deathSaveFailures;
   // Dados de Vida usados (0..level)
   int? hitDiceUsed;
+  // Inspiração
+  bool inspiration;
 
   Character({
     String? id,
@@ -116,6 +118,7 @@ class Character {
     this.deathSaveSuccesses = 0,
     this.deathSaveFailures = 0,
     this.hitDiceUsed = 0,
+    this.inspiration = false,
   }) : id = id ?? const Uuid().v4(),
        skills = skills ?? DefaultSkills.getDefaultSkills(),
        inventory = inventory ?? [],
@@ -580,6 +583,7 @@ class Character {
       deathSaveSuccesses: json['death_save_successes'] as int? ?? 0,
       deathSaveFailures: json['death_save_failures'] as int? ?? 0,
       hitDiceUsed: json['hit_dice_used'] as int? ?? 0,
+      inspiration: json['inspiration'] as bool? ?? false,
       isSpellcaster: json['is_spellcaster'] as bool?,
       customSpellcastingAbility: json['custom_spellcasting_ability'] as String?,
       customAbilities:
@@ -633,6 +637,7 @@ class Character {
       'death_save_successes': deathSaveSuccesses,
       'death_save_failures': deathSaveFailures,
       'hit_dice_used': hitDiceUsed ?? 0,
+      'inspiration': inspiration,
       'is_spellcaster': isSpellcaster,
       'custom_spellcasting_ability': customSpellcastingAbility,
       'custom_abilities': customAbilities,

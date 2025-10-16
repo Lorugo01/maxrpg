@@ -507,13 +507,22 @@ class _EditRaceScreenState extends ConsumerState<EditRaceScreen> {
                 const SizedBox(width: 8),
                 IconButton(
                   tooltip: 'Remover',
-                  onPressed: () {
-                    // Dispose dos controllers antes de remover
-                    subrace['nameController']?.dispose();
-                    subrace['descriptionController']?.dispose();
-                    subrace['traitsController']?.dispose();
-                    subrace['spellsController']?.dispose();
-                    setState(() => _subraces.removeAt(index));
+                  onPressed: () async {
+                    final confirmed = await showDeleteConfirmationDialog(
+                      context,
+                      title: 'Excluir Subraça',
+                      itemName: subrace['nameController']?.text ?? 'Subraça',
+                      customMessage:
+                          'Deseja excluir a subraça "${subrace['nameController']?.text ?? 'Sem nome'}"?',
+                    );
+                    if (confirmed) {
+                      // Dispose dos controllers antes de remover
+                      subrace['nameController']?.dispose();
+                      subrace['descriptionController']?.dispose();
+                      subrace['traitsController']?.dispose();
+                      subrace['spellsController']?.dispose();
+                      setState(() => _subraces.removeAt(index));
+                    }
                   },
                   icon: const Icon(Icons.delete, color: Colors.red),
                 ),
@@ -756,10 +765,24 @@ class _EditRaceScreenState extends ConsumerState<EditRaceScreen> {
                                         tooltip: 'Remover',
                                         onPressed:
                                             _traitEntries.length > 1
-                                                ? () => setState(() {
-                                                  trait.dispose();
-                                                  _traitEntries.removeAt(index);
-                                                })
+                                                ? () async {
+                                                  final confirmed =
+                                                      await showDeleteConfirmationDialog(
+                                                        context,
+                                                        title: 'Excluir Traço',
+                                                        itemName: 'Traço',
+                                                        customMessage:
+                                                            'Deseja excluir este traço?',
+                                                      );
+                                                  if (confirmed) {
+                                                    setState(() {
+                                                      trait.dispose();
+                                                      _traitEntries.removeAt(
+                                                        index,
+                                                      );
+                                                    });
+                                                  }
+                                                }
                                                 : null,
                                         icon: const Icon(
                                           Icons.delete,
@@ -866,11 +889,22 @@ class _EditRaceScreenState extends ConsumerState<EditRaceScreen> {
                                       const SizedBox(width: 8),
                                       IconButton(
                                         tooltip: 'Remover',
-                                        onPressed:
-                                            () => setState(() {
+                                        onPressed: () async {
+                                          final confirmed =
+                                              await showDeleteConfirmationDialog(
+                                                context,
+                                                title: 'Excluir Magia',
+                                                itemName: spell.name.text,
+                                                customMessage:
+                                                    'Deseja excluir a magia "${spell.name.text}"?',
+                                              );
+                                          if (confirmed) {
+                                            setState(() {
                                               spell.dispose();
                                               _spellEntries.removeAt(index);
-                                            }),
+                                            });
+                                          }
+                                        },
                                         icon: const Icon(
                                           Icons.delete,
                                           color: Colors.red,
@@ -1394,11 +1428,21 @@ class _EditRaceScreenState extends ConsumerState<EditRaceScreen> {
                           ),
                         ),
                         IconButton(
-                          onPressed:
-                              () => setState(
+                          onPressed: () async {
+                            final confirmed = await showDeleteConfirmationDialog(
+                              context,
+                              title: 'Excluir Aumento Manual',
+                              itemName: 'Aumento de nível',
+                              customMessage:
+                                  'Deseja excluir este aumento manual de nível?',
+                            );
+                            if (confirmed) {
+                              setState(
                                 () =>
                                     trait.manualLevelIncreases.removeAt(index),
-                              ),
+                              );
+                            }
+                          },
                           icon: const Icon(Icons.delete, color: Colors.red),
                         ),
                       ],
@@ -1528,10 +1572,21 @@ class _EditRaceScreenState extends ConsumerState<EditRaceScreen> {
                                 ),
                               ),
                               IconButton(
-                                onPressed:
-                                    () => setState(
+                                onPressed: () async {
+                                  final confirmed =
+                                      await showDeleteConfirmationDialog(
+                                        context,
+                                        title: 'Excluir Aumento de Dado',
+                                        itemName: 'Aumento de dado',
+                                        customMessage:
+                                            'Deseja excluir este aumento de dado?',
+                                      );
+                                  if (confirmed) {
+                                    setState(
                                       () => trait.diceIncreases.removeAt(index),
-                                    ),
+                                    );
+                                  }
+                                },
                                 icon: const Icon(
                                   Icons.delete,
                                   color: Colors.red,

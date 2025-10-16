@@ -256,11 +256,28 @@ class _EditFeatScreenState extends ConsumerState<EditFeatScreen> {
                                         tooltip: 'Remover',
                                         onPressed:
                                             _benefitEntries.length > 1
-                                                ? () => setState(() {
-                                                  b['name']!.dispose();
-                                                  b['description']!.dispose();
-                                                  _benefitEntries.removeAt(i);
-                                                })
+                                                ? () async {
+                                                  final confirmed =
+                                                      await showDeleteConfirmationDialog(
+                                                        context,
+                                                        title:
+                                                            'Excluir Benefício',
+                                                        itemName:
+                                                            b['name']!.text,
+                                                        customMessage:
+                                                            'Deseja excluir o benefício "${b['name']!.text}"?',
+                                                      );
+                                                  if (confirmed) {
+                                                    setState(() {
+                                                      b['name']!.dispose();
+                                                      b['description']!
+                                                          .dispose();
+                                                      _benefitEntries.removeAt(
+                                                        i,
+                                                      );
+                                                    });
+                                                  }
+                                                }
                                                 : null,
                                         icon: const Icon(
                                           Icons.delete,

@@ -547,6 +547,22 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
                               'Tendência: ${_character.alignment}',
                               style: Theme.of(context).textTheme.bodyLarge,
                             ),
+                            Row(
+                              children: [
+                                Checkbox(
+                                  value: _character.inspiration,
+                                  onChanged: (v) async {
+                                    setState(
+                                      () => _character.inspiration = v ?? false,
+                                    );
+                                    await CharacterService.saveCharacter(
+                                      _character,
+                                    );
+                                  },
+                                ),
+                                const Text('Inspiração'),
+                              ],
+                            ),
                           ],
                         ),
                       ),

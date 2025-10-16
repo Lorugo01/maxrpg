@@ -2,6 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' as fq;
 import 'dart:convert';
 
+/// Exibe um diálogo de confirmação para exclusão
+Future<bool> showDeleteConfirmationDialog(
+  BuildContext context, {
+  required String title,
+  required String itemName,
+  String? customMessage,
+}) async {
+  final confirmed = await showDialog<bool>(
+    context: context,
+    builder:
+        (_) => AlertDialog(
+          title: Text(title),
+          content: Text(customMessage ?? 'Deseja excluir "$itemName"?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Excluir', style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        ),
+  );
+  return confirmed == true;
+}
+
 /// Constrói um InlineSpan a partir de marcações simples: [b] [/b], [i] [/i], [u] [/u].
 /// - Negrito é renderizado em vermelho.
 InlineSpan buildFormattedSpan(
@@ -60,6 +88,50 @@ InlineSpan buildFormattedSpan(
   return parse(input, baseStyle);
 }
 
+/// Constrói um InlineSpan a partir de um Delta JSON (lista de ops do Quill).
+/// Suporta apenas os atributos: bold, italic, underline. Qualquer outro é ignorado.
+InlineSpan buildDeltaFormattedSpan(
+  List<dynamic> ops, {
+  TextStyle? baseStyle,
+  Color boldColor = Colors.red,
+}) {
+  baseStyle ??= const TextStyle(fontSize: 14, color: Colors.black87);
+  final children = <InlineSpan>[];
+
+  for (final rawOp in ops) {
+    if (rawOp is! Map) continue;
+    final Object? insertObj = rawOp['insert'];
+    if (insertObj == null) continue;
+    final String insertText = insertObj.toString();
+    TextStyle effective = baseStyle;
+
+    final attrs = rawOp['attributes'];
+    if (attrs is Map) {
+      final bool isBold = attrs['bold'] == true;
+      final bool isItalic = attrs['italic'] == true;
+      final bool isUnderline = attrs['underline'] == true;
+
+      if (isBold) {
+        effective = effective.copyWith(
+          fontWeight: FontWeight.w700,
+          color: boldColor,
+        );
+      }
+      if (isItalic) {
+        effective = effective.copyWith(fontStyle: FontStyle.italic);
+      }
+      if (isUnderline) {
+        effective = effective.copyWith(decoration: TextDecoration.underline);
+      }
+    }
+
+    if (insertText.isEmpty) continue;
+    children.add(TextSpan(text: insertText, style: effective));
+  }
+
+  return TextSpan(children: children, style: baseStyle);
+}
+
 /// Controller que renderiza inline as marcações [b]/[i]/[u] dentro do próprio campo.
 class MarkupTextEditingController extends TextEditingController {
   MarkupTextEditingController({super.text});
@@ -104,11 +176,39 @@ class _CollapsibleRichTextState extends State<CollapsibleRichText> {
 
   @override
   Widget build(BuildContext context) {
-    final span = buildFormattedSpan(
-      widget.text,
-      baseStyle: widget.style,
-      boldColor: widget.boldColor,
-    );
+    InlineSpan span;
+    final raw = widget.text.trim();
+    // Detecta Delta JSON (lista de ops) e renderiza como RichText; caso contrário, usa marcações [b]/[i]/[u]
+    if (raw.startsWith('[') || raw.startsWith('{')) {
+      try {
+        final decoded = jsonDecode(raw);
+        final List<dynamic> ops;
+        if (decoded is List) {
+          ops = decoded;
+        } else if (decoded is Map && decoded['ops'] is List) {
+          ops = decoded['ops'] as List;
+        } else {
+          ops = const [];
+        }
+        span = buildDeltaFormattedSpan(
+          ops,
+          baseStyle: widget.style,
+          boldColor: widget.boldColor,
+        );
+      } catch (_) {
+        span = buildFormattedSpan(
+          widget.text,
+          baseStyle: widget.style,
+          boldColor: widget.boldColor,
+        );
+      }
+    } else {
+      span = buildFormattedSpan(
+        widget.text,
+        baseStyle: widget.style,
+        boldColor: widget.boldColor,
+      );
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -166,10 +266,16 @@ class _FormattedTextEditorState extends State<FormattedTextEditor> {
         final dynamic decoded = jsonDecode(raw);
         doc = fq.Document.fromJson(decoded as List);
       } else {
-        doc = fq.Document()..insert(0, _plainTextCache);
+        // Para texto externo, remove toda formatação e usa apenas texto puro
+        final cleanText = _extractPlainText(_plainTextCache);
+        doc = fq.Document()..insert(0, cleanText);
+        _plainTextCache = cleanText;
       }
     } catch (_) {
-      doc = fq.Document()..insert(0, _plainTextCache);
+      // Em caso de erro, extrai apenas texto puro
+      final cleanText = _extractPlainText(_plainTextCache);
+      doc = fq.Document()..insert(0, cleanText);
+      _plainTextCache = cleanText;
     }
     _quillController = fq.QuillController(
       document: doc,
@@ -191,35 +297,81 @@ class _FormattedTextEditorState extends State<FormattedTextEditor> {
           final dynamic decoded = jsonDecode(raw);
           _quillController.document = fq.Document.fromJson(decoded as List);
         } else {
+          // Para texto externo, remove toda formatação e usa apenas texto puro
+          final plainText = _extractPlainText(raw);
           final len = _quillController.document.length;
           _quillController.replaceText(
             0,
             len,
-            _plainTextCache,
+            plainText,
             const TextSelection.collapsed(offset: 0),
           );
         }
       } catch (_) {
+        // Em caso de erro, extrai apenas texto puro
+        final plainText = _extractPlainText(_plainTextCache);
         final len = _quillController.document.length;
         _quillController.replaceText(
           0,
           len,
-          _plainTextCache,
+          plainText,
           const TextSelection.collapsed(offset: 0),
         );
       }
     }
   }
 
+  /// Extrai apenas texto puro, removendo formatações HTML, URLs, marcações e outros elementos externos
+  String _extractPlainText(String input) {
+    String text = input;
+
+    // Remove URLs (SourceURL, http://, https://)
+    text = text.replaceAll(RegExp(r'SourceURL:.*?(?=\n|$)'), '');
+    text = text.replaceAll(RegExp(r'https?://[^\s]+'), '');
+
+    // Remove marcações HTML básicas
+    text = text.replaceAll(RegExp(r'<[^>]*>'), '');
+
+    // Remove marcações de formatação do próprio app [b], [i], [u]
+    text = text.replaceAll(RegExp(r'\[/?[biu]\]'), '');
+
+    // Remove quebras de linha excessivas (mais de 2 consecutivas)
+    text = text.replaceAll(RegExp(r'\n{3,}'), '\n\n');
+
+    // Remove espaços em branco no início e fim
+    text = text.trim();
+
+    return text;
+  }
+
   void _onQuillChanged() {
-    final plain = _quillController.document.toPlainText();
-    final deltaJson = jsonEncode(_quillController.document.toDelta().toJson());
+    // Sanitize delta: allow only bold, italic, underline; drop others
+    final ops = List<Map<String, dynamic>>.from(
+      _quillController.document.toDelta().toJson().cast<Map<String, dynamic>>(),
+    );
+    final allowed = {'bold', 'italic', 'underline'};
+
+    for (final op in ops) {
+      final attrs = op['attributes'];
+      if (attrs is Map) {
+        final newAttrs = <String, dynamic>{};
+        for (final key in attrs.keys) {
+          if (allowed.contains(key)) newAttrs[key] = attrs[key];
+        }
+        if (newAttrs.isEmpty) {
+          op.remove('attributes');
+        } else {
+          op['attributes'] = newAttrs;
+        }
+      }
+    }
+
+    final deltaJson = jsonEncode(ops);
     if (deltaJson == widget.controller.text) return;
-    _plainTextCache = plain;
-    // Salva como Delta JSON no controller para persistir formatação
+
+    _plainTextCache = _quillController.document.toPlainText();
     widget.controller.text = deltaJson;
     widget.onChanged?.call(deltaJson);
-    setState(() {});
   }
 
   @override
@@ -235,6 +387,16 @@ class _FormattedTextEditorState extends State<FormattedTextEditor> {
       initialValue: _plainTextCache,
       validator: widget.validator,
       builder: (state) {
+        void toggleAttr(fq.Attribute attribute) {
+          final attrs = _quillController.getSelectionStyle().attributes;
+          if (attrs.containsKey(attribute.key)) {
+            final unset = fq.Attribute.fromKeyValue(attribute.key, null);
+            _quillController.formatSelection(unset);
+          } else {
+            _quillController.formatSelection(attribute);
+          }
+        }
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -244,23 +406,40 @@ class _FormattedTextEditorState extends State<FormattedTextEditor> {
                 IconButton(
                   tooltip: 'Negrito',
                   icon: const Icon(Icons.format_bold),
-                  onPressed:
-                      () => _quillController.formatSelection(fq.Attribute.bold),
+                  onPressed: () => toggleAttr(fq.Attribute.bold),
                 ),
                 IconButton(
                   tooltip: 'Itálico',
                   icon: const Icon(Icons.format_italic),
-                  onPressed:
-                      () =>
-                          _quillController.formatSelection(fq.Attribute.italic),
+                  onPressed: () => toggleAttr(fq.Attribute.italic),
                 ),
                 IconButton(
                   tooltip: 'Sublinhado',
                   icon: const Icon(Icons.format_underline),
-                  onPressed:
-                      () => _quillController.formatSelection(
-                        fq.Attribute.underline,
-                      ),
+                  onPressed: () => toggleAttr(fq.Attribute.underline),
+                ),
+                const SizedBox(width: 8),
+                IconButton(
+                  tooltip: 'Remover formatação',
+                  icon: const Icon(Icons.format_clear),
+                  onPressed: () {
+                    // Limpa os atributos suportados na seleção atual
+                    final unsetBold = fq.Attribute.fromKeyValue(
+                      fq.Attribute.bold.key,
+                      null,
+                    );
+                    final unsetItalic = fq.Attribute.fromKeyValue(
+                      fq.Attribute.italic.key,
+                      null,
+                    );
+                    final unsetUnderline = fq.Attribute.fromKeyValue(
+                      fq.Attribute.underline.key,
+                      null,
+                    );
+                    _quillController.formatSelection(unsetBold);
+                    _quillController.formatSelection(unsetItalic);
+                    _quillController.formatSelection(unsetUnderline);
+                  },
                 ),
               ],
             ),

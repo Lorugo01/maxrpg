@@ -1,5 +1,192 @@
-Você invoca momentaneamente espíritos da ordem para expurgar desordem ao seu redor. Com ação de Magia, você invoca espíritos em Cubo de 9m originado de você. Os espíritos se parecem com modrons ou outros Construtos à sua escolha. Os espíritos são intangíveis e invulneráveis, e criam efeitos abaixo dentro do Cubo antes de desaparecerem:
-Cura: Os espíritos restauram até 100 Pontos de Vida, divididos conforme você escolher entre qualquer número de criaturas de sua escolha no Cubo.
-Reparo: Quaisquer objetos danificados que estejam inteiramente no Cubo serão reparados instantaneamente.
-Dissipar: Todas as magias de nível 6 ou inferior terminam em criaturas e objetos de sua escolha no Cubo.
-Depois de usar, não poderá usar novamente até terminar Descanso Longo, a menos que gaste 7 Pontos de Feitiçaria para restaurar uso.
+[
+  {
+    "name": "Conjuração",
+    "level": 1,
+    "description": "[{\"insert\":\"Você aprendeu a canalizar a essência mágica da natureza para conjurar magias. As informações abaixo detalham como usar essas regras com magias de Guardião, que aparecem na lista de magias de Guardião mais adiante na descrição da classe.\\r\\n\\r\\n\"},{\"insert\":\"Espaços de Magia\",\"attributes\":{\"bold\":true}},{\"insert\":\". A tabela de Recursos do Guardião mostra quantos espaços de magia você tem para conjurar suas magias de nível 1+. Você recupera todos os espaços gastos ao terminar um Descanso Longo .\\r\\n\"},{\"insert\":\"\\r\",\"attributes\":{\"bold\":true}},{\"insert\":\"\\n\"},{\"insert\":\"Magias Preparadas de Nível 1+\",\"attributes\":{\"bold\":true}},{\"insert\":\". Você prepara a lista de magias de nível 1+ disponíveis para você conjurar com esta habilidade. Para começar, escolha duas magias de Guardião de nível 1. Curar Ferimentos e Ataque Enredador são recomendados.\\r\\n\\r\\nO número de magias na sua lista aumenta à medida que você ganha níveis de Guardião, conforme mostrado na coluna Magias Preparadas da tabela de Características do Guardião. Sempre que esse número aumentar, escolha magias adicionais de Guardião até que o número de magias na sua lista corresponda ao número na tabela de Características do Guardião. As magias escolhidas devem ser de um nível para o qual você tenha espaços de magia. Por exemplo, se você for um Guardião nível 5, sua lista de magias preparadas pode incluir seis magias de Guardião de nível 1 ou 2 em qualquer combinação.\\r\\n\\r\\nSe outro recurso do Guardião lhe der magias que você sempre preparou, essas magias não contarão para o número de magias que você pode preparar com esse recurso, mas essas magias contarão como magias do Guardião para você.\\r\\n\"},{\"insert\":\"\\r\",\"attributes\":{\"bold\":true}},{\"insert\":\"\\n\"},{\"insert\":\"Alterando suas Magias Preparadas\",\"attributes\":{\"bold\":true}},{\"insert\":\". Sempre que terminar um Descanso Longo , você pode substituir uma magia da sua lista por outra magia de Guardião para a qual você tenha espaços de magia.\\r\\n\\r\\n\"},{\"insert\":\"Habilidade de Conjuração\",\"attributes\":{\"bold\":true}},{\"insert\":\". Sabedoria é sua habilidade de conjuração para suas magias de Guardião.\\r\\n\\r\\n\"},{\"insert\":\"Foco em Conjuração\",\"attributes\":{\"bold\":true}},{\"insert\":\". Você pode usar um Foco Druídico como Foco em Conjuração para suas magias de Guardião.\\n\"}]",
+    "has_usage_limit": false,
+    "has_dice_increase": false,
+    "has_proficiency_doubling": false
+  },
+  {
+    "name": "Inimigo Favorito",
+    "level": 1,
+    "usage_type": "Manual por Nível",
+    "description": "[{\"insert\":\"Você sempre tem a magia \"},{\"insert\":\"Marca do Predador\",\"attributes\":{\"underline\":true}},{\"insert\":\" preparada. Você pode conjurá-la duas vezes sem gastar um espaçode magia, e você restaura todos os usos gastos desta característica ao completar um \"},{\"insert\":\"Descanso Longo\",\"attributes\":{\"underline\":true}},{\"insert\":\".\\n\\n O número de vezes que você pode conjurar a magiasem um espaço de magia aumenta ao atingir certosníveis de Guardião, conforme mostrado na coluna Inimigo Favorito da tabela Características de Guardião.\\n\\n\\n\"}]",
+    "usage_value": 2,
+    "usage_recovery": "Descanso Longo",
+    "has_usage_limit": true,
+    "usage_attribute": null,
+    "has_dice_increase": false,
+    "manual_level_increases": [
+      {
+        "level": 6,
+        "increase": 3
+      },
+      {
+        "level": 14,
+        "increase": 4
+      }
+    ],
+    "has_proficiency_doubling": false
+  },
+  {
+    "name": "Maestria em Armas",
+    "level": 1,
+    "description": "[{\"insert\":\"Seu treinamento com armas permite que você useas propriedades de maestria de dois tipos de armas à sua escolha com as quais você tem proficiência, como Arcos Longos e Espadas Curtas.\\n\\nSempre que completar um \"},{\"insert\":\"Descanso Longo\",\"attributes\":{\"underline\":true}},{\"insert\":\", você pode alterar os tipos de armas que escolheu. Por exemplo, você pode mudar para usar as propriedades demaestria de Cimitarras e Espadas Longas.\\n\\n\"}]",
+    "has_usage_limit": false,
+    "has_dice_increase": false,
+    "has_proficiency_doubling": false
+  },
+  {
+    "name": "Explorador Hábil",
+    "level": 2,
+    "description": "[{\"insert\":\"Graças às suas viagens, você adquire os seguintes benefícios.\\n\\n\"},{\"insert\":\"Especialista\",\"attributes\":{\"bold\":true}},{\"insert\":\". Escolha uma perícia na qual você tenha \"},{\"insert\":\"proficiência\",\"attributes\":{\"underline\":true}},{\"insert\":\", mas não seja Especialista. Você obtém Especialização nessa perícia.\\n\\n\"},{\"insert\":\"Idiomas\",\"attributes\":{\"bold\":true}},{\"insert\":\". Você conhece dois idiomas à sua escolha da tabela de idiomas\\n\\n\"}]",
+    "has_usage_limit": false,
+    "has_dice_increase": false,
+    "proficiency_skill_count": 1,
+    "has_proficiency_doubling": true
+  },
+  {
+    "name": "Estilo de Luta",
+    "level": 2,
+    "description": "[{\"insert\":\"Você adquire um talento \"},{\"insert\":\"Estilo de Luta\",\"attributes\":{\"underline\":true}},{\"insert\":\" à sua escolha. Em vez de escolher um desses talentos, você pode escolher a opção abaixo.\\n\\n\"}]",
+    "subabilities": [
+      {
+        "name": "Combatente Druídico",
+        "description": "Você aprende dois truques de Druida à sua escolha. Fagulha Estelar e Orientação são recomendados. Os truques escolhidos contam como magias de Guardião para você, e Sabedoria é seu atributo de conjuração para eles. Sempre que você atingir um nível de Guardião, pode substituir um desses truques por outro truque de Druida."
+      }
+    ],
+    "has_usage_limit": false,
+    "has_dice_increase": false,
+    "has_proficiency_doubling": false
+  },
+  {
+    "name": "Subclasse Guardião",
+    "level": 3,
+    "description": "[{\"insert\":\"Você ganha uma subclasse de Guardião à sua escolha.\\n\"}]",
+    "has_usage_limit": false,
+    "has_dice_increase": false,
+    "has_proficiency_doubling": false
+  },
+  {
+    "name": "Melhoria da Pontuação de Habilidade",
+    "level": 4,
+    "description": "[{\"insert\":\"Você ganha o talento Aprimoramento de Valor de Habilidade ou outro talento à sua escolha. Você ganha essa característica novamente nos níveis 8, 12 e 16 de Guardião.\\n\"}]",
+    "has_usage_limit": false,
+    "has_dice_increase": false,
+    "has_proficiency_doubling": false
+  },
+  {
+    "name": "Ataque Extra",
+    "level": 5,
+    "description": "[{\"insert\":\"Você pode atacar duas vezes em vez de uma sempre que realizar a \"},{\"insert\":\"ação Atacar\",\"attributes\":{\"underline\":true}},{\"insert\":\" no seu turno.\\n\"}]",
+    "has_usage_limit": false,
+    "has_dice_increase": false,
+    "has_proficiency_doubling": false
+  },
+  {
+    "name": "Errante",
+    "level": 6,
+    "description": "[{\"insert\":\"Sua Velocidade aumenta em 3 metros enquanto você não estiver usando armadura pesada. Você também tem uma \"},{\"insert\":\"Velocidade de Escalada\",\"attributes\":{\"underline\":true}},{\"insert\":\" e uma\"},{\"insert\":\" Velocidade de Natação\",\"attributes\":{\"underline\":true}},{\"insert\":\" iguais à sua \"},{\"insert\":\"Velocidade\",\"attributes\":{\"underline\":true}},{\"insert\":\".\\n\"}]",
+    "has_usage_limit": false,
+    "has_dice_increase": false,
+    "has_proficiency_doubling": false
+  },
+  {
+    "name": "Característica de Subclasse",
+    "level": 7,
+    "description": "[{\"insert\":\"Você ganha uma característica da sua Subclasse de Guardião.\\n\"}]",
+    "has_usage_limit": false,
+    "has_dice_increase": false,
+    "has_proficiency_doubling": false
+  },
+  {
+    "name": "Especialização",
+    "level": 9,
+    "description": "[{\"insert\":\"Escolha duas das suas proficiências em \"},{\"insert\":\"perícias\",\"attributes\":{\"underline\":true}},{\"insert\":\" nas quais você não possui Perícia. Você ganha Perícia nessas perícias.\\n\"}]",
+    "has_usage_limit": false,
+    "has_dice_increase": false,
+    "proficiency_skill_count": 2,
+    "has_proficiency_doubling": true
+  },
+  {
+    "name": "Incansável",
+    "level": 10,
+    "usage_type": "Por Modificador de Atributo",
+    "description": "As forças primordiais agora ajudam a impulsionar suas jornadas:\\n\\nPontos de Vida Temporários: Como ação de Magia, conceda a si mesmo 1d8 + Sabedoria PV Temporários. Usos = modificador de Sabedoria (mínimo 1). Recupera todos em Descanso Longo.\\n\\nDiminua a Exaustão: Sempre que terminar Descanso Curto, seu nível de Exaustão diminui em 1.",
+    "usage_value": null,
+    "usage_recovery": "Descanso Longo",
+    "has_usage_limit": true,
+    "usage_attribute": "Sabedoria",
+    "has_dice_increase": false,
+    "has_proficiency_doubling": false
+  },
+  {
+    "name": "Característica de Subclasse",
+    "level": 11,
+    "description": "[{\"insert\":\"Você ganha uma característica da sua Subclasse de Guardião.\\n\"}]",
+    "has_usage_limit": false,
+    "has_dice_increase": false,
+    "has_proficiency_doubling": false
+  },
+  {
+    "name": "Caçador Implacável",
+    "level": 13,
+    "description": "Receber dano não pode quebrar sua Concentração na Marca do Caçador.",
+    "has_usage_limit": false,
+    "has_dice_increase": false,
+    "has_proficiency_doubling": false
+  },
+  {
+    "name": "Véu da Natureza",
+    "level": 14,
+    "usage_type": "Por Modificador de Atributo",
+    "description": "Você invoca espíritos da natureza para se esconder magicamente. Como Ação Bônus, você pode se conceder a condição Invisível até o final do seu próximo turno.\\n\\nUsos = modificador de Sabedoria (mínimo 1). Recupera todos em Descanso Longo.",
+    "usage_value": null,
+    "usage_recovery": "Descanso Longo",
+    "has_usage_limit": true,
+    "usage_attribute": "Sabedoria",
+    "has_dice_increase": false,
+    "has_proficiency_doubling": false
+  },
+  {
+    "name": "Característica de Subclasse",
+    "level": 15,
+    "description": "Você ganha uma característica da sua Subclasse de Guardião.",
+    "has_usage_limit": false,
+    "has_dice_increase": false,
+    "has_proficiency_doubling": false
+  },
+  {
+    "name": "Caçador Preciso",
+    "level": 17,
+    "description": "Você tem Vantagem em jogadas de ataque contra a criatura atualmente marcada pela sua Marca do Caçador.",
+    "has_usage_limit": false,
+    "has_dice_increase": false,
+    "has_proficiency_doubling": false
+  },
+  {
+    "name": "Sentidos Selvagens",
+    "level": 18,
+    "description": "Sua conexão com as forças da natureza lhe concede Visão às Cegas com um alcance de 9 metros.",
+    "has_usage_limit": false,
+    "has_dice_increase": false,
+    "has_proficiency_doubling": false
+  },
+  {
+    "name": "Bênção Épica",
+    "level": 19,
+    "description": "Você ganha um talento Dádiva Épica ou outro talento à sua escolha. Dádiva de Viagem Dimensional é recomendada.",
+    "has_usage_limit": false,
+    "has_dice_increase": false,
+    "has_proficiency_doubling": false
+  },
+  {
+    "name": "Matador de Inimigos",
+    "level": 20,
+    "description": "O dado de dano da sua Marca do Caçador é um d10 em vez de um d6.",
+    "has_usage_limit": false,
+    "has_dice_increase": false,
+    "has_proficiency_doubling": false
+  }
+]

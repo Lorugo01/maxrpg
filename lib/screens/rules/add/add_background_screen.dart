@@ -1231,10 +1231,20 @@ class _AddBackgroundScreenState extends ConsumerState<AddBackgroundScreen> {
                       icon: const Icon(Icons.edit, color: Colors.blueGrey),
                     ),
                     IconButton(
-                      onPressed:
-                          () => setState(() {
+                      onPressed: () async {
+                        final confirmed = await showDeleteConfirmationDialog(
+                          context,
+                          title: 'Excluir Escolha de Equipamento',
+                          itemName: 'Escolha de equipamento',
+                          customMessage:
+                              'Deseja excluir esta escolha de equipamento?',
+                        );
+                        if (confirmed) {
+                          setState(() {
                             _equipmentChoices.removeAt(index);
-                          }),
+                          });
+                        }
+                      },
                       icon: const Icon(Icons.delete, color: Colors.red),
                     ),
                   ],
@@ -1353,7 +1363,14 @@ class _EditEquipmentChoiceDialogState
                     margin: const EdgeInsets.only(bottom: 8),
                     child: ListTile(
                       title: Text(option['name'] ?? 'Opção sem nome'),
-                      subtitle: Text(option['description'] ?? ''),
+                      subtitle:
+                          (option['description'] ?? '').toString().isEmpty
+                              ? null
+                              : CollapsibleRichText(
+                                option['description'] ?? '',
+                                initialMaxLines: 3,
+                                style: const TextStyle(fontSize: 12),
+                              ),
                       trailing: IconButton(
                         onPressed: () => _editOption(index, option),
                         icon: const Icon(Icons.edit, color: Colors.blueGrey),

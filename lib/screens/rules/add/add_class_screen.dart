@@ -970,7 +970,16 @@ class _AddClassScreenState extends ConsumerState<AddClassScreen> {
                   iconSize: 20,
                 ),
                 IconButton(
-                  onPressed: () => _removeLevelFeature(index),
+                  onPressed: () async {
+                    final confirmed = await showDeleteConfirmationDialog(
+                      context,
+                      title: 'Excluir Característica',
+                      itemName: feature['name'] ?? 'Característica',
+                      customMessage:
+                          'Deseja excluir a característica "${feature['name'] ?? 'Sem nome'}"?',
+                    );
+                    if (confirmed) _removeLevelFeature(index);
+                  },
                   icon: const Icon(Icons.delete, color: Colors.red),
                   iconSize: 20,
                 ),
@@ -1400,7 +1409,16 @@ class _AddClassScreenState extends ConsumerState<AddClassScreen> {
                   iconSize: 20,
                 ),
                 IconButton(
-                  onPressed: () => _removeSpellLevel(index),
+                  onPressed: () async {
+                    final confirmed = await showDeleteConfirmationDialog(
+                      context,
+                      title: 'Excluir Nível de Magia',
+                      itemName: 'Nível ${spellLevel['level']}',
+                      customMessage:
+                          'Deseja excluir o nível ${spellLevel['level']} de magias?',
+                    );
+                    if (confirmed) _removeSpellLevel(index);
+                  },
                   icon: const Icon(Icons.delete, color: Colors.red),
                   iconSize: 20,
                 ),
@@ -1442,7 +1460,16 @@ class _AddClassScreenState extends ConsumerState<AddClassScreen> {
                   iconSize: 20,
                 ),
                 IconButton(
-                  onPressed: () => _removeSpellSlotsLevel(index),
+                  onPressed: () async {
+                    final confirmed = await showDeleteConfirmationDialog(
+                      context,
+                      title: 'Excluir Nível de Slots',
+                      itemName: 'Nível ${slotsLevel['level']}',
+                      customMessage:
+                          'Deseja excluir os slots de magia do nível ${slotsLevel['level']}?',
+                    );
+                    if (confirmed) _removeSpellSlotsLevel(index);
+                  },
                   icon: const Icon(Icons.delete, color: Colors.red),
                   iconSize: 20,
                 ),
@@ -1647,7 +1674,16 @@ class _AddClassScreenState extends ConsumerState<AddClassScreen> {
                   iconSize: 20,
                 ),
                 IconButton(
-                  onPressed: () => _removeSubclass(index),
+                  onPressed: () async {
+                    final confirmed = await showDeleteConfirmationDialog(
+                      context,
+                      title: 'Excluir Subclasse',
+                      itemName: subclass['name'] ?? 'Subclasse',
+                      customMessage:
+                          'Deseja excluir a subclasse "${subclass['name'] ?? 'Sem nome'}"?',
+                    );
+                    if (confirmed) _removeSubclass(index);
+                  },
                   icon: const Icon(Icons.delete, color: Colors.red),
                   iconSize: 20,
                 ),
@@ -2433,7 +2469,16 @@ class _AddClassScreenState extends ConsumerState<AddClassScreen> {
                   iconSize: 20,
                 ),
                 IconButton(
-                  onPressed: () => _removeEquipmentChoice(index),
+                  onPressed: () async {
+                    final confirmed = await showDeleteConfirmationDialog(
+                      context,
+                      title: 'Excluir Escolha de Equipamento',
+                      itemName: 'Escolha de equipamento',
+                      customMessage:
+                          'Deseja excluir esta escolha de equipamento?',
+                    );
+                    if (confirmed) _removeEquipmentChoice(index);
+                  },
                   icon: const Icon(Icons.delete, color: Colors.red),
                   iconSize: 20,
                 ),
@@ -2590,7 +2635,14 @@ class _EquipmentChoiceDialogState extends State<_EquipmentChoiceDialog> {
                     margin: const EdgeInsets.only(bottom: 8),
                     child: ListTile(
                       title: Text(option['name'] ?? 'Opção sem nome'),
-                      subtitle: Text(option['description'] ?? ''),
+                      subtitle:
+                          (option['description'] ?? '').toString().isEmpty
+                              ? null
+                              : CollapsibleRichText(
+                                option['description'] ?? '',
+                                initialMaxLines: 3,
+                                style: const TextStyle(fontSize: 12),
+                              ),
                       trailing: IconButton(
                         onPressed: () => _editOption(index, option),
                         icon: const Icon(Icons.edit, color: Colors.blueGrey),
@@ -3212,9 +3264,18 @@ class _LevelFeatureDialogState extends State<_LevelFeatureDialog> {
                           icon: const Icon(Icons.edit, color: Colors.blueGrey),
                         ),
                         IconButton(
-                          onPressed:
-                              () =>
-                                  setState(() => _subabilities.removeAt(index)),
+                          onPressed: () async {
+                            final confirmed = await showDeleteConfirmationDialog(
+                              context,
+                              title: 'Excluir Sub-habilidade',
+                              itemName: sub['name'] ?? 'Sub-habilidade',
+                              customMessage:
+                                  'Deseja excluir a sub-habilidade "${sub['name'] ?? 'Sem nome'}"?',
+                            );
+                            if (confirmed) {
+                              setState(() => _subabilities.removeAt(index));
+                            }
+                          },
                           icon: const Icon(Icons.delete, color: Colors.red),
                         ),
                       ],
@@ -3693,7 +3754,15 @@ class _LevelFeatureDialogState extends State<_LevelFeatureDialog> {
             ),
             const SizedBox(width: 12),
             IconButton(
-              onPressed: () => _removeManualLevelIncrease(index),
+              onPressed: () async {
+                final confirmed = await showDeleteConfirmationDialog(
+                  context,
+                  title: 'Excluir Aumento Manual',
+                  itemName: 'Aumento de nível',
+                  customMessage: 'Deseja excluir este aumento manual de nível?',
+                );
+                if (confirmed) _removeManualLevelIncrease(index);
+              },
               icon: const Icon(Icons.delete, color: Colors.red),
               tooltip: 'Remover',
             ),
@@ -3886,7 +3955,15 @@ class _LevelFeatureDialogState extends State<_LevelFeatureDialog> {
             ),
             const SizedBox(width: 12),
             IconButton(
-              onPressed: () => _removeDiceIncrease(index),
+              onPressed: () async {
+                final confirmed = await showDeleteConfirmationDialog(
+                  context,
+                  title: 'Excluir Aumento de Dado',
+                  itemName: 'Aumento de dado',
+                  customMessage: 'Deseja excluir este aumento de dado?',
+                );
+                if (confirmed) _removeDiceIncrease(index);
+              },
               icon: const Icon(Icons.delete, color: Colors.red),
               tooltip: 'Remover',
             ),
@@ -4401,7 +4478,14 @@ class _SubclassDialogState extends State<_SubclassDialog> {
                     margin: const EdgeInsets.only(bottom: 8),
                     child: ListTile(
                       title: Text('Nível ${f['level']}: ${f['name']}'),
-                      subtitle: Text(f['description'] ?? ''),
+                      subtitle:
+                          (f['description'] ?? '').toString().isEmpty
+                              ? null
+                              : CollapsibleRichText(
+                                f['description'] ?? '',
+                                initialMaxLines: 3,
+                                style: const TextStyle(fontSize: 12),
+                              ),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -4413,8 +4497,18 @@ class _SubclassDialogState extends State<_SubclassDialog> {
                             ),
                           ),
                           IconButton(
-                            onPressed:
-                                () => setState(() => _features.removeAt(index)),
+                            onPressed: () async {
+                              final confirmed = await showDeleteConfirmationDialog(
+                                context,
+                                title: 'Excluir Característica',
+                                itemName: f['name'] ?? 'Característica',
+                                customMessage:
+                                    'Deseja excluir a característica "${f['name'] ?? 'Sem nome'}"?',
+                              );
+                              if (confirmed) {
+                                setState(() => _features.removeAt(index));
+                              }
+                            },
                             icon: const Icon(Icons.delete, color: Colors.red),
                           ),
                         ],

@@ -11,6 +11,9 @@ C:/Users/J.Informatica/Desktop/app/Rpg/maxrpg/build/windows/x64/runner/CMakeFile
 C:/Users/J.Informatica/Desktop/app/Rpg/maxrpg/build/windows/x64/plugins/app_links/CMakeFiles/app_links_plugin.dir
 C:/Users/J.Informatica/Desktop/app/Rpg/maxrpg/build/windows/x64/plugins/app_links/CMakeFiles/INSTALL.dir
 C:/Users/J.Informatica/Desktop/app/Rpg/maxrpg/build/windows/x64/plugins/app_links/CMakeFiles/ALL_BUILD.dir
+C:/Users/J.Informatica/Desktop/app/Rpg/maxrpg/build/windows/x64/plugins/file_selector_windows/CMakeFiles/file_selector_windows_plugin.dir
+C:/Users/J.Informatica/Desktop/app/Rpg/maxrpg/build/windows/x64/plugins/file_selector_windows/CMakeFiles/INSTALL.dir
+C:/Users/J.Informatica/Desktop/app/Rpg/maxrpg/build/windows/x64/plugins/file_selector_windows/CMakeFiles/ALL_BUILD.dir
 C:/Users/J.Informatica/Desktop/app/Rpg/maxrpg/build/windows/x64/plugins/screen_retriever_windows/CMakeFiles/screen_retriever_windows_plugin.dir
 C:/Users/J.Informatica/Desktop/app/Rpg/maxrpg/build/windows/x64/plugins/screen_retriever_windows/CMakeFiles/INSTALL.dir
 C:/Users/J.Informatica/Desktop/app/Rpg/maxrpg/build/windows/x64/plugins/screen_retriever_windows/CMakeFiles/ALL_BUILD.dir

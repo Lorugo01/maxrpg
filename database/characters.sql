@@ -39,6 +39,7 @@ create table public.characters (
   death_save_successes integer null default 0,
   death_save_failures integer null default 0,
   hit_dice_used integer null default 0,
+  inspiration boolean null default false,
   is_spellcaster boolean null,
   custom_spellcasting_ability text null,
   subclass_name character varying(50) null,
